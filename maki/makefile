@@ -14,13 +14,13 @@ JAR=maki.jar
 all: $(OBJ) $(JAR)
 
 $(JAR)::
-        @echo Building ${JAR} file
-        @jar -0cvf ${JAR} *.class
+	@echo Building ${JAR} file
+	@jar -0cvf ${JAR} *.class
 
 .java.class:
-        @echo Compiling $<
-        @${JAVAC}       $<
+	@echo Compiling $<
+	@${JAVAC}       $<
 
 clean:
-        @rm -f $(OBJ) *.class *.jar
-        @echo Done
+	@rm -f $(OBJ) *.class *.jar
+	@echo Done
