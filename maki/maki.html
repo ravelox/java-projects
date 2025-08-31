@@ -1,32 +1,36 @@
-<HTML>
-<SCRIPT LANGUAGE="JavaScript">
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Maki</title>
+    <script src="Maki.js"></script>
+    <script src="../scoreserver/ScoreServer.js"></script>
+    <script>
+        let game;
 
-function resetMaki()
-{
-	document.maki.reset();
-	return true;
-}
+        window.addEventListener('load', () => {
+            // Instantiate scoreboard service and the game once the page loads.
+            new ScoreServer();
+            const canvas = document.getElementById('maki');
+            game = new Maki(canvas);
+        });
 
-function undoMaki()
-{
-	document.maki.undo();
-	return true;
-}
+        function resetMaki() {
+            if (game) game.reset();
+        }
 
-</SCRIPT>
-<TITLE>Maki</TITLE>
-<BODY BGCOLOR=#FFFFFF>
-<CENTER>
-<APPLET NAME=maki CODE=Maki.class CODEBASE="." HEIGHT=500 WIDTH=500>
-</APPLET>
-<APPLET NAME=server CODE=ScoreServer.class CODEBASE="../scoreserver" WIDTH=1 HEIGHT=1>
-<PARAM NAME=game VALUE=MAKI>
-<PARAM NAME=server VALUE=hpwine40.uksr.hp.com>
-</APPLET>
-<FORM>
-<INPUT TYPE=BUTTON VALUE="New Game" onClick="resetMaki();">
-<INPUT TYPE=BUTTON VALUE="Undo" onClick="undoMaki();">
-</FORM>
-</CENTER>
-</BODY>
-</HTML>
+        function undoMaki() {
+            if (game) game.undo();
+        }
+    </script>
+</head>
+<body bgcolor="#FFFFFF">
+    <center>
+        <canvas id="maki" width="500" height="500"></canvas>
+        <form>
+            <input type="button" value="New Game" onclick="resetMaki();">
+            <input type="button" value="Undo" onclick="undoMaki();">
+        </form>
+    </center>
+</body>
+</html>
+
