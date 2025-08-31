@@ -17,129 +17,118 @@ Added RCS log
 
 */
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 class AllStats
 {
-	private static Vector stats;
-	public static int msgTotal;
+        private static List<QueueStats> stats;
+        public static int msgTotal;
 
-	class queueStats
-	{
-		public int sentCount;
-		public int acceptedCount;
-		public int cancelledCount;
-		public String queue;
+        private static class QueueStats
+        {
+                int sentCount;
+                int acceptedCount;
+                int cancelledCount;
+                String queue;
 
-		public queueStats(String name)
-		{
-			sentCount = 0;
-			acceptedCount= 0;
-			cancelledCount = 0;
-			queue = name;
-		}
-		public void sent() { sentCount++; }
-		public void accepted() { acceptedCount++; }
-		public void cancelled() { cancelledCount++; }
-	}
+                QueueStats(String name)
+                {
+                        sentCount = 0;
+                        acceptedCount = 0;
+                        cancelledCount = 0;
+                        queue = name;
+                }
+
+                void sent() { sentCount++; }
+                void accepted() { acceptedCount++; }
+                void cancelled() { cancelledCount++; }
+        }
 
 	public AllStats()
 	{
-		stats = new Vector();
-		msgTotal = 0;
-	}
+                stats = new ArrayList<>();
+                msgTotal = 0;
+        }
 
-	private queueStats findStats(String name)
-	{
-		queueStats s;
-		
-		for(int i=0;i<stats.size();i++)
-		{
-			s = (queueStats)stats.elementAt(i);
-
-			if(name.equalsIgnoreCase(s.queue)) return s;
-		}
-
-		return null;
-	}
+        private QueueStats findStats(String name)
+        {
+                for(QueueStats s : stats)
+                {
+                        if(name.equalsIgnoreCase(s.queue)) return s;
+                }
+                return null;
+        }
 
 	public void sent(String name)
 	{
-		queueStats s = findStats(name);
-		if(s == null) return;
-		s.sent();
-		msgTotal++;
-	}
+                QueueStats s = findStats(name);
+                if(s == null) return;
+                s.sent();
+                msgTotal++;
+        }
 
 	public void cancelled(String name)
 	{
-		queueStats s = findStats(name);
-		if(s == null) return;
-		s.cancelled();
-	}
+                QueueStats s = findStats(name);
+                if(s == null) return;
+                s.cancelled();
+        }
 
 	public void accepted(String name)
 	{
-		queueStats s = findStats(name);
-		if(s == null) return;
-		s.accepted();
-	}
+                QueueStats s = findStats(name);
+                if(s == null) return;
+                s.accepted();
+        }
 
 	public void add(String name)
 	{
-		queueStats s = findStats(name);
-		if(s != null) return;
-		s = new queueStats(name);
-		stats.addElement(s);
-	}
+                QueueStats s = findStats(name);
+                if(s != null) return;
+                s = new QueueStats(name);
+                stats.add(s);
+        }
 
 	public void remove(String name)
 	{
-		queueStats s = findStats(name);
-		if(s == null) return;
-		stats.removeElement(s);
-	}
+                QueueStats s = findStats(name);
+                if(s == null) return;
+                stats.remove(s);
+        }
 
 	public int size() { return stats.size(); };
 
-	public String getQueue(int i)
-	{
-		queueStats s;
-		if(stats.size() <= 0 || (i+1) > stats.size() ) return new String();
-		s = (queueStats)stats.elementAt(i);
-		return s.queue;
-	}
+        public String getQueue(int i)
+        {
+                if(stats.isEmpty() || (i+1) > stats.size()) return "";
+                return stats.get(i).queue;
+        }
 
-	public int getSent(int i)
-	{
-		queueStats s;
-		if(stats.size() <= 0 || (i+1) > stats.size() ) return 0;
-		s = (queueStats)stats.elementAt(i);
-		return s.sentCount;
-	}
+        public int getSent(int i)
+        {
+                if(stats.isEmpty() || (i+1) > stats.size()) return 0;
+                return stats.get(i).sentCount;
+        }
 
-	public int getAccepted(int i)
-	{
-		queueStats s;
-		if(stats.size() <= 0 || (i+1) > stats.size() ) return 0;
-		s = (queueStats)stats.elementAt(i);
-		return s.acceptedCount;
-	}
+        public int getAccepted(int i)
+        {
+                if(stats.isEmpty() || (i+1) > stats.size()) return 0;
+                return stats.get(i).acceptedCount;
+        }
 
-	public int getCancelled(int i)
-	{
-		queueStats s;
-		if(stats.size() <= 0 || (i+1) > stats.size() ) return 0;
-		s = (queueStats)stats.elementAt(i);
-		return s.cancelledCount;
-	}
+        public int getCancelled(int i)
+        {
+                if(stats.isEmpty() || (i+1) > stats.size()) return 0;
+                return stats.get(i).cancelledCount;
+        }
 
 	public String getQueueStats(String queueName)
 	{
-		queueStats s = findStats(queueName);
+                QueueStats s = findStats(queueName);
 
-		if(s == null) return "";
+                if(s == null) return "";
 
-		return new StringBuffer(s.queue).append("#").append(s.sentCount).append("#").append(s.acceptedCount).append("#").append(s.cancelledCount).toString();
-	}
+                return String.format("%s#%d#%d#%d", s.queue, s.sentCount, s.acceptedCount, s.cancelledCount);
+        }
 }

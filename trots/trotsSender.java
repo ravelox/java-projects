@@ -76,8 +76,8 @@ import java.net.*;
 /*---------------------------------*/
 /* Class to send the TROTS message */
 /*---------------------------------*/
-public class trotsSender implements Observer,WindowListener
-{
+public class trotsSender implements Observer, WindowListener
+{ 
 	Socket client;
 	DataOutputStream	clientDataOut;
 	DataInputStream	clientDataIn;
@@ -98,17 +98,24 @@ public class trotsSender implements Observer,WindowListener
 	OKDialog dlgAbout;
 	boolean noQueueUpdate;
 
-	public void windowOpened(WindowEvent e) {}
-	public void windowClosing(WindowEvent e)
-	{
-		DBG.trace(debug.MAJOR, "Window closed");
-		exitProgram();
-	}
-	public void windowClosed(WindowEvent e) {}
-	public void windowDeactivated(WindowEvent e) {}
-	public void windowDeiconified(WindowEvent e) {}
-	public void windowIconified(WindowEvent e) {}
-	public void windowActivated(WindowEvent e) {}
+        @Override
+        public void windowOpened(WindowEvent e) {}
+        @Override
+        public void windowClosing(WindowEvent e)
+        {
+                DBG.trace(debug.MAJOR, "Window closed");
+                exitProgram();
+        }
+        @Override
+        public void windowClosed(WindowEvent e) {}
+        @Override
+        public void windowDeactivated(WindowEvent e) {}
+        @Override
+        public void windowDeiconified(WindowEvent e) {}
+        @Override
+        public void windowIconified(WindowEvent e) {}
+        @Override
+        public void windowActivated(WindowEvent e) {}
 
 	void exitProgram()
 	{
@@ -122,9 +129,10 @@ public class trotsSender implements Observer,WindowListener
 		System.exit(0);
 	}
 
-	ActionListener buttonListener = new ActionListener()
-	{
-		public void actionPerformed(ActionEvent e)
+    ActionListener buttonListener = new ActionListener()
+    {
+            @Override
+            public void actionPerformed(ActionEvent e)
 		{
 			String actionCommand;
 			actionCommand = e.getActionCommand();
@@ -204,9 +212,10 @@ public class trotsSender implements Observer,WindowListener
 		}
 	};
 
-	ItemListener listListener = new ItemListener()
-	{
-		public void itemStateChanged(ItemEvent e)
+    ItemListener listListener = new ItemListener()
+    {
+            @Override
+            public void itemStateChanged(ItemEvent e)
 		{
 			String text = messageInput.getText();
 			int colonPos;
@@ -240,8 +249,8 @@ public class trotsSender implements Observer,WindowListener
 		DBG.trace(debug.ERROR,new StringBuffer("Timeout     :").append(ini.getProperty("msgtimeout")).toString());
 		DBG.trace(debug.ERROR,new StringBuffer("Debug Level :").append(ini.getProperty("debug")).toString());
 
-		pServer = ini.getProperty("server");
-		pServerPort = new Integer(ini.getProperty("port")).intValue();
+                pServer = ini.getProperty("server");
+                pServerPort = Integer.parseInt(ini.getProperty("port"));
 		pUserName = ini.getProperty("user");
 		pUserPhone = ini.getProperty("phone");
 
@@ -249,7 +258,7 @@ public class trotsSender implements Observer,WindowListener
 		{
 			try
 			{
-				tempDebug = new Integer(ini.getProperty("debug")).intValue();
+                                tempDebug = Integer.parseInt(ini.getProperty("debug"));
 			}
 			catch(NumberFormatException exNumFmt)
 			{
@@ -262,7 +271,7 @@ public class trotsSender implements Observer,WindowListener
 		{
 			try
 			{
-				tempTimeout = new Integer(ini.getProperty("msgtimeout")).intValue();
+                                tempTimeout = Integer.parseInt(ini.getProperty("msgtimeout"));
 			}
 			catch(NumberFormatException exNumFmt)
 			{
@@ -281,7 +290,8 @@ public class trotsSender implements Observer,WindowListener
 /*-------------------------------------------------------------------*/
 /* The ini file has been changed so we need to re-set the connection */
 /*-------------------------------------------------------------------*/
-	public void update(Observable o, Object arg)
+    @Override
+    public void update(Observable o, Object arg)
 	{
 		DBG.trace(debug.MAJOR, "Ini file has changed");
 
@@ -752,7 +762,7 @@ public class trotsSender implements Observer,WindowListener
 		{
 			try
 			{
-				tempDebug = new Integer(ini.getProperty("debug")).intValue();
+                                tempDebug = Integer.parseInt(ini.getProperty("debug"));
 			}
 			catch(NumberFormatException exNumFmt)
 			{
@@ -766,7 +776,7 @@ public class trotsSender implements Observer,WindowListener
 		{
 			try
 			{
-				tempTimeout = new Integer(ini.getProperty("msgtimeout")).intValue();
+                                tempTimeout = Integer.parseInt(ini.getProperty("msgtimeout"));
 			}
 			catch(NumberFormatException exNumFmt)
 			{

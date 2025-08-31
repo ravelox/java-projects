@@ -167,7 +167,7 @@ class trotsMsgItem
 	int	sender;
 	public String msgText;
 	public int flag;
-	public Vector recipients;
+	public List<trotsUser> recipients;
 	public long createTime;
 
 /*-------------*/
@@ -176,7 +176,7 @@ class trotsMsgItem
 	public trotsMsgItem()
 	{
 		id = 0;
-		recipients = new Vector();
+		recipients = new ArrayList<>();
 		createTime = System.currentTimeMillis() / 1000;
 	}
 
@@ -185,13 +185,15 @@ class trotsMsgItem
 /*-------------------------------------------------------*/
 	public void addUser(trotsUser user)
 	{
-		recipients.addElement(user);
+		recipients.add(user);
 	}
 }
 
 public class trotsServer
 {
-	Vector					users, msgs, currentQueues;
+	List<trotsUser> users;
+        List<trotsMsgItem> msgs;
+        List<String> currentQueues;
 	Random					idGenerator = new Random();
 	ServerSocket			server;
 	Socket					client;
@@ -216,7 +218,7 @@ public class trotsServer
 		DBG.trace(debug.DEBUG, "-->makeInt");
 		try
 		{
-			returnValue = new Integer(value).intValue();
+                        returnValue = Integer.parseInt(value);
 		}
 		catch(NumberFormatException exNumFmt) {}
 
@@ -233,7 +235,7 @@ public class trotsServer
 		DBG.trace(debug.DEBUG, new StringBuffer("-->findUser (").append(id).append(")").toString());
 		for(int i=0; i < users.size(); i++)
 		{
-			tu = (trotsUser)users.elementAt(i);
+			tu = users.get(i);
 			if(tu.id == id)
 			{
 				DBG.trace(debug.DEBUG,"<--findUser(true)");
@@ -253,7 +255,7 @@ public class trotsServer
 		DBG.trace(debug.DEBUG, new StringBuffer("-->findMsg (").append(id).append(")").toString());
 		for(int i=0; i < msgs.size(); i++)
 		{
-			tm = (trotsMsgItem)msgs.elementAt(i);
+			tm = msgs.get(i);
 			if(tm.id == id)
 			{
 				DBG.trace(debug.DEBUG, "<--findMsg (true)");
@@ -274,7 +276,7 @@ public class trotsServer
 		if(id==0) return true;
 		for(int i=0; i < msgs.size(); i++)
 		{
-			tm = (trotsMsgItem)msgs.elementAt(i);
+			tm = msgs.get(i);
 			if(tm.id == id)
 			{
 				DBG.trace(debug.DEBUG, "<--isDuplicateMsg(true)");
@@ -295,7 +297,7 @@ public class trotsServer
 		if(id==0) return true;
 		for(int i=0; i < users.size(); i++)
 		{
-			tu = (trotsUser)users.elementAt(i);
+			tu = users.get(i);
 			if(tu.id == id)
 			{
 				DBG.trace(debug.DEBUG, "<--isDuplicateUser (true)");
@@ -317,7 +319,7 @@ public class trotsServer
 		for(int i=0; i < currentQueues.size(); i++)
 		{
 			if(i > 0) output = output.concat(",");
-			output = output.concat((String)currentQueues.elementAt(i));
+			output = output.concat(currentQueues.get(i));
 		}
 		DBG.trace(debug.DEBUG, "<--queue_vector_to_list");
 		return output;
@@ -338,7 +340,7 @@ public class trotsServer
 			this_queue = st.nextToken();
 			if(! currentQueues.contains(this_queue) )
 			{
-				currentQueues.addElement(this_queue.toUpperCase());
+				currentQueues.add(this_queue.toUpperCase());
 				serverStats.add(this_queue.toUpperCase());
 			}
 		}
@@ -363,7 +365,7 @@ public class trotsServer
 		{
 			for(int i=0; i<numRecipients; i++)
 			{
-				recip = (trotsUser)tm.recipients.elementAt(i);
+				recip = tm.recipients.get(i);
 
 				DBG.trace(debug.MINOR,"Sending TROTS_ASSIGN_SEND");
 				DBG.trace(debug.DEBUG,"To " + recip.userName);
@@ -414,7 +416,7 @@ public class trotsServer
 				tu.textIn.close();
 				tu.dataIn.close();
 				tu.dataOut.close();
-				users.removeElement(tu);
+				users.remove(tu);
 				DBG.trace(debug.MAJOR,"Client deregistered");
 			}
 		}
@@ -473,7 +475,7 @@ public class trotsServer
 			DBG.trace(debug.DEBUG, new StringBuffer("Client Host Name = ").append(tu.hostname).toString());
 
 			DBG.trace(debug.MINOR,"Adding user to list of clients");
-			users.insertElementAt(tu, tu.id - 1);
+                    users.add(tu.id - 1, tu);
 			DBG.trace(debug.MAJOR,"Client registered");
 
 		}
@@ -571,7 +573,7 @@ public class trotsServer
 			DBG.trace(debug.MINOR, "Finding recipients");
 			for(int i = 0; i < users.size(); i++)
 			{
-				tu = (trotsUser)users.elementAt(i);
+				tu = users.get(i);
 				DBG.trace(debug.DEBUG, new StringBuffer("Checking [").append(tu.userName).append("] Queues [").append(tu.queueList).append("]").toString());
 				if(tu.isUserQueue(tm.queue) && tu.available)
 				{
@@ -581,7 +583,7 @@ public class trotsServer
 				}
 			}
 			DBG.trace(debug.MINOR,"Adding message to list of messages");
-			msgs.addElement(tm);
+			msgs.add(tm);
 
 		}
 		catch(IOException exIO)
@@ -654,7 +656,7 @@ public class trotsServer
 			DBG.trace(debug.MINOR, "Processing recipients");
 			for(int i = 0 ; i < tm.recipients.size(); i++)
 			{
-				tu = (trotsUser)tm.recipients.elementAt(i);
+				tu = tm.recipients.get(i);
 				DBG.trace(debug.DEBUG, new StringBuffer("Processing [").append(tu.userName).append("]").toString());
 				try
 				{
@@ -670,7 +672,7 @@ public class trotsServer
 			}
 
 			DBG.trace(debug.MINOR, "Removing message from list of messages");
-			msgs.removeElement(tm);
+			msgs.remove(tm);
 		}
 		catch(IOException exIO)
 		{
@@ -760,7 +762,7 @@ public class trotsServer
 			tu.textIn.close();
 			tu.dataIn.close();
 			tu.dataOut.close();
-			users.removeElement(tu);
+			users.remove(tu);
 		}
 		catch(IOException exIO)
 		{
@@ -789,7 +791,7 @@ public class trotsServer
 				DBG.trace(debug.ERROR, "Unable to close client");
 			}
 			DBG.trace(debug.MINOR, "Removing client entry");
-			users.removeElement(tu);
+			users.remove(tu);
 		}
 
 		DBG.trace(debug.DEBUG, "<--shutdownClient");
@@ -947,7 +949,7 @@ public class trotsServer
 			tellRecipients(tm, tu);
 
 			DBG.trace(debug.MINOR, "Removing message from list of messages");
-			msgs.removeElement(tm);
+			msgs.remove(tm);
 
 		}
 		catch(IOException exIO)
@@ -962,19 +964,19 @@ public class trotsServer
 /*------------------------------*/
 	public void processListUsers()
 	{
-		Vector userCopy;
+		List<trotsUser> userCopy;
 		trotsUser tu;
 		int userCount;
 
 		DBG.trace(debug.DEBUG, "--> processListUsers");
 		DBG.trace(debug.MAJOR, "Sending list of user names");
-		userCopy = (Vector)users.clone();
+		userCopy = new ArrayList<>(users);
 		try
 		{
 			userCount = 0;
 			for(int i=0; i< userCopy.size(); i++)
 			{
-				tu = (trotsUser)userCopy.elementAt(i);
+				tu = userCopy.get(i);
 				if(i > 0) dataOut.writeBytes(",");
 				dataOut.writeBytes(new StringBuffer("").append(tu.id).append("#").append(tu.userName).toString());
 			}
@@ -994,15 +996,15 @@ public class trotsServer
 /*---------------------------------------------------------------------*/
 	public void processCleanUsers()
 	{
-		Vector userCopy;
+		List<trotsUser> userCopy;
 		trotsUser tu;
 
 		DBG.trace(debug.DEBUG, "--> processCleanUsers");
 		DBG.trace(debug.MAJOR, "Checking all user connections");
-		userCopy = (Vector)users.clone();
+		userCopy = new ArrayList<>(users);
 		for(int i=0; i< userCopy.size(); i++)
 		{
-			tu = (trotsUser)userCopy.elementAt(i);
+			tu = userCopy.get(i);
 
 			try
 			{
@@ -1020,7 +1022,7 @@ public class trotsServer
 					tu.textIn.close();
 				}
 				catch(Exception ex) {}
-				users.removeElement(tu);
+				users.remove(tu);
 			}
 		}
 		try
@@ -1060,7 +1062,8 @@ public class trotsServer
 /*-------------------------------------*/
 	public void processServerStatusHTML()
 	{
-		Vector userCopy, messageCopy;
+		List<trotsUser> userCopy;
+            List<trotsMsgItem> messageCopy;
 		trotsUser tu;
 		trotsMsgItem tm;
 		BSumTime bst = new BSumTime();
@@ -1076,8 +1079,8 @@ public class trotsServer
 		TimeZone.setDefault( bst );
 		SimpleDateFormat dtf = bst.getDateTimeFormatter();
 
-		userCopy = (Vector)users.clone();
-		messageCopy = (Vector)msgs.clone();
+		userCopy = new ArrayList<>(users);
+		messageCopy = new ArrayList<>(msgs);
 
 		try
 		{
@@ -1099,7 +1102,7 @@ public class trotsServer
 			{
 				for(int i=0; i < currentQueues.size(); i++)
 				{
-					queueName = (String)currentQueues.elementAt(i);
+					queueName = currentQueues.get(i);
 					dataOut.writeBytes("<LI><H3>"+queueName+"</H3>\n");
 				}
 			}
@@ -1159,7 +1162,7 @@ public class trotsServer
 				dataOut.writeBytes("</TR>");
 				for(int i=0; i< userCopy.size(); i++)
 				{
-					tu = (trotsUser)userCopy.elementAt(i);
+					tu = userCopy.get(i);
 					date = new Date( tu.createTime * 1000 );
 					dataOut.writeBytes("<TR>\n");
 					dataOut.writeBytes("<TD>" + (tu.available ? "Yes" : "NO") + "</TD>\n");
@@ -1190,7 +1193,7 @@ public class trotsServer
 				dataOut.writeBytes("</TR>");
 				for(int i=0; i< messageCopy.size(); i++)
 				{
-					tm = (trotsMsgItem)messageCopy.elementAt(i);
+					tm = messageCopy.get(i);
 					date = new Date( tm.createTime * 1000 );
 					dataOut.writeBytes("<TR>\n");
 					dataOut.writeBytes("<TD>"+dtf.format(date) + "</TD>\n");
@@ -1272,7 +1275,7 @@ public class trotsServer
 			DBG.trace(debug.MAJOR, new StringBuffer("Adding queue [").append(new_queue).append("]").toString());
 			if( ! currentQueues.contains(new_queue) )
 			{
-				currentQueues.addElement(new_queue);
+				currentQueues.add(new_queue);
 				serverStats.add(new_queue);
 				props.put("queues",queue_vector_to_list());
 				props.store(new FileOutputStream(Constants.SERVER_INI_FILE), "Updated automatically on ADD_QUEUE");
@@ -1379,7 +1382,7 @@ public class trotsServer
 				DBG.trace(debug.MINOR, "Removing statistics");
 				serverStats.remove(del_queue);
 				DBG.trace(debug.MINOR, "Removing queue from list");
-				currentQueues.removeElement(del_queue);
+				currentQueues.remove(del_queue);
 				DBG.trace(debug.MINOR, "Updating queue property in ini file");
 				props.put("queues",queue_vector_to_list());
 				props.store(new FileOutputStream(Constants.SERVER_INI_FILE), "Updated automatically on DEL_QUEUE");
@@ -1402,9 +1405,9 @@ public class trotsServer
 
 		DBG.trace(debug.DEBUG, "--> trotsServer (Constructor)");
 
-		users = new Vector();
-		msgs = new Vector();
-		currentQueues = new Vector();
+		users = new ArrayList<>();
+		msgs = new ArrayList<>();
+		currentQueues = new ArrayList<>();
 
 		DBG.trace(debug.MAJOR, "Initialising counters");
 		serverStats = new AllStats();
@@ -1608,7 +1611,7 @@ public class trotsServer
 
 				for(int i=0;i < numUsers; i++)
 				{
-					tu = (trotsUser)users.firstElement();
+                                   tu = users.get(0);
 					DBG.trace(debug.DEBUG, "Closing down [ " + tu.userName + "]");
 					shutdownClient(tu);
 				}
@@ -1657,7 +1660,7 @@ public class trotsServer
 			DBG.trace(debug.DEBUG,"Queues = " + propQueues);
 			DBG.trace(debug.DEBUG,"Debug Level = " + props.getProperty("debug"));
 
-			trotsServer ts = new trotsServer(new Integer(propServerPort).intValue());
+                   trotsServer ts = new trotsServer(Integer.parseInt(propServerPort));
 
 		}
 		catch(FileNotFoundException exFile)
