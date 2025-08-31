@@ -31,7 +31,7 @@ import java.util.*;
 /*------------------------------------*/
 /* Class to display the TROTS message */
 /*------------------------------------*/
-public class trotsMessage
+public class TrotsMessage
 {
 	public int instanceID;
 	Frame		trotsFrame;
@@ -42,7 +42,7 @@ public class trotsMessage
 /*-------------*/
 /* Constructor */
 /*-------------*/
-	public trotsMessage(ActionListener buttonListener)
+        public TrotsMessage(ActionListener buttonListener)
 	{
 		Panel		pnlButtons, pnlMessage;
 

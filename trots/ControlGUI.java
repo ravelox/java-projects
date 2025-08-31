@@ -27,7 +27,6 @@ Initial revision
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.StringTokenizer;
 import java.util.Properties;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -52,13 +51,20 @@ public class ControlGUI implements WindowListener
 /*-----------------------*/
 /* WindowListener events */
 /*-----------------------*/
-	public void windowOpened(WindowEvent e) {}
-	public void windowClosing(WindowEvent e) { System.exit(0);}
-	public void windowClosed(WindowEvent e) {}
-	public void windowDeactivated(WindowEvent e) {}
-	public void windowDeiconified(WindowEvent e) { guiFrame.repaint(); }
-	public void windowIconified(WindowEvent e) {}
-	public void windowActivated(WindowEvent e) {}
+        @Override
+        public void windowOpened(WindowEvent e) {}
+        @Override
+        public void windowClosing(WindowEvent e) { System.exit(0);}
+        @Override
+        public void windowClosed(WindowEvent e) {}
+        @Override
+        public void windowDeactivated(WindowEvent e) {}
+        @Override
+        public void windowDeiconified(WindowEvent e) { guiFrame.repaint(); }
+        @Override
+        public void windowIconified(WindowEvent e) {}
+        @Override
+        public void windowActivated(WindowEvent e) {}
 
 /*----------------------------------------*/
 /* Display red text message in status bar */
@@ -243,9 +249,8 @@ public class ControlGUI implements WindowListener
 	{
 		public void actionPerformed(ActionEvent e)
 		{
-			String menuItem, menuName;
-			String itemID = "";
-			StringTokenizer st;
+                        String menuItem, menuName;
+                        String itemID = "";
 
 /*-------------------*/
 /* Get the menu name */
@@ -258,8 +263,8 @@ public class ControlGUI implements WindowListener
 /*-------------------------------------------------------------------------*/
 			if(menuName.equalsIgnoreCase("Users") || menuName.equalsIgnoreCase("Call Receipt"))
 			{
-				st = new StringTokenizer(menuItem, "#");
-				itemID = st.nextToken();
+                                String[] parts = menuItem.split("#");
+                                if(parts.length > 0) itemID = parts[0];
 			}
 
 			if(menuName.equalsIgnoreCase("Users"))
@@ -296,7 +301,7 @@ public class ControlGUI implements WindowListener
 	void displayUserDetails(String id)
 	{
 		int port;
-		dataConnection server;
+		DataConnection server;
 		String userDetails;
 		String detailTitles[] = {"User Name", "Phone Number", "Connection Time", "Available ?", "Queues", "Host", "Client Version"};
 
@@ -304,7 +309,7 @@ public class ControlGUI implements WindowListener
 		
 		try
 		{
-			server = new dataConnection(txtServer.getText(), port);
+			server = new DataConnection(txtServer.getText(), port);
 			server.dataOut.writeInt(Constants.USER_DETAILS);
 			server.dataOut.writeInt(makeInt(id,0));
 			if(server.dataIn.readInt() > 0)
@@ -333,7 +338,7 @@ public class ControlGUI implements WindowListener
 	void displayQueueDetails(String id)
 	{
 		int port;
-		dataConnection server;
+		DataConnection server;
 		String queueDetails;
 		String detailTitles[] = {"Queue Name", "Sent", "Accepted", "Cancelled"};
 
@@ -341,7 +346,7 @@ public class ControlGUI implements WindowListener
 		
 		try
 		{
-			server = new dataConnection(txtServer.getText(), port);
+			server = new DataConnection(txtServer.getText(), port);
 			server.dataOut.writeInt(Constants.QUEUE_DETAILS);
 			server.dataOut.writeBytes(id + "\n");
 			queueDetails = server.textIn.readLine();
@@ -404,7 +409,7 @@ public class ControlGUI implements WindowListener
 	void removeQueue(String queueName)
 	{
 		int port;
-		dataConnection server;
+		DataConnection server;
 
 		port = makeInt(txtPort.getText(), Constants.DEFAULT_PORT);
 
@@ -428,13 +433,13 @@ public class ControlGUI implements WindowListener
 	void shutdownClient(String id)
 	{
 		int port;
-		dataConnection server;
+		DataConnection server;
 
 		port = makeInt(txtPort.getText(), Constants.DEFAULT_PORT);
 		
 		try
 		{
-			server = new dataConnection(txtServer.getText(), port);
+			server = new DataConnection(txtServer.getText(), port);
 			server.dataOut.writeInt(Constants.CLIENT_SHUTDOWN);
 			server.dataOut.writeInt(makeInt(id,0));
 			server.close();
@@ -452,7 +457,7 @@ public class ControlGUI implements WindowListener
 	void cleanUsers()
 	{
 		int port;
-		dataConnection server;
+		DataConnection server;
 
 		port = makeInt(txtPort.getText(), Constants.DEFAULT_PORT);
 		
@@ -466,7 +471,7 @@ public class ControlGUI implements WindowListener
 
 		try
 		{
-			server = new dataConnection(txtServer.getText(), port);
+			server = new DataConnection(txtServer.getText(), port);
 			server.dataOut.writeInt(Constants.CLEAN_USERS);
 			server.dataIn.readInt();
 			server.close();
@@ -506,12 +511,12 @@ public class ControlGUI implements WindowListener
 	void shutdownServer()
 	{
 		int port;
-		dataConnection server;
+		DataConnection server;
 		port = makeInt(txtPort.getText(), Constants.DEFAULT_PORT);
 		
 		try
 		{
-			server = new dataConnection(txtServer.getText(), port);
+			server = new DataConnection(txtServer.getText(), port);
 			server.dataOut.writeInt(Constants.SERVER_SHUTDOWN);
 		}
 		catch(Exception ex)
@@ -526,12 +531,12 @@ public class ControlGUI implements WindowListener
 	void shutdownAll()
 	{
 		int port;
-		dataConnection server;
+		DataConnection server;
 		port = makeInt(txtPort.getText(), Constants.DEFAULT_PORT);
 		
 		try
 		{
-			server = new dataConnection(txtServer.getText(), port);
+			server = new DataConnection(txtServer.getText(), port);
 			server.dataOut.writeInt(Constants.ALL_SHUTDOWN);
 		}
 		catch(Exception ex)
@@ -546,7 +551,7 @@ public class ControlGUI implements WindowListener
 	void addQueue(String queueName)
 	{
 		int port;
-		dataConnection server;
+		DataConnection server;
 
 		if(queueName.length() == 0) return;
 
@@ -758,13 +763,13 @@ public class ControlGUI implements WindowListener
 
 	}
 
-	dataConnection makeServerConnection(String s, int p)
+	DataConnection makeServerConnection(String s, int p)
 	{
-		dataConnection d;
+		DataConnection d;
 
 		try
 		{
-			d = new dataConnection(s, p);
+			d = new DataConnection(s, p);
 		}
 		catch(Exception exIO)
 		{
@@ -777,7 +782,7 @@ public class ControlGUI implements WindowListener
 	void setDebugLevel(Checkbox cb)
 	{
 		int dbgLevel = Constants.DEBUG_ERROR;
-		dataConnection server;
+		DataConnection server;
 		int port;
 
 		if(cb == cbError) dbgLevel = Constants.DEBUG_ERROR;
@@ -789,13 +794,13 @@ public class ControlGUI implements WindowListener
 
 		try
 		{
-			server = new dataConnection(txtServer.getText(), port);
+			server = new DataConnection(txtServer.getText(), port);
 			server.dataOut.writeInt(dbgLevel);
 			server.close();
 		}
 		catch(Exception ex)
 		{
-			statusError("Unable to set debug level");
+			statusError("Unable to set Debug level");
 		}
 	}
 
@@ -805,19 +810,15 @@ public class ControlGUI implements WindowListener
 /*------------------------------------------------------------*/
 	void updateList(String items, java.awt.List lst)
 	{
-		StringTokenizer st = new StringTokenizer(items,",");
-		String this_item;
-
-		if(lst.getItemCount() > 0) lst.removeAll();
-
-		while(st.hasMoreTokens())
-		{
-			this_item = st.nextToken();
-			lst.add(this_item);
-		}
+                String[] tokens = items.split(",");
+                if(lst.getItemCount() > 0) lst.removeAll();
+                for(String this_item : tokens)
+                {
+                        lst.add(this_item);
+                }
 	}
 
-	void getQueueNames(dataConnection d)
+	void getQueueNames(DataConnection d)
 	{
 		String serverQueues;
 		try
@@ -829,7 +830,7 @@ public class ControlGUI implements WindowListener
 		catch(Exception ex) {}
 	}
 
-	void getUserNames(dataConnection d)
+	void getUserNames(DataConnection d)
 	{
 		String users;
 		try
@@ -841,25 +842,25 @@ public class ControlGUI implements WindowListener
 		catch(Exception ex) {}
 	}
 
-	void getDebugDetails(dataConnection d)
+	void getDebugDetails(DataConnection d)
 	{
-		int debugLevel;
+		int DebugLevel;
 		try
 		{
 			d.dataOut.writeInt(Constants.DEBUG_DETAILS);
-			debugLevel = d.dataIn.readInt();
-			switch(debugLevel)
+			DebugLevel = d.dataIn.readInt();
+			switch(DebugLevel)
 			{
-				case debug.ERROR:
+				case Debug.ERROR:
 					cbgDebug.setSelectedCheckbox(cbError);
 					break;
-				case debug.MAJOR:
+				case Debug.MAJOR:
 					cbgDebug.setSelectedCheckbox(cbMajor);
 					break;
-				case debug.MINOR:
+				case Debug.MINOR:
 					cbgDebug.setSelectedCheckbox(cbMinor);
 					break;
-				case debug.DEBUG:
+				case Debug.DEBUG:
 					cbgDebug.setSelectedCheckbox(cbDebug);
 					break;
 			}
@@ -871,7 +872,7 @@ public class ControlGUI implements WindowListener
 	{
 		int pPort;
 		String pServer;
-		dataConnection server;
+		DataConnection server;
 
 		if(! serverNamePresent()) return;
 
@@ -895,7 +896,7 @@ public class ControlGUI implements WindowListener
 			if(server != null)
 			{
 					server.dataOut.writeInt(Constants.SERVER_VERSION);
-					statusInfo(new StringBuffer("Connection OK - ").append(server.textIn.readLine()).toString());
+					statusInfo(new StringBuilder("Connection OK - ").append(server.textIn.readLine()).toString());
 					server.close();
 			}
 
@@ -935,7 +936,7 @@ public class ControlGUI implements WindowListener
 /*-------------*/
 /* Constructor */
 /*-------------*/
-	public ControlGUI(boolean debugging)
+	public ControlGUI(boolean Debugging)
 	{
 		try
 		{

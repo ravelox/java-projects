@@ -22,7 +22,7 @@ import java.io.*;
 //import java.awt.event.*;
 //import java.text.*;
 
-public class debug
+public class Debug
 {
 	private File debugFile;
 	private DataOutputStream debugOut;
@@ -34,19 +34,12 @@ public class debug
 	public static final int MINOR = 2;
 	public static final int DEBUG = 4;
 
-	private String zeropad(long number, int numZeros)
-	{
-		String s = new String();
+        private String zeropad(long number, int numZeros)
+        {
+                return String.format("%0" + (numZeros + 1) + "d", number);
+        }
 
-		for(int i=0; i <= numZeros; i++) s = s.concat("0");
-		s = s.concat(String.valueOf(number));
-
-		s = s.substring(s.length() - 8);
-
-		return(s);
-	}
-
-	public debug(int initialLevel, String fileName, String title)
+        public Debug(int initialLevel, String fileName, String title)
 	{
 		try
 		{

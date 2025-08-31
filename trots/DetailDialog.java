@@ -13,25 +13,19 @@ Initial revision
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.StringTokenizer;
 
 public class DetailDialog extends Dialog
 {
 	Button btnSpecial,btnNo;
 	String dlgName;
 	
-	ActionListener noButtonListener = new ActionListener()
-	{
-		public void actionPerformed(ActionEvent e)
-		{
-			setVisible(false);
-		}
-	};
+        ActionListener noButtonListener = e -> setVisible(false);
 
-	public void setVisible(boolean visible)
-	{
-		super.setVisible(visible);
-	}
+        @Override
+        public void setVisible(boolean visible)
+        {
+                super.setVisible(visible);
+        }
 
 	public DetailDialog(Frame f, String title, String detailNames[], String details, String specialButtonTitle, String noButtonTitle)
 	{
@@ -46,13 +40,13 @@ public class DetailDialog extends Dialog
 		btnSpecial = new Button(specialButtonTitle); btnNo = new Button(noButtonTitle);
 		pnlBottom.add(btnSpecial);
 		pnlBottom.add(btnNo);
-		pnlTop.setLayout(new GridLayout(detailNames.length, 2));
-		StringTokenizer st = new StringTokenizer(details, "#");
-		for(int i=0;i<detailNames.length;i++)
-		{
-			pnlTop.add(new Label(detailNames[i] + ":"));
-			pnlTop.add(new Label(st.nextToken()));
-		}
+                pnlTop.setLayout(new GridLayout(detailNames.length, 2));
+                String[] tokens = details.split("#");
+                for(int i = 0; i < detailNames.length && i < tokens.length; i++)
+                {
+                        pnlTop.add(new Label(detailNames[i] + ":"));
+                        pnlTop.add(new Label(tokens[i]));
+                }
 		this.pack();
 		s = Toolkit.getDefaultToolkit().getScreenSize();
 		d = this.getSize();

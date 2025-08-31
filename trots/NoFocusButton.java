@@ -15,7 +15,9 @@ import java.awt.*;
 
 class NoFocusButton extends Button
 {
-	public boolean isFocusTraversable() { return false; }
-	public void requestFocus() {}
-	public NoFocusButton(String s) { super(s); }
+        @Override
+        public boolean isFocusTraversable() { return false; }
+        @Override
+        public void requestFocus() {}
+        public NoFocusButton(String s) { super(s); }
 }

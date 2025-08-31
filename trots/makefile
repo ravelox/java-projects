@@ -9,15 +9,15 @@ ANT			= /usr/java/apache-ant-1.6.0/bin/ant
 
 JAR_FILE		=	trots.jar
 
-CLASSES		=	countdownLabel\
-					trotsReceiver\
-					trotsServer\
-					trotsSender\
-					trotsControl\
-					iniFileGen\
-					dataConnection\
+CLASSES		=	CountdownLabel\
+					TrotsReceiver\
+					TrotsServer\
+					TrotsSender\
+					TrotsControl\
+					IniFileGen\
+					DataConnection\
 					AllStats\
-					trotsMessage\
+					TrotsMessage\
 					Constants\
 					ControlGUI\
 					NoFocusButton\
@@ -25,7 +25,7 @@ CLASSES		=	countdownLabel\
 					OKDialog\
 					DetailDialog\
 					BSumTime\
-					debug
+					Debug
 
 COMPILECLASSPATH	= .
 RUNTIMECLASSPATH	= $(JAR_FILE):.

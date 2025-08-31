@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Properties;
 
-public class iniFileGen extends Observable
+public class IniFileGen extends Observable
 {
 	Properties props;
 	String iniFileName;
@@ -56,7 +56,7 @@ public class iniFileGen extends Observable
                                 }
                                 try(FileOutputStream out = new FileOutputStream(iniFileName))
                                 {
-                                        props.store(out, "Updated by iniFileGen");
+                                        props.store(out, "Updated by IniFileGen");
                                 }
                                 catch(IOException ex) { /* ignore */ }
 
@@ -78,7 +78,7 @@ public class iniFileGen extends Observable
 /*-------------*/
 /* Constructor */
 /*-------------*/
-	public iniFileGen(String title, String fileName, String propDetails[][])
+        public IniFileGen(String title, String fileName, String propDetails[][])
 	{
 		int i;
 		TextField t;
