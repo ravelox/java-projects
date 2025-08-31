@@ -759,7 +759,7 @@ public class ControlGUI implements WindowListener
 /*-------------------*/
 /* Display the frame */
 /*-------------------*/
-		guiFrame.show();
+                guiFrame.setVisible(true);
 
 	}
 

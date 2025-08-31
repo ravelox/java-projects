@@ -58,13 +58,11 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 /*------------------------------------*/
 /* Class to receive the TROTS message */
 /*------------------------------------*/
-public class TrotsReceiver implements Observer, WindowListener
+public class TrotsReceiver implements IniFileListener, WindowListener
 {
 	List<TrotsMessage> oldMsgs,trotsMessages;
 	int clientID, pServerPort;
@@ -136,8 +134,8 @@ public class TrotsReceiver implements Observer, WindowListener
 /* The ini file has been changed so we need to re-set the connection */
 /*-------------------------------------------------------------------*/
         @Override
-        public void update(Observable o, Object arg)
-	{
+        public void iniFileUpdated()
+        {
 		DataConnection d;
 		String oldServer = pServer, oldUser = pUserName, oldQueues = pQueues;
 		String oldPhone = pUserPhone;
@@ -433,7 +431,7 @@ public class TrotsReceiver implements Observer, WindowListener
 		statusFrame.setSize(500,150);
 		statusFrame.setLocation(new Point());
 
-		statusFrame.show();
+            statusFrame.setVisible(true);
 	}
 
 		
@@ -739,7 +737,7 @@ public class TrotsReceiver implements Observer, WindowListener
 
 		DBG.trace(Debug.DEBUG, "Adding observer to ini file generator");
 		reloadIniProps();
-		ini.addObserver(this);
+            ini.addListener(this);
 
 /*-----------------------*/
 /* Build the control box */
@@ -802,7 +800,7 @@ public class TrotsReceiver implements Observer, WindowListener
 		}
 		OKDialog okd = new OKDialog(statusFrame, "Shutdown", true, "Trots Receiver has been shutdown from the server");
 		statusFrame.setState(Frame.NORMAL);
-		okd.show();
+                okd.setVisible(true);
 		DBG.trace(Debug.ERROR,"Normal termination");
 		System.exit(0);
 	}
