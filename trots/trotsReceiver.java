@@ -54,17 +54,20 @@ Added RCS statements
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 /*------------------------------------*/
 /* Class to receive the TROTS message */
 /*------------------------------------*/
-public class trotsReceiver implements Observer,WindowListener
+public class trotsReceiver implements Observer, WindowListener
 {
-	Vector				oldMsgs,trotsMessages;
-	int					clientID, pServerPort;
+	List<trotsMessage> oldMsgs,trotsMessages;
+	int clientID, pServerPort;
 	trotsMessage	 	newMessage;
 	String				pServer, pQueues, pUserName, pUserPhone;
 	Frame 				statusFrame;
@@ -76,17 +79,24 @@ public class trotsReceiver implements Observer,WindowListener
 	static iniFileGen	ini;
 	OKDialog				dlgAbout;
 
-	public void windowOpened(WindowEvent e) {}
-	public void windowClosing(WindowEvent e)
+        @Override
+        public void windowOpened(WindowEvent e) {}
+        @Override
+        public void windowClosing(WindowEvent e)
 	{
 		DBG.trace(debug.MAJOR,"Window Closed");
 		exitProgram();
 	}
-	public void windowClosed(WindowEvent e) {}
-	public void windowDeactivated(WindowEvent e) {}
-	public void windowDeiconified(WindowEvent e) {}
-	public void windowIconified(WindowEvent e) {}
-	public void windowActivated(WindowEvent e) {}
+        @Override
+        public void windowClosed(WindowEvent e) {}
+        @Override
+        public void windowDeactivated(WindowEvent e) {}
+        @Override
+        public void windowDeiconified(WindowEvent e) {}
+        @Override
+        public void windowIconified(WindowEvent e) {}
+        @Override
+        public void windowActivated(WindowEvent e) {}
 
 	void exitProgram()
 	{
@@ -106,13 +116,13 @@ public class trotsReceiver implements Observer,WindowListener
 		DBG.trace(debug.ERROR, new StringBuffer("Debug Level :").append(ini.getProperty("debug")).toString());
 
 		pServer = ini.getProperty("server");
-		pServerPort = new Integer(ini.getProperty("port")).intValue();
+                pServerPort = Integer.parseInt(ini.getProperty("port"));
 		pUserName = ini.getProperty("user");
 		pUserPhone = ini.getProperty("phone");
 		pQueues = ini.getProperty("queues");
 		try
 		{
-			pDebug = new Integer(ini.getProperty("debug")).intValue();
+                        pDebug = Integer.parseInt(ini.getProperty("debug"));
 		}
 		catch(NumberFormatException exNumFmt)
 		{
@@ -125,7 +135,8 @@ public class trotsReceiver implements Observer,WindowListener
 /*-------------------------------------------------------------------*/
 /* The ini file has been changed so we need to re-set the connection */
 /*-------------------------------------------------------------------*/
-	public void update(Observable o, Object arg)
+        @Override
+        public void update(Observable o, Object arg)
 	{
 		dataConnection d;
 		String oldServer = pServer, oldUser = pUserName, oldQueues = pQueues;
@@ -171,21 +182,19 @@ public class trotsReceiver implements Observer,WindowListener
 /*--------------------------------------------------*/
 /* Checks to see if we have a duplicate Instance ID */
 /*--------------------------------------------------*/
-	boolean isIDExists(int id)
-	{
-		Vector copy = (Vector)trotsMessages.clone();
-		trotsMessage currentMessage;
+        boolean isIDExists(int id)
+        {
+                List<trotsMessage> copy = new ArrayList<>(trotsMessages);
 
-		DBG.trace(debug.DEBUG, new StringBuffer("--> isIDExists(").append(id).append(")").toString());
-		if(id == 0) return true;
-		for(int i = 0; i < copy.size(); i++)
-		{
-			currentMessage = (trotsMessage)copy.elementAt(i);
-			if(currentMessage.instanceID == id)
-				return true;
-		}
-		return false;
-	}
+                DBG.trace(debug.DEBUG, new StringBuffer("--> isIDExists(").append(id).append(")").toString());
+                if(id == 0) return true;
+                for(trotsMessage currentMessage : copy)
+                {
+                        if(currentMessage.instanceID == id)
+                                return true;
+                }
+                return false;
+        }
 
 /*--------------------------------------------------*/
 /* Send the CLIENT_DEREGISTER message to the server */
@@ -289,9 +298,10 @@ public class trotsReceiver implements Observer,WindowListener
 /*--------------------------------------------------------------------*/
 /* Define ActionListener to handle all events from the trots messages */
 /*--------------------------------------------------------------------*/
-	ActionListener buttonListener = new ActionListener()
-	{
-		public void actionPerformed(ActionEvent e)
+        ActionListener buttonListener = new ActionListener()
+        {
+                @Override
+                public void actionPerformed(ActionEvent e)
 		{
 			String actionCommand = e.getActionCommand();
 			String actionType, IDString;
@@ -300,7 +310,7 @@ public class trotsReceiver implements Observer,WindowListener
 
 			actionType = actionCommand.substring(0,1);
 			IDString = actionCommand.substring(1);
-			trotsID = new Integer(IDString).intValue();
+                    trotsID = Integer.parseInt(IDString);
 
 /*---------------------------------------------------------------*/
 /* If the dismiss button has been pressed then remove the window */
@@ -321,9 +331,10 @@ public class trotsReceiver implements Observer,WindowListener
 /*-----------------------------------*/
 /* Action Listener for status dialog */
 /*-----------------------------------*/
-	ActionListener menuListener = new ActionListener()
-	{
-		public void actionPerformed(ActionEvent e)
+        ActionListener menuListener = new ActionListener()
+        {
+                @Override
+                public void actionPerformed(ActionEvent e)
 		{
 			String command = e.getActionCommand();
 			
@@ -349,9 +360,10 @@ public class trotsReceiver implements Observer,WindowListener
 /*---------------------------------*/
 /* Item Listener for status dialog */
 /*---------------------------------*/
-	ItemListener statusItemListener = new ItemListener()
-	{
-		public void itemStateChanged(ItemEvent e)
+        ItemListener statusItemListener = new ItemListener()
+        {
+                @Override
+                public void itemStateChanged(ItemEvent e)
 		{
 			DBG.trace(debug.MAJOR, "Status change");
 			DBG.trace(debug.DEBUG, new StringBuffer("Change status from ").append(available).append(" to ").append(!available).toString());
@@ -428,24 +440,21 @@ public class trotsReceiver implements Observer,WindowListener
 /*----------------------------*/
 /* Find the specified message */
 /*----------------------------*/
-	trotsMessage findMsg(int id)
-	{
-		Vector copy = (Vector)trotsMessages.clone();
-		trotsMessage t;
-		
-		DBG.trace(debug.DEBUG, new StringBuffer("--> findMsg(").append(id).append(")").toString());
+        trotsMessage findMsg(int id)
+        {
+                List<trotsMessage> copy = new ArrayList<>(trotsMessages);
 
-		for(int i=0;i<copy.size();i++)
-		{
-			t = (trotsMessage)copy.elementAt(i);
+                DBG.trace(debug.DEBUG, new StringBuffer("--> findMsg(").append(id).append(")").toString());
 
-			if(t.instanceID == id)
-			{
-				return t;
-			}
-		}
-		return null;
-	}
+                for(trotsMessage t : copy)
+                {
+                        if(t.instanceID == id)
+                        {
+                                return t;
+                        }
+                }
+                return null;
+        }
 
 /*------------------------------------------------------------------*/
 /* Kill the appropriate trots message and remove it from the vector */
@@ -467,8 +476,8 @@ public class trotsReceiver implements Observer,WindowListener
 
 		t.kill();
 		DBG.trace(debug.MINOR, "Removing the message from the vector");
-		trotsMessages.removeElement(t);
-		oldMsgs.addElement(t);
+                trotsMessages.remove(t);
+                oldMsgs.add(t);
 	}
 
 /*------------------*/
@@ -572,22 +581,22 @@ public class trotsReceiver implements Observer,WindowListener
 
 		DBG.trace(debug.DEBUG, "--> createTrotsMessage");
 		DBG.trace(debug.MAJOR, "Creating trots message");
-		newMessage.setDetails(ID, strUser, strMessage);
-		trotsMessages.addElement(newMessage);
-		newMessage.show();
+                newMessage.setDetails(ID, strUser, strMessage);
+                trotsMessages.add(newMessage);
+                newMessage.show();
 
-		if(oldMsgs.size() > 0)
-		{
-			newMessage = (trotsMessage)oldMsgs.firstElement();
-			newMessage.reset();
-			oldMsgs.removeElement(newMessage);
-		}
-		else
-		{
-			newMessage = new trotsMessage(buttonListener);
-		}
+                if(!oldMsgs.isEmpty())
+                {
+                        newMessage = oldMsgs.get(0);
+                        newMessage.reset();
+                        oldMsgs.remove(newMessage);
+                }
+                else
+                {
+                        newMessage = new trotsMessage(buttonListener);
+                }
 
-		newMessage.hide();
+                newMessage.hide();
 
 	}
 
@@ -722,11 +731,11 @@ public class trotsReceiver implements Observer,WindowListener
 
 		available = true;
 
-		DBG.trace(debug.DEBUG, "Creating new messages vector");
-		trotsMessages = new Vector();
+                DBG.trace(debug.DEBUG, "Creating new messages vector");
+                trotsMessages = new ArrayList<>();
 
-		DBG.trace(debug.DEBUG, "Creating old messages vector");
-		oldMsgs = new Vector();
+                DBG.trace(debug.DEBUG, "Creating old messages vector");
+                oldMsgs = new ArrayList<>();
 
 		DBG.trace(debug.DEBUG, "Adding observer to ini file generator");
 		reloadIniProps();
@@ -840,7 +849,7 @@ public class trotsReceiver implements Observer,WindowListener
 		{
 			try
 			{
-				tempDebug = new Integer(ini.getProperty("debug")).intValue();
+                            tempDebug = Integer.parseInt(ini.getProperty("debug"));
 			}
 			catch(NumberFormatException exNumFmt)
 			{

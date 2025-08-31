@@ -21,43 +21,44 @@ Added RCS
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
-import java.io.FileOutputStream;
-import java.io.FileInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Observable;
+import java.util.Properties;
 
 public class iniFileGen extends Observable
 {
 	Properties props;
 	String iniFileName;
 	Dialog iniDialog;
-	Vector inputValues;
-	boolean OK = true;
+        List<TextField> inputValues;
+        boolean OK = true;
 
-	private ActionListener buttonListener = new ActionListener()
-	{
-		public void actionPerformed(ActionEvent e)
-		{
-			String command = e.getActionCommand();
-			TextField t;
-			int numValues;
+        private ActionListener buttonListener = new ActionListener()
+        {
+                @Override
+                public void actionPerformed(ActionEvent e)
+                {
+                        String command = e.getActionCommand();
 
-			if(command.equalsIgnoreCase("OK"))
-			{
-				OK = checkAllInput();
-				if(!OK) return;
+                        if(command.equalsIgnoreCase("OK"))
+                        {
+                                OK = checkAllInput();
+                                if(!OK) return;
 
-				numValues = inputValues.size();
-				for(int i = 0; i < numValues ; i++)
-				{
-					t = (TextField)inputValues.elementAt(i);
-					props.put(t.getName(),t.getText());
-				}
-				try
-				{
-					props.store(new FileOutputStream(iniFileName), "Updated by iniFileGen");
-				}
-				catch(Exception ex) {}
+                                for(TextField t : inputValues)
+                                {
+                                        props.put(t.getName(), t.getText());
+                                }
+                                try(FileOutputStream out = new FileOutputStream(iniFileName))
+                                {
+                                        props.store(out, "Updated by iniFileGen");
+                                }
+                                catch(IOException ex) { /* ignore */ }
 
 /*-----------------------------------------------------*/
 /* Tell anyone who's listening that we've been updated */
@@ -92,7 +93,7 @@ public class iniFileGen extends Observable
 		pnlButtons = new Panel();
 		pnlButtons.setLayout(new FlowLayout());
 
-		inputValues = new Vector();
+                inputValues = new ArrayList<>();
 		frame = new Frame(title);
 		iniDialog = new Dialog(frame,title, true);
 		iniDialog.setLayout(new BorderLayout());
@@ -107,7 +108,7 @@ public class iniFileGen extends Observable
 			t = new TextField(props.getProperty(propDetails[i][1]));
 			t.setName(propDetails[i][1]);
 			pnlValues.add(t);
-			inputValues.addElement(t);
+                        inputValues.add(t);
 		}
 
 		btnCancel = new Button("Cancel");
@@ -128,17 +129,15 @@ public class iniFileGen extends Observable
 	{
 		int i;
 
-		props = new Properties();
-		boolean loaded = false;
-		if(new File(iniFileName).exists())
-		{
-			try
-			{
-				props.load(new FileInputStream(iniFileName));
-				loaded = true;
-			}
-			catch(Exception e) {}
-		}
+                props = new Properties();
+                if(new File(iniFileName).exists())
+                {
+                        try(FileInputStream in = new FileInputStream(iniFileName))
+                        {
+                                props.load(in);
+                        }
+                        catch(IOException e) { /* ignore */ }
+                }
 
 		for(i = 0; i < propDetails.length; i++)
 		{
@@ -166,33 +165,29 @@ public class iniFileGen extends Observable
 
 	private boolean checkAllInput()
 	{
-		TextField t;
-		int i = 0, numValues;
-		boolean status = true;
-		boolean focusSet = false;
-		
-		numValues = inputValues.size();
-		for(i=0; i < numValues; i++)
-		{
-			t = (TextField)inputValues.elementAt(i);	
-			if(t.getText() == null || t.getText().length() == 0)
-			{
-				t.setBackground(Color.red);
-				t.setForeground(Color.white);
-				status = false;
-				if(!focusSet)
-				{
-					t.requestFocus();
-					focusSet = true;
-				}
-			}	
-			else
-			{
-				t.setBackground(Color.white);
-				t.setForeground(Color.black);
-			}
-		}
-			
-		return status;
-	}
+                boolean status = true;
+                boolean focusSet = false;
+
+                for(TextField t : inputValues)
+                {
+                        if(t.getText() == null || t.getText().isEmpty())
+                        {
+                                t.setBackground(Color.red);
+                                t.setForeground(Color.white);
+                                status = false;
+                                if(!focusSet)
+                                {
+                                        t.requestFocus();
+                                        focusSet = true;
+                                }
+                        }
+                        else
+                        {
+                                t.setBackground(Color.white);
+                                t.setForeground(Color.black);
+                        }
+                }
+
+                return status;
+        }
 }
