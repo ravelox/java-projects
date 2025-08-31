@@ -1,12 +1,12 @@
 import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
-public class maki extends Applet implements MouseListener
+public class Maki extends Applet implements MouseListener
 {
-	private static final int MAX_X=14, MAX_Y=14;
-	private int board[][], marker[][], undoBoard[][];
+        private static final int MAX_X=14, MAX_Y=14;
+        private int[][] board, marker, undoBoard;
 	public boolean gameOver;
 	public int score, undoScore;
 	Font displayFont;
@@ -16,30 +16,27 @@ public class maki extends Applet implements MouseListener
 /*------------------------*/
 /* Re-randomize the board */
 /*------------------------*/
-	private void initialise_board()
-	{
-		int x,y;
-		Random r = new Random();
+        private void initialiseBoard()
+        {
+                for (int x = 0; x < MAX_X; x++)
+                {
+                        for (int y = 0; y < MAX_Y; y++)
+                        {
+                                marker[x][y] = 0;
+                                board[x][y] = ThreadLocalRandom.current().nextInt(1, 6);
+                        }
+                }
+                gameOver = false;
+                score = 0;
+                undoScore = 0;
 
-		for(x=0;x<MAX_X;x++)
-		{
-			for(y=0;y<MAX_Y;y++)
-			{
-				marker[x][y]=0;
-				board[x][y] = 0;
-				while(board[x][y] < 1 || board[x][y] > 5) board[x][y] = r.nextInt() % 6;
-			}
-		}
-		gameOver = false;
-		score = 0;
-		undoScore = 0;
-
-	}
+        }
 
 /*-------------*/
 /* Constructor */
 /*-------------*/
-	public void init()
+        @Override
+        public void init()
 	{
 		board = new int[MAX_X][MAX_Y];
 		marker = new int[MAX_X][MAX_Y];
@@ -47,7 +44,7 @@ public class maki extends Applet implements MouseListener
 
 		displayFont = new Font("Helvetica", Font.BOLD, 21);
 
-		initialise_board();
+                initialiseBoard();
 		
 		addMouseListener(this);
 
@@ -66,7 +63,8 @@ public class maki extends Applet implements MouseListener
 /*----------------*/
 /* Draw the board */
 /*----------------*/
-	public void paint(Graphics g)
+        @Override
+        public void paint(Graphics g)
 	{
 		int x,y;
 
@@ -128,7 +126,8 @@ public class maki extends Applet implements MouseListener
 /*---------------------------------*/
 /* Re-draw the screen if necessary */
 /*---------------------------------*/
-	public void update(Graphics g)
+        @Override
+        public void update(Graphics g)
 	{
 		paint(g);
 	}
@@ -136,22 +135,23 @@ public class maki extends Applet implements MouseListener
 /*-------------------*/
 /* Display the score */
 /*-------------------*/
-	public void drawScore(Graphics g)
-	{
-		g.setFont(displayFont);
-		int fh = getFontMetrics(displayFont).getHeight();
-		Dimension d = this.getSize();
-		g.clearRect(( MAX_X + 1) * 25, 0, 100, 100);
-		g.setColor(Color.black);
-		g.drawString(new String(""+ score), ( MAX_X + 1) * 25 , fh);
-		g.setColor(Color.white);
-		g.drawString(new String(""+ score), (( MAX_X + 1 ) * 25) + 2, fh + 1);
-	}
+        public void drawScore(Graphics g)
+        {
+                g.setFont(displayFont);
+                int fh = getFontMetrics(displayFont).getHeight();
+                Dimension d = this.getSize();
+                g.clearRect(( MAX_X + 1) * 25, 0, 100, 100);
+                g.setColor(Color.black);
+                g.drawString(Integer.toString(score), ( MAX_X + 1) * 25 , fh);
+                g.setColor(Color.white);
+                g.drawString(Integer.toString(score), (( MAX_X + 1 ) * 25) + 2, fh + 1);
+        }
 
 /*-----------------------------*/
 /* Process a mouse click event */
 /*-----------------------------*/
-	public void mouseClicked(MouseEvent e)
+        @Override
+        public void mouseClicked(MouseEvent e)
 	{
 		Graphics g = this.getGraphics();
 		Point p,box = new Point();
@@ -248,10 +248,10 @@ public class maki extends Applet implements MouseListener
 /*----------------------------------------------*/
 /* Remaining mouse events for the MouseListener */
 /*----------------------------------------------*/
-	public void mouseEntered(MouseEvent e) {}
-	public void mouseExited(MouseEvent e) {}
-	public void mousePressed(MouseEvent e) {}
-	public void mouseReleased(MouseEvent e) {}
+        @Override public void mouseEntered(MouseEvent e) {}
+        @Override public void mouseExited(MouseEvent e) {}
+        @Override public void mousePressed(MouseEvent e) {}
+        @Override public void mouseReleased(MouseEvent e) {}
 
 /*---------------------------------------*/
 /* Mark boxes based on the current color */
@@ -400,7 +400,7 @@ public class maki extends Applet implements MouseListener
 	{
 		Graphics g = this.getGraphics();
 		Dimension d = this.getSize();
-		initialise_board();
+                initialiseBoard();
 		g.clearRect( 0, 0, d.width, d.height);
 		paint(g);
 	}
