@@ -9,9 +9,9 @@ public class Maki extends Applet implements MouseListener
         private int[][] board, marker, undoBoard;
 	public boolean gameOver;
 	public int score, undoScore;
-	Font displayFont;
-	ScoreClient sc;
-	boolean scoreClientPresent;
+        Font displayFont;
+        Object sc;
+        boolean scoreClientPresent;
 
 /*------------------------*/
 /* Re-randomize the board */
@@ -51,12 +51,24 @@ public class Maki extends Applet implements MouseListener
 /*-------------------------------------------*/
 /* Check to see if a score client is present */
 /*-------------------------------------------*/
-		scoreClientPresent = false;
-		System.out.println("Checking for presence of ScoreClient");
-		sc = (ScoreClient)getAppletContext().getApplet("SCORES");
-		if(sc != null) scoreClientPresent = true;
+                scoreClientPresent = false;
+                System.out.println("Checking for presence of ScoreClient");
+                Applet app = getAppletContext().getApplet("SCORES");
+                if(app != null)
+                {
+                        try
+                        {
+                                app.getClass().getMethod("newScore", int.class);
+                                sc = app;
+                                scoreClientPresent = true;
+                        }
+                        catch (NoSuchMethodException ex)
+                        {
+                                // ScoreClient not present or does not support newScore
+                        }
+                }
 
-		System.out.println("Score Client present ? " + (scoreClientPresent ? "Yes" : "No"));
+                System.out.println("Score Client present ? " + (scoreClientPresent ? "Yes" : "No"));
 		
 	};
 
@@ -211,10 +223,17 @@ public class Maki extends Applet implements MouseListener
 
 			gameOver = check_win();
 
-			if(gameOver && scoreClientPresent)
-			{
-				sc.newScore(score);
-			}
+                        if(gameOver && scoreClientPresent)
+                        {
+                                try
+                                {
+                                        sc.getClass().getMethod("newScore", int.class).invoke(sc, score);
+                                }
+                                catch (Exception ex)
+                                {
+                                        // ignore any errors from score client
+                                }
+                        }
 		}
 		else
 		{
