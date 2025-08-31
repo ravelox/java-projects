@@ -17,14 +17,14 @@ import java.io.*;
 //import java.lang.*;
 import java.net.*;
 
-public class dataConnection 
+public class DataConnection
 {
-	Socket s;
+        private final Socket s;
 	public DataInputStream dataIn;
 	public DataOutputStream dataOut;
 	public BufferedReader textIn;
 
-	public dataConnection(String host, int port) throws IOException
+        public DataConnection(String host, int port) throws IOException
 	{
 		s = new Socket(host, port);
 		dataIn = new DataInputStream(s.getInputStream());

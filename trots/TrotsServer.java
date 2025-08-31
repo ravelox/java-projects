@@ -19,10 +19,10 @@ Revision 1.28  99/07/20  11:28:13  11:28:13  dkelly (Dave Kelly)
 Added SOCKET_TIMEOUT
 
 Revision 1.27  99/07/19  10:47:49  10:47:49  dkelly (Dave Kelly)
-Stopped SERVER_VERSION being logged to debug file all the time
+Stopped SERVER_VERSION being logged to Debug file all the time
 
 Revision 1.26  99/07/19  10:22:51  10:22:51  dkelly (Dave Kelly)
-Fixed debug statement
+Fixed Debug statement
 
 Revision 1.25  99/07/19  10:21:44  10:21:44  dkelly (Dave Kelly)
 Added code to retrieve client revision
@@ -37,7 +37,7 @@ Revision 1.22  99/07/15  16:36:44  16:36:44  dkelly (Dave Kelly)
 Removed Call Receipt admin commands
 
 Revision 1.21  99/07/14  11:35:10  11:35:10  dkelly (Dave Kelly)
-Cleaned up debug statements
+Cleaned up Debug statements
 
 Revision 1.20  99/07/14  09:19:53  09:19:53  dkelly (Dave Kelly)
 Added call to remove statistics when a queue is deleted
@@ -46,7 +46,7 @@ Revision 1.19  99/07/13  14:59:40  14:59:40  dkelly (Dave Kelly)
 Removed deregistration of call receipt users. This now happens in the REMOVE_CALL_RECEIPT functionality
 
 Revision 1.18  99/07/13  14:29:51  14:29:51  dkelly (Dave Kelly)
-Changed debugging statement
+Changed Debugging statement
 
 Revision 1.17  99/07/13  13:27:47  13:27:47  dkelly (Dave Kelly)
 Removed need for additional data to be sent for call receipt deregister
@@ -55,14 +55,14 @@ Revision 1.16  99/07/13  12:53:08  12:53:08  dkelly (Dave Kelly)
 Multiple changes to add extra admin functionality
 
 Revision 1.15  99/07/07  11:39:47  11:39:47  dkelly (Dave Kelly)
-Removed logging of status to debug file.
+Removed logging of status to Debug file.
 Changed reference from SERVER_STATUS to STATUS_HTML
 
 Revision 1.14  99/07/07  11:17:29  11:17:29  dkelly (Dave Kelly)
 Added processing to respond to HEARTBEAT request
 
 Revision 1.13  99/07/07  09:19:09  09:19:09  dkelly (Dave Kelly)
-Changed shutdown debug logging to always log when shutdown received
+Changed shutdown Debug logging to always log when shutdown received
 
 Revision 1.12  99/07/05  15:52:12  15:52:12  dkelly (Dave Kelly)
 Made queue manipulation case insensitive
@@ -80,7 +80,7 @@ Revision 1.9  99/04/30  09:12:15  09:12:15  dkelly (Dave Kelly)
 Don't know !
 
 Revision 1.8  99/04/29  14:00:54  14:00:54  dkelly (Dave Kelly)
-Corrected typo in debugging statement
+Corrected typo in Debugging statement
 ,.
 
 Revision 1.7  99/04/29  13:50:59  13:50:59  dkelly (Dave Kelly)
@@ -112,7 +112,7 @@ import java.text.*;
 /*---------------------------*/
 /* Class for TROTS user item */
 /*---------------------------*/
-class trotsUser
+class TrotsUser
 {
 	public int id;
 	public String userName;
@@ -129,7 +129,7 @@ class trotsUser
 /*-------------*/
 /* Constructor */
 /*-------------*/
-	public trotsUser()
+	public TrotsUser()
 	{
 		id = 0;
 		available = true;
@@ -141,39 +141,35 @@ class trotsUser
 /*-------------------------------------------------------------------*/
 	public boolean isUserQueue(String queueName)
 	{
-		String temp = queueList;
-		String currentQueue;
-		StringTokenizer st = new StringTokenizer(temp, ",");
-
-		while(st.hasMoreTokens())
-		{
-			currentQueue = st.nextToken();
-			if(currentQueue.equalsIgnoreCase(queueName))
-			{
-				return true;
-			}
-		}
-		return false;
+                String[] queues = queueList.split(",");
+                for(String currentQueue : queues)
+                {
+                        if(currentQueue.equalsIgnoreCase(queueName))
+                        {
+                                return true;
+                        }
+                }
+                return false;
 	}
 }
 
 /*------------------------------*/
 /* Class for TROTS message item */
 /*------------------------------*/
-class trotsMsgItem
+class TrotsMsgItem
 {
 	public int id;
 	public String queue;
 	int	sender;
 	public String msgText;
 	public int flag;
-	public List<trotsUser> recipients;
+	public List<TrotsUser> recipients;
 	public long createTime;
 
 /*-------------*/
 /* Constructor */
 /*-------------*/
-	public trotsMsgItem()
+	public TrotsMsgItem()
 	{
 		id = 0;
 		recipients = new ArrayList<>();
@@ -183,16 +179,16 @@ class trotsMsgItem
 /*-------------------------------------------------------*/
 /* Add a user to the list of recipients for this message */
 /*-------------------------------------------------------*/
-	public void addUser(trotsUser user)
+	public void addUser(TrotsUser user)
 	{
 		recipients.add(user);
 	}
 }
 
-public class trotsServer
+public class TrotsServer
 {
-	List<trotsUser> users;
-        List<trotsMsgItem> msgs;
+	List<TrotsUser> users;
+        List<TrotsMsgItem> msgs;
         List<String> currentQueues;
 	Random					idGenerator = new Random();
 	ServerSocket			server;
@@ -203,7 +199,7 @@ public class trotsServer
 	static Properties		props = new Properties();
 	AllStats		serverStats;
 	
-	static debug DBG;
+	static Debug DBG;
 
 	long startTime;
 
@@ -215,54 +211,54 @@ public class trotsServer
 	{
 		int returnValue = defaultValue;
 
-		DBG.trace(debug.DEBUG, "-->makeInt");
+		DBG.trace(Debug.DEBUG, "-->makeInt");
 		try
 		{
                         returnValue = Integer.parseInt(value);
 		}
 		catch(NumberFormatException exNumFmt) {}
 
-		DBG.trace(debug.DEBUG, "<--makeInt");
+		DBG.trace(Debug.DEBUG, "<--makeInt");
 		return returnValue;
 	}
 
 /*---------------------------*/
 /* Find the specific user ID */
 /*---------------------------*/
-	trotsUser findUser(int id)
+	TrotsUser findUser(int id)
 	{
-		trotsUser tu;
-		DBG.trace(debug.DEBUG, new StringBuffer("-->findUser (").append(id).append(")").toString());
+		TrotsUser tu;
+		DBG.trace(Debug.DEBUG, new StringBuilder("-->findUser (").append(id).append(")").toString());
 		for(int i=0; i < users.size(); i++)
 		{
 			tu = users.get(i);
 			if(tu.id == id)
 			{
-				DBG.trace(debug.DEBUG,"<--findUser(true)");
+				DBG.trace(Debug.DEBUG,"<--findUser(true)");
 				return tu;
 			}
 		}
-		DBG.trace(debug.DEBUG,"<--findUser(null)");
+		DBG.trace(Debug.DEBUG,"<--findUser(null)");
 		return null;
 	}
 
 /*------------------------------*/
 /* Find the specific message ID */
 /*------------------------------*/
-	trotsMsgItem findMsg(int id)
+	TrotsMsgItem findMsg(int id)
 	{
-		trotsMsgItem tm;
-		DBG.trace(debug.DEBUG, new StringBuffer("-->findMsg (").append(id).append(")").toString());
+		TrotsMsgItem tm;
+		DBG.trace(Debug.DEBUG, new StringBuilder("-->findMsg (").append(id).append(")").toString());
 		for(int i=0; i < msgs.size(); i++)
 		{
 			tm = msgs.get(i);
 			if(tm.id == id)
 			{
-				DBG.trace(debug.DEBUG, "<--findMsg (true)");
+				DBG.trace(Debug.DEBUG, "<--findMsg (true)");
 				return tm;
 			}
 		}
-		DBG.trace(debug.DEBUG, "<--findMsg (null)");
+		DBG.trace(Debug.DEBUG, "<--findMsg (null)");
 		return null;
 	}
 
@@ -271,19 +267,19 @@ public class trotsServer
 /*-----------------------------------------------*/
 	boolean isDuplicateMsg(int id)
 	{
-		trotsMsgItem tm;
-		DBG.trace(debug.DEBUG, new StringBuffer("-->isDuplicateMsg (").append(id).append(")").toString());
+		TrotsMsgItem tm;
+		DBG.trace(Debug.DEBUG, new StringBuilder("-->isDuplicateMsg (").append(id).append(")").toString());
 		if(id==0) return true;
 		for(int i=0; i < msgs.size(); i++)
 		{
 			tm = msgs.get(i);
 			if(tm.id == id)
 			{
-				DBG.trace(debug.DEBUG, "<--isDuplicateMsg(true)");
+				DBG.trace(Debug.DEBUG, "<--isDuplicateMsg(true)");
 				return true;
 			}
 		}
-		DBG.trace(debug.DEBUG, "<--isDuplicateMsg(false)");
+		DBG.trace(Debug.DEBUG, "<--isDuplicateMsg(false)");
 		return false;
 	}
 
@@ -292,19 +288,19 @@ public class trotsServer
 /*--------------------------------------------*/
 	boolean isDuplicateUser(int id)
 	{
-		trotsUser tu;
-		DBG.trace(debug.DEBUG, new StringBuffer("-->isDuplicateUser (").append(id).append(")").toString());
+		TrotsUser tu;
+		DBG.trace(Debug.DEBUG, new StringBuilder("-->isDuplicateUser (").append(id).append(")").toString());
 		if(id==0) return true;
 		for(int i=0; i < users.size(); i++)
 		{
 			tu = users.get(i);
 			if(tu.id == id)
 			{
-				DBG.trace(debug.DEBUG, "<--isDuplicateUser (true)");
+				DBG.trace(Debug.DEBUG, "<--isDuplicateUser (true)");
 				return true;
 			}
 		}
-		DBG.trace(debug.DEBUG, "<--isDuplicateUser (false)");
+		DBG.trace(Debug.DEBUG, "<--isDuplicateUser (false)");
 		return false;
 	}
 
@@ -313,7 +309,7 @@ public class trotsServer
 /*----------------------------------------------------------*/
 	String queue_vector_to_list()
 	{
-		DBG.trace(debug.DEBUG,"-->queue_vector_to_list");
+		DBG.trace(Debug.DEBUG,"-->queue_vector_to_list");
 		String output = new String("");
 
 		for(int i=0; i < currentQueues.size(); i++)
@@ -321,7 +317,7 @@ public class trotsServer
 			if(i > 0) output = output.concat(",");
 			output = output.concat(currentQueues.get(i));
 		}
-		DBG.trace(debug.DEBUG, "<--queue_vector_to_list");
+		DBG.trace(Debug.DEBUG, "<--queue_vector_to_list");
 		return output;
 	}
 
@@ -330,36 +326,36 @@ public class trotsServer
 /*----------------------------------------------------------*/
 	void queue_list_to_vector()
 	{
-		StringTokenizer st = new StringTokenizer(props.getProperty("queues"),",");
-		String this_queue;
+                String[] queues = props.getProperty("queues", "").split(",");
+                String this_queue;
 
-		DBG.trace(debug.DEBUG, "-->queue_list_to_vector");
+                DBG.trace(Debug.DEBUG, "-->queue_list_to_vector");
 
-		while(st.hasMoreTokens())
-		{
-			this_queue = st.nextToken();
+                for(String queue : queues)
+                {
+                        this_queue = queue;
 			if(! currentQueues.contains(this_queue) )
 			{
 				currentQueues.add(this_queue.toUpperCase());
 				serverStats.add(this_queue.toUpperCase());
 			}
 		}
-		DBG.trace(debug.DEBUG, "<--queue_list_to_vector");
+		DBG.trace(Debug.DEBUG, "<--queue_list_to_vector");
 	}
 
 /*---------------------------------------------------------------------*/
 /* Update the recipients of a message to say who got assigned the call */
 /*---------------------------------------------------------------------*/
-	void tellRecipients(trotsMsgItem tm, trotsUser tu)
+	void tellRecipients(TrotsMsgItem tm, TrotsUser tu)
 	{
 		int numRecipients;
-		trotsUser recip;
+		TrotsUser recip;
 
-		DBG.trace(debug.DEBUG, "--> tellRecipients");
+		DBG.trace(Debug.DEBUG, "--> tellRecipients");
 
 		numRecipients = tm.recipients.size();
 
-		DBG.trace(debug.MINOR,new StringBuffer("[").append(numRecipients).append("] recipients to update").toString());
+		DBG.trace(Debug.MINOR,new StringBuilder("[").append(numRecipients).append("] recipients to update").toString());
 
 		try
 		{
@@ -367,8 +363,8 @@ public class trotsServer
 			{
 				recip = tm.recipients.get(i);
 
-				DBG.trace(debug.MINOR,"Sending TROTS_ASSIGN_SEND");
-				DBG.trace(debug.DEBUG,"To " + recip.userName);
+				DBG.trace(Debug.MINOR,"Sending TROTS_ASSIGN_SEND");
+				DBG.trace(Debug.DEBUG,"To " + recip.userName);
 				recip.dataOut.writeInt(Constants.TROTS_ASSIGN_SEND);
 				recip.dataOut.writeInt(tm.id);
 
@@ -378,15 +374,15 @@ public class trotsServer
 				}
 				else
 				{
-					recip.dataOut.writeBytes(new StringBuffer("Call is assigned to ").append(tu.userName).append("\n").toString());
+					recip.dataOut.writeBytes(new StringBuilder("Call is assigned to ").append(tu.userName).append("\n").toString());
 				}
 			}
 		}
 		catch(IOException exIO)
 		{
-			DBG.trace(debug.ERROR,"Unable to update client ("+exIO.getMessage()+")");
+			DBG.trace(Debug.ERROR,"Unable to update client ("+exIO.getMessage()+")");
 		}
-		DBG.trace(debug.DEBUG, "<--tellRecipients");
+		DBG.trace(Debug.DEBUG, "<--tellRecipients");
 	}
 
 /*-----------------------------------------------------*/
@@ -395,36 +391,36 @@ public class trotsServer
 	void deregisterClient()
 	{
 		int userID;
-		trotsUser tu;
-		DBG.trace(debug.DEBUG, "--> deregisterClient");
+		TrotsUser tu;
+		DBG.trace(Debug.DEBUG, "--> deregisterClient");
 
 		try
 		{
-			DBG.trace(debug.MINOR,"Waiting for User ID");
+			DBG.trace(Debug.MINOR,"Waiting for User ID");
 			userID = dataIn.readInt();
-			DBG.trace(debug.DEBUG, new StringBuffer("User ID [").append(userID).append("]").toString());
-			DBG.trace(debug.MINOR,"Locating user ID");
+			DBG.trace(Debug.DEBUG, new StringBuilder("User ID [").append(userID).append("]").toString());
+			DBG.trace(Debug.MINOR,"Locating user ID");
 			tu = findUser(userID);
 
 			if(tu==null)
 			{
-				DBG.trace(debug.MAJOR,"Unable to locate user ID");
+				DBG.trace(Debug.MAJOR,"Unable to locate user ID");
 			}
 			else
 			{
-				DBG.trace(debug.MINOR,"Closing down data streams");
+				DBG.trace(Debug.MINOR,"Closing down data streams");
 				tu.textIn.close();
 				tu.dataIn.close();
 				tu.dataOut.close();
 				users.remove(tu);
-				DBG.trace(debug.MAJOR,"Client deregistered");
+				DBG.trace(Debug.MAJOR,"Client deregistered");
 			}
 		}
 		catch(IOException exIO)
 		{
-			DBG.trace(debug.ERROR,"Can't deregister client ("+exIO.getMessage()+")");
+			DBG.trace(Debug.ERROR,"Can't deregister client ("+exIO.getMessage()+")");
 		}
-		DBG.trace(debug.DEBUG, "<-- deregisterClient");
+		DBG.trace(Debug.DEBUG, "<-- deregisterClient");
 	}
 
 /*------------------------------------------------*/
@@ -432,69 +428,69 @@ public class trotsServer
 /*------------------------------------------------*/
 	void registerClient()
 	{
-		trotsUser tu;
+		TrotsUser tu;
 
-		DBG.trace(debug.DEBUG, "--> registerClient");
+		DBG.trace(Debug.DEBUG, "--> registerClient");
 
-		DBG.trace(debug.MINOR, "Creating new trots user");
-		tu = new trotsUser();
+		DBG.trace(Debug.MINOR, "Creating new trots user");
+		tu = new TrotsUser();
 
-		DBG.trace(debug.MINOR, "Generating client ID");
+		DBG.trace(Debug.MINOR, "Generating client ID");
 		while(isDuplicateUser(tu.id)) tu.id++;
 
-		DBG.trace(debug.DEBUG, new StringBuffer("Client ID = ").append(tu.id).toString());
+		DBG.trace(Debug.DEBUG, new StringBuilder("Client ID = ").append(tu.id).toString());
 
 		try
 		{
-			DBG.trace(debug.MINOR,"Sending ID to client");
+			DBG.trace(Debug.MINOR,"Sending ID to client");
 			dataOut.writeInt(tu.id);
 
-			DBG.trace(debug.MINOR,"Waiting for user name");
+			DBG.trace(Debug.MINOR,"Waiting for user name");
 			tu.userName = textIn.readLine();
-			DBG.trace(debug.DEBUG,new StringBuffer("User Name = ").append(tu.userName).toString());
+			DBG.trace(Debug.DEBUG,new StringBuilder("User Name = ").append(tu.userName).toString());
 
-			DBG.trace(debug.MINOR,"Waiting for phone number");
+			DBG.trace(Debug.MINOR,"Waiting for phone number");
 			tu.phoneNo = textIn.readLine();
-			DBG.trace(debug.DEBUG,new StringBuffer("Phone No = ").append(tu.phoneNo).toString());
+			DBG.trace(Debug.DEBUG,new StringBuilder("Phone No = ").append(tu.phoneNo).toString());
 
-			DBG.trace(debug.MINOR,"Waiting for queue list");
+			DBG.trace(Debug.MINOR,"Waiting for queue list");
 			tu.queueList = textIn.readLine();
-			DBG.trace(debug.DEBUG, new StringBuffer("Queue List = ").append(tu.queueList).toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Queue List = ").append(tu.queueList).toString());
 
-			DBG.trace(debug.MINOR,"Waiting for Client version");
+			DBG.trace(Debug.MINOR,"Waiting for Client version");
 			tu.version = textIn.readLine();
-			DBG.trace(debug.DEBUG, new StringBuffer("Client Version = ").append(tu.version).toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Client Version = ").append(tu.version).toString());
 
-			DBG.trace(debug.MINOR,"Assigning input/output streams");
+			DBG.trace(Debug.MINOR,"Assigning input/output streams");
 			tu.dataIn = dataIn;
 			tu.dataOut = dataOut;
 			tu.textIn = textIn;
 
-			DBG.trace(debug.MINOR, "Obtaining client host name");
+			DBG.trace(Debug.MINOR, "Obtaining client host name");
 			tu.hostname = client.getInetAddress().getHostName();
-			DBG.trace(debug.DEBUG, new StringBuffer("Client Host Name = ").append(tu.hostname).toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Client Host Name = ").append(tu.hostname).toString());
 
-			DBG.trace(debug.MINOR,"Adding user to list of clients");
+			DBG.trace(Debug.MINOR,"Adding user to list of clients");
                     users.add(tu.id - 1, tu);
-			DBG.trace(debug.MAJOR,"Client registered");
+			DBG.trace(Debug.MAJOR,"Client registered");
 
 		}
 		catch(IOException exIO)
 		{
-			DBG.trace(debug.ERROR,"Unable to process CLIENT_REGISTER (" + exIO.getMessage() + ")");
+			DBG.trace(Debug.ERROR,"Unable to process CLIENT_REGISTER (" + exIO.getMessage() + ")");
 		}
-		DBG.trace(debug.DEBUG,"<--registerClient");
+		DBG.trace(Debug.DEBUG,"<--registerClient");
 	}
 
 /*----------------------------------------------*/
 /* Send the TROTS message to the specified user */
 /*----------------------------------------------*/
-	public void sendMessage(trotsUser user, trotsMsgItem msg)
+	public void sendMessage(TrotsUser user, TrotsMsgItem msg)
 	{
-		trotsUser sender;
+		TrotsUser sender;
 		String from;
 
-		DBG.trace(debug.DEBUG, "--> sendMessage");
+		DBG.trace(Debug.DEBUG, "--> sendMessage");
 
 		try
 		{
@@ -506,28 +502,28 @@ public class trotsServer
 			}
 			else
 			{
-				from = new StringBuffer(sender.userName).append(" - ").append(sender.phoneNo).toString();
+				from = new StringBuilder(sender.userName).append(" - ").append(sender.phoneNo).toString();
 			}
 
-			DBG.trace(debug.MINOR,"Sending TROTS_MESSAGE_RECV");
+			DBG.trace(Debug.MINOR,"Sending TROTS_MESSAGE_RECV");
 			user.dataOut.writeInt(Constants.TROTS_MESSAGE_RECV);
-			DBG.trace(debug.DEBUG,new StringBuffer("Sending Message ID [").append(msg.id).append("]").toString());
+			DBG.trace(Debug.DEBUG,new StringBuilder("Sending Message ID [").append(msg.id).append("]").toString());
 			user.dataOut.writeInt(msg.id);
-			DBG.trace(debug.DEBUG,new StringBuffer("Sending From [").append(from).append("]").toString());
-			user.dataOut.writeBytes(new StringBuffer(from).append("\n").toString());
-			DBG.trace(debug.DEBUG, new StringBuffer("Sending Message Text [").append(msg.msgText).append("]").toString());
-			user.dataOut.writeBytes(new StringBuffer(msg.msgText).append("\n").toString());
+			DBG.trace(Debug.DEBUG,new StringBuilder("Sending From [").append(from).append("]").toString());
+			user.dataOut.writeBytes(new StringBuilder(from).append("\n").toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Sending Message Text [").append(msg.msgText).append("]").toString());
+			user.dataOut.writeBytes(new StringBuilder(msg.msgText).append("\n").toString());
 
-			DBG.trace(debug.MINOR,"Waiting for client response");
-			DBG.trace(debug.DEBUG,new StringBuffer("Response [").append(user.dataIn.readInt()).append("]").toString());
+			DBG.trace(Debug.MINOR,"Waiting for client response");
+			DBG.trace(Debug.DEBUG,new StringBuilder("Response [").append(user.dataIn.readInt()).append("]").toString());
 
-			DBG.trace(debug.MAJOR, "TROTS_MESSAGE_RECV sent");
+			DBG.trace(Debug.MAJOR, "TROTS_MESSAGE_RECV sent");
 		}
 		catch(IOException exIO)
 		{
-			DBG.trace(debug.ERROR, "Unable to send TROTS_MESSAGE_RECV to " + user.userName + "(" + exIO.getMessage() + ")");
+			DBG.trace(Debug.ERROR, "Unable to send TROTS_MESSAGE_RECV to " + user.userName + "(" + exIO.getMessage() + ")");
 		}
-		DBG.trace(debug.DEBUG, "<-- sendMessage");
+		DBG.trace(Debug.DEBUG, "<-- sendMessage");
 	}
 
 /*----------------------------------------*/
@@ -535,62 +531,62 @@ public class trotsServer
 /*----------------------------------------*/
 	public void processTrotsMessage()
 	{
-		trotsMsgItem tm;
-		trotsUser tu;
+		TrotsMsgItem tm;
+		TrotsUser tu;
 
-		DBG.trace(debug.DEBUG, "--> processTrotsMessage");
+		DBG.trace(Debug.DEBUG, "--> processTrotsMessage");
 
-		DBG.trace(debug.MAJOR,"Creating new trots message");
-		tm = new trotsMsgItem();
+		DBG.trace(Debug.MAJOR,"Creating new trots message");
+		tm = new TrotsMsgItem();
 
-		DBG.trace(debug.MINOR,"Generating message ID");
+		DBG.trace(Debug.MINOR,"Generating message ID");
 		while(isDuplicateMsg(tm.id)) tm.id++;
 
-		DBG.trace(debug.DEBUG, "Message ID = " + tm.id);
+		DBG.trace(Debug.DEBUG, "Message ID = " + tm.id);
 
 		try
 		{
 
-			DBG.trace(debug.MINOR, "Waiting for user ID");
+			DBG.trace(Debug.MINOR, "Waiting for user ID");
 			tm.sender = dataIn.readInt();
-			DBG.trace(debug.DEBUG, new StringBuffer("User ID = ").append(tm.sender).toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("User ID = ").append(tm.sender).toString());
 
-			DBG.trace(debug.MINOR, "Waiting for queue name");
+			DBG.trace(Debug.MINOR, "Waiting for queue name");
 			tm.queue = textIn.readLine();
-			DBG.trace(debug.DEBUG, new StringBuffer("Queue Name = ").append(tm.queue).toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Queue Name = ").append(tm.queue).toString());
 
-			DBG.trace(debug.DEBUG, "Updating statistics");
+			DBG.trace(Debug.DEBUG, "Updating statistics");
 			serverStats.add(tm.queue);
 			serverStats.sent(tm.queue);
 
-			DBG.trace(debug.MINOR, "Waiting for message text");
+			DBG.trace(Debug.MINOR, "Waiting for message text");
 			tm.msgText = textIn.readLine();
-			DBG.trace(debug.DEBUG, new StringBuffer("Message Text = ").append(tm.msgText).toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Message Text = ").append(tm.msgText).toString());
 
-			DBG.trace(debug.MINOR, "Sending message ID");
+			DBG.trace(Debug.MINOR, "Sending message ID");
 			dataOut.writeInt(tm.id);
 
-			DBG.trace(debug.MINOR, "Finding recipients");
+			DBG.trace(Debug.MINOR, "Finding recipients");
 			for(int i = 0; i < users.size(); i++)
 			{
 				tu = users.get(i);
-				DBG.trace(debug.DEBUG, new StringBuffer("Checking [").append(tu.userName).append("] Queues [").append(tu.queueList).append("]").toString());
+				DBG.trace(Debug.DEBUG, new StringBuilder("Checking [").append(tu.userName).append("] Queues [").append(tu.queueList).append("]").toString());
 				if(tu.isUserQueue(tm.queue) && tu.available)
 				{
-					DBG.trace(debug.DEBUG, new StringBuffer("Adding [").append(tu.userName).append("]").toString());
+					DBG.trace(Debug.DEBUG, new StringBuilder("Adding [").append(tu.userName).append("]").toString());
 					tm.addUser(tu);
 					sendMessage(tu,tm);
 				}
 			}
-			DBG.trace(debug.MINOR,"Adding message to list of messages");
+			DBG.trace(Debug.MINOR,"Adding message to list of messages");
 			msgs.add(tm);
 
 		}
 		catch(IOException exIO)
 		{
-			DBG.trace(debug.ERROR, "Unable to process TROTS_MESSAGE_SEND (" + exIO.getMessage() + ")");
+			DBG.trace(Debug.ERROR, "Unable to process TROTS_MESSAGE_SEND (" + exIO.getMessage() + ")");
 		}
-		DBG.trace(debug.DEBUG, "<-- processTrotsMessage");
+		DBG.trace(Debug.DEBUG, "<-- processTrotsMessage");
 	}
 
 /*--------------------------------*/
@@ -599,28 +595,28 @@ public class trotsServer
 	void processTrotsCancel()
 	{
 		int msgID;
-		trotsMsgItem tm;
-		trotsUser tu;
+		TrotsMsgItem tm;
+		TrotsUser tu;
 
-		DBG.trace(debug.DEBUG, "--> processTrotsCancel");
-		DBG.trace(debug.MAJOR, "Cancelling trots message");
+		DBG.trace(Debug.DEBUG, "--> processTrotsCancel");
+		DBG.trace(Debug.MAJOR, "Cancelling trots message");
 
 		try
 		{
-			DBG.trace(debug.MINOR, "Waiting for message ID");
+			DBG.trace(Debug.MINOR, "Waiting for message ID");
 			msgID = dataIn.readInt();
-			DBG.trace(debug.DEBUG, new StringBuffer("Message ID = ").append(msgID).toString());
-			DBG.trace(debug.MINOR, "Sending ACK");
+			DBG.trace(Debug.DEBUG, new StringBuilder("Message ID = ").append(msgID).toString());
+			DBG.trace(Debug.MINOR, "Sending ACK");
 			dataOut.writeInt((Constants.ACK));
 
 
-			DBG.trace(debug.MINOR,"Locating message");
+			DBG.trace(Debug.MINOR,"Locating message");
 			tm = findMsg(msgID);
 
 			if(tm == null)
 			{
-				DBG.trace(debug.MAJOR, "Unable to find message (Non-fatal)");
-				DBG.trace(debug.DEBUG, "<--processTrotsCancel");
+				DBG.trace(Debug.MAJOR, "Unable to find message (Non-fatal)");
+				DBG.trace(Debug.DEBUG, "<--processTrotsCancel");
 				return;
 			}
 			
@@ -631,94 +627,94 @@ public class trotsServer
 /* sender to stop listening to the main connection for a response            */
 /*---------------------------------------------------------------------------*/
 
-			DBG.trace(debug.MINOR,"Locating sender");
+			DBG.trace(Debug.MINOR,"Locating sender");
 			tu = findUser(tm.sender);
 
 			if(tu != null)
 			{
 				try
 				{
-					DBG.trace(debug.MINOR, "Sending TROTS_CANCEL to sender");
+					DBG.trace(Debug.MINOR, "Sending TROTS_CANCEL to sender");
 					tu.dataOut.writeInt(Constants.TROTS_CANCEL);
-					DBG.trace(debug.MINOR, new StringBuffer("Sending message ID [").append(tm.id).append("] to sender").toString());
+					DBG.trace(Debug.MINOR, new StringBuilder("Sending message ID [").append(tm.id).append("] to sender").toString());
 					tu.dataOut.writeInt(tm.id);
 				}
 				catch(IOException exIO)
 				{
-					DBG.trace(debug.ERROR, "Unable to send TROTS_CANCEL to sender (" + exIO.getMessage() + ")");
+					DBG.trace(Debug.ERROR, "Unable to send TROTS_CANCEL to sender (" + exIO.getMessage() + ")");
 				}
 			}
 			else
 			{
-				DBG.trace(debug.MAJOR, "Unable to locate sender (Non-fatal)");
+				DBG.trace(Debug.MAJOR, "Unable to locate sender (Non-fatal)");
 			}
 
-			DBG.trace(debug.MINOR, "Processing recipients");
+			DBG.trace(Debug.MINOR, "Processing recipients");
 			for(int i = 0 ; i < tm.recipients.size(); i++)
 			{
 				tu = tm.recipients.get(i);
-				DBG.trace(debug.DEBUG, new StringBuffer("Processing [").append(tu.userName).append("]").toString());
+				DBG.trace(Debug.DEBUG, new StringBuilder("Processing [").append(tu.userName).append("]").toString());
 				try
 				{
-					DBG.trace(debug.DEBUG, "Sending TROTS_CANCEL");
+					DBG.trace(Debug.DEBUG, "Sending TROTS_CANCEL");
 					tu.dataOut.writeInt(Constants.TROTS_CANCEL);
-					DBG.trace(debug.DEBUG, "Sending message id");
+					DBG.trace(Debug.DEBUG, "Sending message id");
 					tu.dataOut.writeInt(msgID);
 				}
 				catch(IOException exIO)
 				{
-					DBG.trace(debug.ERROR, "Unable to send TROTS_CANCEL (" + exIO.getMessage() + ")");
+					DBG.trace(Debug.ERROR, "Unable to send TROTS_CANCEL (" + exIO.getMessage() + ")");
 				}
 			}
 
-			DBG.trace(debug.MINOR, "Removing message from list of messages");
+			DBG.trace(Debug.MINOR, "Removing message from list of messages");
 			msgs.remove(tm);
 		}
 		catch(IOException exIO)
 		{
-			DBG.trace(debug.ERROR, "Unable to process TROTS_CANCEL (" + exIO.getMessage() + ")");
+			DBG.trace(Debug.ERROR, "Unable to process TROTS_CANCEL (" + exIO.getMessage() + ")");
 		}
-		DBG.trace(debug.DEBUG, "<-- processTrotsCancel");
+		DBG.trace(Debug.DEBUG, "<-- processTrotsCancel");
 	}
 
 /*-------------------------------------------------*/
 /* Tell the message sender who picked this call up */
 /*-------------------------------------------------*/
-	void tellSender(trotsMsgItem tm, trotsUser tu)
+	void tellSender(TrotsMsgItem tm, TrotsUser tu)
 	{
-		trotsUser sender;
+		TrotsUser sender;
 
-		DBG.trace(debug.DEBUG, "--> tellSender");
+		DBG.trace(Debug.DEBUG, "--> tellSender");
 
 		try
 		{
-			DBG.trace(debug.MINOR,"Locating sender details");
+			DBG.trace(Debug.MINOR,"Locating sender details");
 			sender = findUser(tm.sender);
 
 			if(sender==null)
 			{
-				DBG.trace(debug.MINOR,new StringBuffer("Unable to locate User ID [").append(+tm.sender).append("]").toString());
-				DBG.trace(debug.DEBUG, "<--tellSender");
+				DBG.trace(Debug.MINOR,new StringBuilder("Unable to locate User ID [").append(+tm.sender).append("]").toString());
+				DBG.trace(Debug.DEBUG, "<--tellSender");
 				return;
 			}
 
-			DBG.trace(debug.DEBUG,new StringBuffer("Sender is [").append(sender.userName).append("]").toString());
+			DBG.trace(Debug.DEBUG,new StringBuilder("Sender is [").append(sender.userName).append("]").toString());
 
-			DBG.trace(debug.MINOR,"Sending TROTS_ASSIGN_SEND to sender");
+			DBG.trace(Debug.MINOR,"Sending TROTS_ASSIGN_SEND to sender");
 			sender.dataOut.writeInt(Constants.TROTS_ASSIGN_SEND);
-			DBG.trace(debug.MINOR,new StringBuffer("Sending message id [").append(tm.id).append("]").toString());
+			DBG.trace(Debug.MINOR,new StringBuilder("Sending message id [").append(tm.id).append("]").toString());
 			sender.dataOut.writeInt(tm.id);
-			DBG.trace(debug.MINOR, new StringBuffer("Sending [").append(tu.userName).append("] to sender").toString());
-			sender.dataOut.writeBytes(new StringBuffer("Call accepted by ").append(tu.userName).append(" - ").append(tu.phoneNo).append("\n").toString());
+			DBG.trace(Debug.MINOR, new StringBuilder("Sending [").append(tu.userName).append("] to sender").toString());
+			sender.dataOut.writeBytes(new StringBuilder("Call accepted by ").append(tu.userName).append(" - ").append(tu.phoneNo).append("\n").toString());
 
-			DBG.trace(debug.MINOR, "Waiting for server response");
-			DBG.trace(debug.DEBUG, new StringBuffer("Server response [").append(sender.dataIn.readInt()).append("]").toString());
+			DBG.trace(Debug.MINOR, "Waiting for server response");
+			DBG.trace(Debug.DEBUG, new StringBuilder("Server response [").append(sender.dataIn.readInt()).append("]").toString());
 		}
 		catch(IOException exIO)
 		{
-			DBG.trace(debug.ERROR, "Unable to send TROTS_ASSIGN_SEND to sender (" + exIO.getMessage() + ")");
+			DBG.trace(Debug.ERROR, "Unable to send TROTS_ASSIGN_SEND to sender (" + exIO.getMessage() + ")");
 		}
-		DBG.trace(debug.DEBUG, "<--tellSender");
+		DBG.trace(Debug.DEBUG, "<--tellSender");
 	}
 
 /*--------------------------------*/
@@ -727,38 +723,38 @@ public class trotsServer
 	public void processClientReset()
 	{
 		int clientID;
-		trotsUser tu;
+		TrotsUser tu;
 
-		DBG.trace(debug.DEBUG, "--> processClientReset");
+		DBG.trace(Debug.DEBUG, "--> processClientReset");
 
 		try
 		{
-			DBG.trace(debug.MINOR, "Waiting for client ID");
+			DBG.trace(Debug.MINOR, "Waiting for client ID");
 			clientID = dataIn.readInt();
-			DBG.trace(debug.DEBUG, new StringBuffer("Client ID = ").append(clientID).toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Client ID = ").append(clientID).toString());
 
-			DBG.trace(debug.MINOR, "Sending ACK response");
+			DBG.trace(Debug.MINOR, "Sending ACK response");
 			dataOut.writeInt(Constants.ACK);
 
-			DBG.trace(debug.MINOR, "Locating client");
+			DBG.trace(Debug.MINOR, "Locating client");
 			tu = findUser(clientID);
 
 			if(tu == null)
 			{
-				DBG.trace(debug.MAJOR, "Unable to locate client ID (Non-fatal)");
-				DBG.trace(debug.DEBUG, "<-- processClientReset");
+				DBG.trace(Debug.MAJOR, "Unable to locate client ID (Non-fatal)");
+				DBG.trace(Debug.DEBUG, "<-- processClientReset");
 				return;
 			}
 
-			DBG.trace(debug.DEBUG, new StringBuffer("User Name = ").append(tu.userName).toString());
-			DBG.trace(debug.MINOR, "Sending CLIENT_RESET to client");
+			DBG.trace(Debug.DEBUG, new StringBuilder("User Name = ").append(tu.userName).toString());
+			DBG.trace(Debug.MINOR, "Sending CLIENT_RESET to client");
 			
 			tu.dataOut.writeInt(Constants.CLIENT_RESET);
 
-			DBG.trace(debug.MINOR, "Waiting for ACK");
-			DBG.trace(debug.DEBUG, new StringBuffer("Client responded with ").append(tu.dataIn.readInt()).toString());
+			DBG.trace(Debug.MINOR, "Waiting for ACK");
+			DBG.trace(Debug.DEBUG, new StringBuilder("Client responded with ").append(tu.dataIn.readInt()).toString());
 
-			DBG.trace(debug.MINOR, "De-registering client");
+			DBG.trace(Debug.MINOR, "De-registering client");
 			tu.textIn.close();
 			tu.dataIn.close();
 			tu.dataOut.close();
@@ -766,35 +762,35 @@ public class trotsServer
 		}
 		catch(IOException exIO)
 		{
-			DBG.trace(debug.ERROR, "Unable to process CLIENT_RESET (" + exIO.getMessage() + ")");
+			DBG.trace(Debug.ERROR, "Unable to process CLIENT_RESET (" + exIO.getMessage() + ")");
 		}
-		DBG.trace(debug.DEBUG, "<-- processClientReset");
+		DBG.trace(Debug.DEBUG, "<-- processClientReset");
 	}
 
-	void shutdownClient(trotsUser tu)
+	void shutdownClient(TrotsUser tu)
 	{
-		DBG.trace(debug.DEBUG, "-->shutdownClient");
+		DBG.trace(Debug.DEBUG, "-->shutdownClient");
 		
 		if(tu != null)
 		{
 			try
 			{
-				DBG.trace(debug.MINOR, "Sending CLIENT_SHUTDOWN");
+				DBG.trace(Debug.MINOR, "Sending CLIENT_SHUTDOWN");
 				tu.dataOut.writeInt(Constants.CLIENT_SHUTDOWN);
-				DBG.trace(debug.MINOR, "Closing input/output streams");
+				DBG.trace(Debug.MINOR, "Closing input/output streams");
 				tu.dataOut.close();
 				tu.dataIn.close();
 				tu.textIn.close();
 			}
 			catch(IOException exIO)
 			{
-				DBG.trace(debug.ERROR, "Unable to close client");
+				DBG.trace(Debug.ERROR, "Unable to close client");
 			}
-			DBG.trace(debug.MINOR, "Removing client entry");
+			DBG.trace(Debug.MINOR, "Removing client entry");
 			users.remove(tu);
 		}
 
-		DBG.trace(debug.DEBUG, "<--shutdownClient");
+		DBG.trace(Debug.DEBUG, "<--shutdownClient");
 	}
 
 /*-----------------------------------*/
@@ -803,23 +799,23 @@ public class trotsServer
 	void processClientShutdown()
 	{
 		int userID;
-		trotsUser tu;
+		TrotsUser tu;
 
-		DBG.trace(debug.DEBUG, "-->processClientShutdown");
+		DBG.trace(Debug.DEBUG, "-->processClientShutdown");
 		try
 		{
-			DBG.trace(debug.MINOR, "Waiting for client ID");
+			DBG.trace(Debug.MINOR, "Waiting for client ID");
 			userID = dataIn.readInt();
-			DBG.trace(debug.DEBUG, new StringBuffer("Client ID = ").append(userID).toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Client ID = ").append(userID).toString());
 			
-			DBG.trace(debug.MINOR, "Locating client ID");
+			DBG.trace(Debug.MINOR, "Locating client ID");
 			tu = findUser(userID);
 
 			if(tu != null)
 			{
 				if(tu.queueList.equalsIgnoreCase(Constants.CALL_RECEIPT_QUEUE))
 				{
-					DBG.trace(debug.MAJOR, "User is a call receipt user. Will not send shutdown");
+					DBG.trace(Debug.MAJOR, "User is a call receipt user. Will not send shutdown");
 				}
 				else
 				{
@@ -828,14 +824,14 @@ public class trotsServer
 			}
 			else
 			{
-				DBG.trace(debug.MINOR, "Unable to locate client ID");
+				DBG.trace(Debug.MINOR, "Unable to locate client ID");
 			}
 		}
 		catch(IOException exIO)
 		{
-			DBG.trace(debug.ERROR, "Unable to process CLIENT_SHUTDOWN");
+			DBG.trace(Debug.ERROR, "Unable to process CLIENT_SHUTDOWN");
 		}
-		DBG.trace(debug.DEBUG, "<--processClientShutdown");
+		DBG.trace(Debug.DEBUG, "<--processClientShutdown");
 	}
 
 /*---------------------------------*/
@@ -844,42 +840,42 @@ public class trotsServer
 	public void processClientStatus()
 	{
 		int clientID, status;
-		trotsUser tu;
+		TrotsUser tu;
 
-		DBG.trace(debug.DEBUG, "--> processClientStatus");
+		DBG.trace(Debug.DEBUG, "--> processClientStatus");
 
 		try
 		{
-			DBG.trace(debug.MINOR, "Waiting for client ID");
+			DBG.trace(Debug.MINOR, "Waiting for client ID");
 			clientID = dataIn.readInt();
-			DBG.trace(debug.DEBUG, new StringBuffer("Client ID = ").append(clientID).toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Client ID = ").append(clientID).toString());
 
-			DBG.trace(debug.MINOR, "Waiting for client status");
+			DBG.trace(Debug.MINOR, "Waiting for client status");
 			status = dataIn.readInt();
-			DBG.trace(debug.DEBUG, new StringBuffer("Client Status = ").append(status).toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Client Status = ").append(status).toString());
 
-			DBG.trace(debug.MINOR, "Sending ACK response");
+			DBG.trace(Debug.MINOR, "Sending ACK response");
 			dataOut.writeInt((Constants.ACK));
 
-			DBG.trace(debug.MINOR, "Locating client");
+			DBG.trace(Debug.MINOR, "Locating client");
 			tu = findUser(clientID);
 
 			if(tu == null)
 			{
-				DBG.trace(debug.MAJOR, "Unable to locate client ID (Non-fatal)");
-				DBG.trace(debug.DEBUG, "<--processClientStatus");
+				DBG.trace(Debug.MAJOR, "Unable to locate client ID (Non-fatal)");
+				DBG.trace(Debug.DEBUG, "<--processClientStatus");
 				return;
 			}
 
-			DBG.trace(debug.DEBUG, new StringBuffer("User Name = ").append(tu.userName).toString());
-			DBG.trace(debug.MAJOR, "Setting user availability");
+			DBG.trace(Debug.DEBUG, new StringBuilder("User Name = ").append(tu.userName).toString());
+			DBG.trace(Debug.MAJOR, "Setting user availability");
 			tu.available = (status > 0 ? false : true);
 		}
 		catch(IOException exIO)
 		{
-			DBG.trace(debug.ERROR, "Unable to process CLIENT_STATUS (" + exIO.getMessage() + ")");
+			DBG.trace(Debug.ERROR, "Unable to process CLIENT_STATUS (" + exIO.getMessage() + ")");
 		}
-		DBG.trace(debug.DEBUG,"<--processClientStatus");
+		DBG.trace(Debug.DEBUG,"<--processClientStatus");
 	}
 
 /*--------------------------------*/
@@ -888,75 +884,75 @@ public class trotsServer
 	public void processTrotsAssign()
 	{
 		int msgID, userID;
-		trotsMsgItem tm;
-		trotsUser tu;
-		DBG.trace(debug.DEBUG, "--> processTrotsAssign");
-		DBG.trace(debug.MAJOR, "Processing TROTS_ASSIGN_RECV");
+		TrotsMsgItem tm;
+		TrotsUser tu;
+		DBG.trace(Debug.DEBUG, "--> processTrotsAssign");
+		DBG.trace(Debug.MAJOR, "Processing TROTS_ASSIGN_RECV");
 
 		try
 		{
-			DBG.trace(debug.MINOR,"Waiting for Message ID");
+			DBG.trace(Debug.MINOR,"Waiting for Message ID");
 			msgID = dataIn.readInt();
-			DBG.trace(debug.DEBUG, new StringBuffer("Message ID = ").append(msgID).toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Message ID = ").append(msgID).toString());
 
-			DBG.trace(debug.MINOR, "Waiting for User ID");
+			DBG.trace(Debug.MINOR, "Waiting for User ID");
 			userID = dataIn.readInt();
-			DBG.trace(debug.DEBUG, new StringBuffer("User ID = ").append(userID).toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("User ID = ").append(userID).toString());
 
-			DBG.trace(debug.MINOR, "Sending ACK response");
+			DBG.trace(Debug.MINOR, "Sending ACK response");
 			dataOut.writeInt((Constants.ACK));
 			dataOut.flush();
 
-			DBG.trace(debug.MINOR, new StringBuffer("Locating Message ID [").append(msgID).append("]").toString());
+			DBG.trace(Debug.MINOR, new StringBuilder("Locating Message ID [").append(msgID).append("]").toString());
 
 			tm = findMsg(msgID);
 
 			if(tm == null)
 			{
-				DBG.trace(debug.MAJOR, new StringBuffer("Message ID [").append(msgID).append("] could not be found (Non-fatal)").toString());
-				DBG.trace(debug.DEBUG, "<-- processTrotsAssign");
+				DBG.trace(Debug.MAJOR, new StringBuilder("Message ID [").append(msgID).append("] could not be found (Non-fatal)").toString());
+				DBG.trace(Debug.DEBUG, "<-- processTrotsAssign");
 				return;
 			}
 
 			if(tm.flag == Constants.MSG_PROCESSED)
 			{
-				DBG.trace(debug.MINOR, new StringBuffer("Message [").append(msgID).append("] already processed").toString());
-				DBG.trace(debug.DEBUG, "<-- processTrotsAssign");
+				DBG.trace(Debug.MINOR, new StringBuilder("Message [").append(msgID).append("] already processed").toString());
+				DBG.trace(Debug.DEBUG, "<-- processTrotsAssign");
 				return;
 			}
 
-			DBG.trace(debug.MINOR, "Setting message to processed");
+			DBG.trace(Debug.MINOR, "Setting message to processed");
 			tm.flag = Constants.MSG_PROCESSED;
 
-			DBG.trace(debug.MINOR, new StringBuffer("Locating User ID [").append(userID).append("]").toString());
+			DBG.trace(Debug.MINOR, new StringBuilder("Locating User ID [").append(userID).append("]").toString());
 			tu = findUser(userID);
 
 			if(tu == null)
 			{
-				DBG.trace(debug.MAJOR, new StringBuffer("User [").append(userID).append("] could not be found").toString());
-				DBG.trace(debug.DEBUG, "<-- processTrotsAssign");
+				DBG.trace(Debug.MAJOR, new StringBuilder("User [").append(userID).append("] could not be found").toString());
+				DBG.trace(Debug.DEBUG, "<-- processTrotsAssign");
 				return;
 			}
 
-			DBG.trace(debug.DEBUG, new StringBuffer("User ID [").append(userID).append("] is [").append(tu.userName).append("]").toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("User ID [").append(userID).append("] is [").append(tu.userName).append("]").toString());
 
 			serverStats.accepted(tm.queue);
 
-			DBG.trace(debug.MINOR, "Telling sender who picked this up");
+			DBG.trace(Debug.MINOR, "Telling sender who picked this up");
 			tellSender(tm, tu);
 
-			DBG.trace(debug.MINOR, "Telling other recipients who picked this up");
+			DBG.trace(Debug.MINOR, "Telling other recipients who picked this up");
 			tellRecipients(tm, tu);
 
-			DBG.trace(debug.MINOR, "Removing message from list of messages");
+			DBG.trace(Debug.MINOR, "Removing message from list of messages");
 			msgs.remove(tm);
 
 		}
 		catch(IOException exIO)
 		{
-			DBG.trace(debug.ERROR, "Unable to process TROTS_ASSIGN (" + exIO.getMessage() + ")");
+			DBG.trace(Debug.ERROR, "Unable to process TROTS_ASSIGN (" + exIO.getMessage() + ")");
 		}
-		DBG.trace(debug.DEBUG, "<-- processTrotsAssign");
+		DBG.trace(Debug.DEBUG, "<-- processTrotsAssign");
 	}
 	
 /*------------------------------*/
@@ -964,12 +960,12 @@ public class trotsServer
 /*------------------------------*/
 	public void processListUsers()
 	{
-		List<trotsUser> userCopy;
-		trotsUser tu;
+		List<TrotsUser> userCopy;
+		TrotsUser tu;
 		int userCount;
 
-		DBG.trace(debug.DEBUG, "--> processListUsers");
-		DBG.trace(debug.MAJOR, "Sending list of user names");
+		DBG.trace(Debug.DEBUG, "--> processListUsers");
+		DBG.trace(Debug.MAJOR, "Sending list of user names");
 		userCopy = new ArrayList<>(users);
 		try
 		{
@@ -978,15 +974,15 @@ public class trotsServer
 			{
 				tu = userCopy.get(i);
 				if(i > 0) dataOut.writeBytes(",");
-				dataOut.writeBytes(new StringBuffer("").append(tu.id).append("#").append(tu.userName).toString());
+				dataOut.writeBytes(new StringBuilder("").append(tu.id).append("#").append(tu.userName).toString());
 			}
 			dataOut.writeBytes("\n");
 		}
 		catch(IOException exIO)
 		{
-			DBG.trace(debug.ERROR, "Unable to process LIST_USERS");
+			DBG.trace(Debug.ERROR, "Unable to process LIST_USERS");
 		}
-		DBG.trace(debug.DEBUG, "<-- processListUsers");
+		DBG.trace(Debug.DEBUG, "<-- processListUsers");
 	}
 
 	
@@ -996,11 +992,11 @@ public class trotsServer
 /*---------------------------------------------------------------------*/
 	public void processCleanUsers()
 	{
-		List<trotsUser> userCopy;
-		trotsUser tu;
+		List<TrotsUser> userCopy;
+		TrotsUser tu;
 
-		DBG.trace(debug.DEBUG, "--> processCleanUsers");
-		DBG.trace(debug.MAJOR, "Checking all user connections");
+		DBG.trace(Debug.DEBUG, "--> processCleanUsers");
+		DBG.trace(Debug.MAJOR, "Checking all user connections");
 		userCopy = new ArrayList<>(users);
 		for(int i=0; i< userCopy.size(); i++)
 		{
@@ -1008,13 +1004,13 @@ public class trotsServer
 
 			try
 			{
-				DBG.trace(debug.DEBUG, "Checking " + tu.userName + " ("+tu.id+")");
+				DBG.trace(Debug.DEBUG, "Checking " + tu.userName + " ("+tu.id+")");
 				tu.dataOut.writeInt(Constants.HEARTBEAT);
 				tu.dataIn.readInt();
 			}
 			catch(IOException exIO)
 			{
-				DBG.trace(debug.ERROR, "Unable to talk to " + tu.userName + " ("+tu.id+") [" + exIO.getMessage() +"] - Removing connection");
+				DBG.trace(Debug.ERROR, "Unable to talk to " + tu.userName + " ("+tu.id+") [" + exIO.getMessage() +"] - Removing connection");
 				try
 				{
 					tu.dataIn.close();
@@ -1027,14 +1023,14 @@ public class trotsServer
 		}
 		try
 		{
-			DBG.trace(debug.DEBUG, "Sending ACK to client");
+			DBG.trace(Debug.DEBUG, "Sending ACK to client");
 			dataOut.writeInt(Constants.ACK);
 		}
 		catch(IOException exIO)
 		{
-			DBG.trace(debug.ERROR, "Unable to send ACK in response to CLEAN_USERS");
+			DBG.trace(Debug.ERROR, "Unable to send ACK in response to CLEAN_USERS");
 		}
-		DBG.trace(debug.DEBUG, "<-- processCleanUsers");
+		DBG.trace(Debug.DEBUG, "<-- processCleanUsers");
 	}
 
 /*-------------------------------------*/
@@ -1042,19 +1038,19 @@ public class trotsServer
 /*-------------------------------------*/
 	public void processServerVersion()
 	{
-		DBG.trace(debug.DEBUG, "--> processServerVersion");
-		DBG.trace(debug.MAJOR, "Sending server version");
+		DBG.trace(Debug.DEBUG, "--> processServerVersion");
+		DBG.trace(Debug.MAJOR, "Sending server version");
 		try
 		{
-			DBG.trace(debug.MINOR, "Sending revision");
-			DBG.trace(debug.DEBUG, "$Revision: 6 $");
+			DBG.trace(Debug.MINOR, "Sending revision");
+			DBG.trace(Debug.DEBUG, "$Revision: 6 $");
 			dataOut.writeBytes("$Revision: 6 $\n");
 		}
 		catch(IOException exIO)
 		{
-			DBG.trace(debug.ERROR, "Unable to process SERVER_VERSION");
+			DBG.trace(Debug.ERROR, "Unable to process SERVER_VERSION");
 		}
-		DBG.trace(debug.DEBUG, "<-- processServerVersion");
+		DBG.trace(Debug.DEBUG, "<-- processServerVersion");
 	}
 
 /*-------------------------------------*/
@@ -1062,20 +1058,20 @@ public class trotsServer
 /*-------------------------------------*/
 	public void processServerStatusHTML()
 	{
-		List<trotsUser> userCopy;
-            List<trotsMsgItem> messageCopy;
-		trotsUser tu;
-		trotsMsgItem tm;
+		List<TrotsUser> userCopy;
+            List<TrotsMsgItem> messageCopy;
+		TrotsUser tu;
+		TrotsMsgItem tm;
 		BSumTime bst = new BSumTime();
 		Date date;
 		String queueName;
 
 
-		DBG.trace(debug.DEBUG, "--> processServerStatusHTML");
+		DBG.trace(Debug.DEBUG, "--> processServerStatusHTML");
 
-		DBG.trace(debug.MAJOR, "Dumping server status as HTML");
+		DBG.trace(Debug.MAJOR, "Dumping server status as HTML");
 
-		DBG.trace(debug.DEBUG, "Setting GMT0BST time zone");
+		DBG.trace(Debug.DEBUG, "Setting GMT0BST time zone");
 		TimeZone.setDefault( bst );
 		SimpleDateFormat dtf = bst.getDateTimeFormatter();
 
@@ -1209,7 +1205,7 @@ public class trotsServer
 			dataOut.writeBytes("</BODY>\n</HTML>\n");
 		}
 		catch(IOException exIO) {}
-		DBG.trace(debug.DEBUG, "<-- processServerStatusHTML");
+		DBG.trace(Debug.DEBUG, "<-- processServerStatusHTML");
 	}
 
 /*-------------------------------*/
@@ -1217,17 +1213,17 @@ public class trotsServer
 /*-------------------------------*/
 	public void processQueueNames()
 	{
-		DBG.trace(debug.DEBUG, "--> processQueueNames");
-		DBG.trace(debug.MAJOR, "Sending queue names");
+		DBG.trace(Debug.DEBUG, "--> processQueueNames");
+		DBG.trace(Debug.MAJOR, "Sending queue names");
 		try
 		{
 			dataOut.writeBytes(queue_vector_to_list()+"\n");
 		}
 		catch(IOException exIO)
 		{
-			DBG.trace(debug.ERROR, "Unable to process QUEUE_NAMES (" + exIO.getMessage() + ")");
+			DBG.trace(Debug.ERROR, "Unable to process QUEUE_NAMES (" + exIO.getMessage() + ")");
 		}
-		DBG.trace(debug.DEBUG, "<--processQueueNames");
+		DBG.trace(Debug.DEBUG, "<--processQueueNames");
 	}
 
 /*---------------------------------*/
@@ -1238,13 +1234,13 @@ public class trotsServer
 		String queueName;
 		int queuePos;
 
-		DBG.trace(debug.DEBUG, "-->processQueueDetails");
+		DBG.trace(Debug.DEBUG, "-->processQueueDetails");
 		try
 		{
-			DBG.trace(debug.MINOR, "Waiting for queue name");
+			DBG.trace(Debug.MINOR, "Waiting for queue name");
 			queueName = textIn.readLine();
 			queueName = queueName.toUpperCase();
-			DBG.trace(debug.DEBUG, new StringBuffer("Queue Name = ").append(queueName).toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Queue Name = ").append(queueName).toString());
 
 			if(currentQueues.contains(queueName))
 			{
@@ -1255,9 +1251,9 @@ public class trotsServer
 		}
 		catch(IOException exIO)
 		{
-			DBG.trace(debug.ERROR, "Unable to process QUEUE_DETAILS (" + exIO.getMessage() +")");
+			DBG.trace(Debug.ERROR, "Unable to process QUEUE_DETAILS (" + exIO.getMessage() +")");
 		}
-		DBG.trace(debug.DEBUG, "<--processQueueDetails");
+		DBG.trace(Debug.DEBUG, "<--processQueueDetails");
 	}
 
 /*------------------------------*/
@@ -1266,13 +1262,13 @@ public class trotsServer
 	public void processAddQueue()
 	{
 		String new_queue;
-		DBG.trace(debug.DEBUG, "--> processAddQueue");
+		DBG.trace(Debug.DEBUG, "--> processAddQueue");
 
 		try
 		{
 			new_queue = textIn.readLine();
 			new_queue = new_queue.toUpperCase();
-			DBG.trace(debug.MAJOR, new StringBuffer("Adding queue [").append(new_queue).append("]").toString());
+			DBG.trace(Debug.MAJOR, new StringBuilder("Adding queue [").append(new_queue).append("]").toString());
 			if( ! currentQueues.contains(new_queue) )
 			{
 				currentQueues.add(new_queue);
@@ -1283,9 +1279,9 @@ public class trotsServer
 		}
 		catch(IOException exIO)
 		{
-			DBG.trace(debug.ERROR, "Unable to process ADD_QUEUE (" + exIO.getMessage() + ")");
+			DBG.trace(Debug.ERROR, "Unable to process ADD_QUEUE (" + exIO.getMessage() + ")");
 		}
-		DBG.trace(debug.DEBUG, "<-- processAddQueue");
+		DBG.trace(Debug.DEBUG, "<-- processAddQueue");
 	}
 
 /*--------------------------------*/
@@ -1294,62 +1290,62 @@ public class trotsServer
 	public void processUserDetails()
 	{
 		int userID;
-		trotsUser tu;
+		TrotsUser tu;
 		BSumTime bst = new BSumTime();
 
-		DBG.trace(debug.DEBUG, "--> processUserDetails");
-		DBG.trace(debug.MAJOR, "Listing user details");
+		DBG.trace(Debug.DEBUG, "--> processUserDetails");
+		DBG.trace(Debug.MAJOR, "Listing user details");
 
-		DBG.trace(debug.DEBUG, "Setting GMT0BST time zone");
+		DBG.trace(Debug.DEBUG, "Setting GMT0BST time zone");
 		TimeZone.setDefault( bst );
 
 		SimpleDateFormat dtf = bst.getDateTimeFormatter();
 
 		try
 		{
-			DBG.trace(debug.MINOR, "Waiting for user ID");
+			DBG.trace(Debug.MINOR, "Waiting for user ID");
 			userID = dataIn.readInt();
-			DBG.trace(debug.DEBUG, new StringBuffer("Client ID = ").append(userID).toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Client ID = ").append(userID).toString());
 
 			tu = findUser(userID);
 
 			if(tu == null) userID = 0;
 
-			DBG.trace(debug.MINOR, "Sending user ID back as acknowledgment");
-			DBG.trace(debug.DEBUG, new StringBuffer("Client ID = ").append(userID).toString());
+			DBG.trace(Debug.MINOR, "Sending user ID back as acknowledgment");
+			DBG.trace(Debug.DEBUG, new StringBuilder("Client ID = ").append(userID).toString());
 			dataOut.writeInt(userID);
 
 			if(userID > 0)
 			{
 				Date date = new Date( tu.createTime * 1000 );
-				DBG.trace(debug.MINOR, "Sending User Name");
-				DBG.trace(debug.DEBUG, new StringBuffer("User Name = ").append(tu.userName).toString());
+				DBG.trace(Debug.MINOR, "Sending User Name");
+				DBG.trace(Debug.DEBUG, new StringBuilder("User Name = ").append(tu.userName).toString());
 				dataOut.writeBytes(tu.userName);
 				dataOut.writeBytes("#");
-				DBG.trace(debug.MINOR, "Sending Phone Number");
-				DBG.trace(debug.DEBUG, new StringBuffer("Phone Number = ").append(tu.phoneNo).toString());
+				DBG.trace(Debug.MINOR, "Sending Phone Number");
+				DBG.trace(Debug.DEBUG, new StringBuilder("Phone Number = ").append(tu.phoneNo).toString());
 				dataOut.writeBytes(tu.phoneNo);
 				dataOut.writeBytes("#");
-				DBG.trace(debug.MINOR, "Sending Connection Time");
-				DBG.trace(debug.DEBUG, dtf.format(date) );
+				DBG.trace(Debug.MINOR, "Sending Connection Time");
+				DBG.trace(Debug.DEBUG, dtf.format(date) );
 				dataOut.writeBytes(dtf.format(date) );
 				dataOut.writeBytes("#");
-				DBG.trace(debug.MINOR, "Sending Availability");
-				DBG.trace(debug.DEBUG, "Availability = " + (tu.available ? "Yes" : "NO"));
+				DBG.trace(Debug.MINOR, "Sending Availability");
+				DBG.trace(Debug.DEBUG, "Availability = " + (tu.available ? "Yes" : "NO"));
 				dataOut.writeBytes((tu.available ? "Yes" : "NO"));
 				dataOut.writeBytes("#");
-				DBG.trace(debug.MINOR, "Sending Queue List");
-				DBG.trace(debug.DEBUG, tu.queueList);
+				DBG.trace(Debug.MINOR, "Sending Queue List");
+				DBG.trace(Debug.DEBUG, tu.queueList);
 				dataOut.writeBytes(tu.queueList);
 
 				dataOut.writeBytes("#");
-				DBG.trace(debug.MINOR, "Sending Client Host Name");
-				DBG.trace(debug.DEBUG, tu.hostname);
+				DBG.trace(Debug.MINOR, "Sending Client Host Name");
+				DBG.trace(Debug.DEBUG, tu.hostname);
 				dataOut.writeBytes(tu.hostname);
 
 				dataOut.writeBytes("#");
-				DBG.trace(debug.MINOR, "Sending Client Version");
-				DBG.trace(debug.DEBUG, tu.version);
+				DBG.trace(Debug.MINOR, "Sending Client Version");
+				DBG.trace(Debug.DEBUG, tu.version);
 				dataOut.writeBytes(tu.version);
 
 				dataOut.writeBytes("\n");
@@ -1357,9 +1353,9 @@ public class trotsServer
 		}
 		catch(IOException exIO)
 		{
-			DBG.trace(debug.ERROR, "Unable to process USER_DETAILS (" + exIO.getMessage() + ")");
+			DBG.trace(Debug.ERROR, "Unable to process USER_DETAILS (" + exIO.getMessage() + ")");
 		}
-		DBG.trace(debug.DEBUG, "<-- processUserDetails");
+		DBG.trace(Debug.DEBUG, "<-- processUserDetails");
 	}
 
 /*-----------------------------*/
@@ -1368,48 +1364,48 @@ public class trotsServer
 	public void processDelQueue()
 	{
 		String del_queue;
-		DBG.trace(debug.DEBUG, "--> processDelQueue");
+		DBG.trace(Debug.DEBUG, "--> processDelQueue");
 
 		try
 		{
-			DBG.trace(debug.MINOR, "Waiting for queue name");
+			DBG.trace(Debug.MINOR, "Waiting for queue name");
 			del_queue = textIn.readLine();
 			del_queue = del_queue.toUpperCase();
-			DBG.trace(debug.DEBUG, new StringBuffer("Queue Name = ").append(del_queue).toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Queue Name = ").append(del_queue).toString());
 			if( currentQueues.contains(del_queue) )
 			{
-				DBG.trace(debug.MAJOR, new StringBuffer("Deleting queue [").append(del_queue).append("]").toString());
-				DBG.trace(debug.MINOR, "Removing statistics");
+				DBG.trace(Debug.MAJOR, new StringBuilder("Deleting queue [").append(del_queue).append("]").toString());
+				DBG.trace(Debug.MINOR, "Removing statistics");
 				serverStats.remove(del_queue);
-				DBG.trace(debug.MINOR, "Removing queue from list");
+				DBG.trace(Debug.MINOR, "Removing queue from list");
 				currentQueues.remove(del_queue);
-				DBG.trace(debug.MINOR, "Updating queue property in ini file");
+				DBG.trace(Debug.MINOR, "Updating queue property in ini file");
 				props.put("queues",queue_vector_to_list());
 				props.store(new FileOutputStream(Constants.SERVER_INI_FILE), "Updated automatically on DEL_QUEUE");
 			}
 		}
 		catch(IOException exIO)
 		{
-			DBG.trace(debug.ERROR, "Unable to process DEL_QUEUE (" + exIO.getMessage() + ")");
+			DBG.trace(Debug.ERROR, "Unable to process DEL_QUEUE (" + exIO.getMessage() + ")");
 		}
-		DBG.trace(debug.DEBUG, "<-- processDelQueue");
+		DBG.trace(Debug.DEBUG, "<-- processDelQueue");
 	}
 
 /*-------------*/
 /* Constructor */
 /*-------------*/
-	public trotsServer(int port)
+	public TrotsServer(int port)
 	{
 		int command = Constants.CLIENT_NULL;
-		trotsUser tu;
+		TrotsUser tu;
 
-		DBG.trace(debug.DEBUG, "--> trotsServer (Constructor)");
+		DBG.trace(Debug.DEBUG, "--> TrotsServer (Constructor)");
 
 		users = new ArrayList<>();
 		msgs = new ArrayList<>();
 		currentQueues = new ArrayList<>();
 
-		DBG.trace(debug.MAJOR, "Initialising counters");
+		DBG.trace(Debug.MAJOR, "Initialising counters");
 		serverStats = new AllStats();
 
 		queue_list_to_vector();
@@ -1421,7 +1417,7 @@ public class trotsServer
 /*--------------------------*/
 /* Create the server socket */
 /*--------------------------*/
-			DBG.trace(debug.MAJOR, new StringBuffer("Creating socket on port ").append(port).toString());
+			DBG.trace(Debug.MAJOR, new StringBuilder("Creating socket on port ").append(port).toString());
 			server = new ServerSocket(port);
 
 			while(command != Constants.SERVER_SHUTDOWN && command != Constants.ALL_SHUTDOWN)
@@ -1431,13 +1427,13 @@ public class trotsServer
 /*-------------------------*/
 /* Wait for client command */
 /*-------------------------*/
-					DBG.trace(debug.MINOR, "Waiting for client connection");
+					DBG.trace(Debug.MINOR, "Waiting for client connection");
 					client = server.accept();
 
 /*----------------------------*/
 /* Build input/output streams */
 /*----------------------------*/
-					DBG.trace(debug.MINOR, "Creating input/output streams");
+					DBG.trace(Debug.MINOR, "Creating input/output streams");
 					dataIn = new DataInputStream(client.getInputStream());
 					dataOut = new DataOutputStream(client.getOutputStream());
 					textIn = new BufferedReader(new InputStreamReader(client.getInputStream()));
@@ -1450,146 +1446,146 @@ public class trotsServer
 /*------------------------*/
 /* Get the client command */
 /*------------------------*/
-					DBG.trace(debug.MINOR, "Waiting for client command");
+					DBG.trace(Debug.MINOR, "Waiting for client command");
 					command = dataIn.readInt();
 
-					DBG.trace(debug.DEBUG, new StringBuffer("Received command [").append(command).append("]").toString());
+					DBG.trace(Debug.DEBUG, new StringBuilder("Received command [").append(command).append("]").toString());
 
 					switch(command)
 					{
 						case Constants.CLIENT_REGISTER:
-							DBG.trace(debug.MAJOR,"CLIENT_REGISTER");
+							DBG.trace(Debug.MAJOR,"CLIENT_REGISTER");
 							registerClient();
 							break;
 						case Constants.CLIENT_DEREGISTER:
-							DBG.trace(debug.MAJOR, "CLIENT_DEREGISTER");
+							DBG.trace(Debug.MAJOR, "CLIENT_DEREGISTER");
 							deregisterClient();
 							client.close();
 							break;
 						case Constants.SERVER_SHUTDOWN:
-							DBG.trace(debug.ERROR, "SERVER_SHUTDOWN");
+							DBG.trace(Debug.ERROR, "SERVER_SHUTDOWN");
 							break;
 						case Constants.ALL_SHUTDOWN:
-							DBG.trace(debug.ERROR, "ALL_SHUTDOWN");
+							DBG.trace(Debug.ERROR, "ALL_SHUTDOWN");
 							break;
 						case Constants.SERVER_VERSION:
-							DBG.trace(debug.MAJOR, "SERVER_VERSION");
+							DBG.trace(Debug.MAJOR, "SERVER_VERSION");
 							processServerVersion();
 							break;
 						case Constants.TROTS_MESSAGE_SEND:
-							DBG.trace(debug.MAJOR,"TROTS_MESSAGE_SEND");
+							DBG.trace(Debug.MAJOR,"TROTS_MESSAGE_SEND");
 							processTrotsMessage();
 							break;
 						case Constants.TROTS_ASSIGN_RECV:
-							DBG.trace(debug.MAJOR, "TROTS_ASSIGN_RECV");
+							DBG.trace(Debug.MAJOR, "TROTS_ASSIGN_RECV");
 							processTrotsAssign();
 							break;
 						case Constants.CLIENT_STATUS:
-							DBG.trace(debug.MAJOR, "CLIENT_STATUS");
+							DBG.trace(Debug.MAJOR, "CLIENT_STATUS");
 							processClientStatus();
 							break;
 						case Constants.TROTS_CANCEL:
-							DBG.trace(debug.MAJOR, "TROTS_CANCEL");
+							DBG.trace(Debug.MAJOR, "TROTS_CANCEL");
 							processTrotsCancel();
 							break;
 						case Constants.QUEUE_NAMES:
-							DBG.trace(debug.MAJOR, "QUEUE_NAMES");
+							DBG.trace(Debug.MAJOR, "QUEUE_NAMES");
 							processQueueNames();
 							break;
 						case Constants.DEBUG_MAJOR:
-							DBG.trace(debug.ERROR, "Debug level set to MAJOR");
-							DBG.setLevel(debug.MAJOR);
-							props.put("debug",""+debug.MAJOR);
+							DBG.trace(Debug.ERROR, "Debug level set to MAJOR");
+							DBG.setLevel(Debug.MAJOR);
+							props.put("debug",""+Debug.MAJOR);
 							try
 							{
 								props.store(new FileOutputStream(Constants.SERVER_INI_FILE), "Updated automatically on DEBUG_MAJOR");
 							}
 							catch(IOException exPropPut)
 							{
-								DBG.trace(debug.ERROR, "Unable to update properties file");
+								DBG.trace(Debug.ERROR, "Unable to update properties file");
 							}
 							break;
 						case Constants.DEBUG_MINOR:
-							DBG.trace(debug.ERROR, "Debug level set to MINOR");
-							DBG.setLevel(debug.MINOR);
-							props.put("debug",""+debug.MINOR);
+							DBG.trace(Debug.ERROR, "Debug level set to MINOR");
+							DBG.setLevel(Debug.MINOR);
+							props.put("debug",""+Debug.MINOR);
 							try
 							{
 								props.store(new FileOutputStream(Constants.SERVER_INI_FILE), "Updated automatically on DEBUG_MINOR");
 							}
 							catch(IOException exPropPut)
 							{
-								DBG.trace(debug.ERROR, "Unable to update properties file");
+								DBG.trace(Debug.ERROR, "Unable to update properties file");
 							}
 							break;
 						case Constants.DEBUG_DEBUG:
-							DBG.trace(debug.ERROR, "Debug level set to DEBUG");
-							DBG.setLevel(debug.DEBUG);
-							props.put("debug",""+debug.DEBUG);
+							DBG.trace(Debug.ERROR, "Debug level set to DEBUG");
+							DBG.setLevel(Debug.DEBUG);
+							props.put("debug",""+Debug.DEBUG);
 							try
 							{
 								props.store(new FileOutputStream(Constants.SERVER_INI_FILE), "Updated automatically on DEBUG_DEBUG");
 							}
 							catch(IOException exPropPut)
 							{
-								DBG.trace(debug.ERROR, "Unable to update properties file");
+								DBG.trace(Debug.ERROR, "Unable to update properties file");
 							}
 							break;
 						case Constants.DEBUG_ERROR:
-							DBG.trace(debug.ERROR, "Debug level set to ERROR");
-							DBG.setLevel(debug.ERROR);
-							props.put("debug",""+debug.ERROR);
+							DBG.trace(Debug.ERROR, "Debug level set to ERROR");
+							DBG.setLevel(Debug.ERROR);
+							props.put("debug",""+Debug.ERROR);
 							try
 							{
 								props.store(new FileOutputStream(Constants.SERVER_INI_FILE), "Updated automatically on DEBUG_ERROR");
 							}
 							catch(IOException exPropPut)
 							{
-								DBG.trace(debug.ERROR, "Unable to update properties file");
+								DBG.trace(Debug.ERROR, "Unable to update properties file");
 							}
 							break;
 						case Constants.STATUS_HTML:
-							DBG.trace(debug.MAJOR, "STATUS_HTML");
+							DBG.trace(Debug.MAJOR, "STATUS_HTML");
 							processServerStatusHTML();
 							break;
 						case Constants.CLIENT_RESET:
-							DBG.trace(debug.MAJOR, "CLIENT_RESET");
+							DBG.trace(Debug.MAJOR, "CLIENT_RESET");
 							processClientReset();
 							break;
 						case Constants.ADD_QUEUE:
-							DBG.trace(debug.MAJOR, "ADD_QUEUE");
+							DBG.trace(Debug.MAJOR, "ADD_QUEUE");
 							processAddQueue();
 							break;
 						case Constants.DEL_QUEUE:
-							DBG.trace(debug.MAJOR, "DEL_QUEUE");
+							DBG.trace(Debug.MAJOR, "DEL_QUEUE");
 							processDelQueue();
 							break;
 						case Constants.CLEAN_USERS:
-							DBG.trace(debug.MAJOR, "CLEAN_USERS");
+							DBG.trace(Debug.MAJOR, "CLEAN_USERS");
 							processCleanUsers();
 							break;
 						case Constants.HEARTBEAT:
-							DBG.trace(debug.MAJOR, "HEARTBEAT");
+							DBG.trace(Debug.MAJOR, "HEARTBEAT");
 							dataOut.writeInt(Constants.ACK);
 							break;
 						case Constants.LIST_USERS:
-							DBG.trace(debug.MAJOR, "LIST_USERS");
+							DBG.trace(Debug.MAJOR, "LIST_USERS");
 							processListUsers();
 							break;
 						case Constants.DEBUG_DETAILS:
-							DBG.trace(debug.MAJOR, "DEBUG_DETAILS");
+							DBG.trace(Debug.MAJOR, "DEBUG_DETAILS");
 							dataOut.writeInt(DBG.getLevel());
 							break;
 						case Constants.USER_DETAILS:
-							DBG.trace(debug.MAJOR, "USER_DETAILS");
+							DBG.trace(Debug.MAJOR, "USER_DETAILS");
 							processUserDetails();
 							break;
 						case Constants.CLIENT_SHUTDOWN:
-							DBG.trace(debug.MAJOR, "CLIENT_SHUTDOWN");
+							DBG.trace(Debug.MAJOR, "CLIENT_SHUTDOWN");
 							processClientShutdown();
 							break;
 						case Constants.QUEUE_DETAILS:
-							DBG.trace(debug.MAJOR, "QUEUE_DETAILS");
+							DBG.trace(Debug.MAJOR, "QUEUE_DETAILS");
 							processQueueDetails();
 							break;
 					}
@@ -1597,7 +1593,7 @@ public class trotsServer
 				}
 				catch(IOException exIO)
 				{
-					DBG.trace(debug.ERROR, "Unable to maintain connection with client ("+exIO.getMessage()+")");
+					DBG.trace(Debug.ERROR, "Unable to maintain connection with client ("+exIO.getMessage()+")");
 				}
 			}
 
@@ -1607,12 +1603,12 @@ public class trotsServer
 			if(command == Constants.ALL_SHUTDOWN)
 			{
 				int numUsers = users.size();
-				DBG.trace(debug.MINOR, "Closing down ["+numUsers+"] users");
+				DBG.trace(Debug.MINOR, "Closing down ["+numUsers+"] users");
 
 				for(int i=0;i < numUsers; i++)
 				{
                                    tu = users.get(0);
-					DBG.trace(debug.DEBUG, "Closing down [ " + tu.userName + "]");
+					DBG.trace(Debug.DEBUG, "Closing down [ " + tu.userName + "]");
 					shutdownClient(tu);
 				}
 			}
@@ -1621,8 +1617,8 @@ public class trotsServer
 		}
 		catch(IOException exIO)
 		{
-			DBG.trace(debug.ERROR, "Unable to listen to client connections ("+exIO.getMessage()+")");
-			DBG.trace(debug.ERROR, "Abnormal termination");
+			DBG.trace(Debug.ERROR, "Unable to listen to client connections ("+exIO.getMessage()+")");
+			DBG.trace(Debug.ERROR, "Abnormal termination");
 		}
 	}
 
@@ -1630,7 +1626,7 @@ public class trotsServer
 	{
 
 		String propServerPort, propQueues;
-		DBG = new debug(0, "server.dbg", "TROTS SERVER ($Revision: 6 $) DEBUG TRACE");
+		DBG = new Debug(0, "server.dbg", "TROTS SERVER ($Revision: 6 $) DEBUG TRACE");
 
 		try
 		{
@@ -1655,12 +1651,12 @@ public class trotsServer
 				DBG.setLevel(makeInt(props.getProperty("debug"), 0));
 			}
 
-			DBG.trace(debug.MAJOR,"Properties loaded");
-			DBG.trace(debug.DEBUG,"Port = " + propServerPort);
-			DBG.trace(debug.DEBUG,"Queues = " + propQueues);
-			DBG.trace(debug.DEBUG,"Debug Level = " + props.getProperty("debug"));
+			DBG.trace(Debug.MAJOR,"Properties loaded");
+			DBG.trace(Debug.DEBUG,"Port = " + propServerPort);
+			DBG.trace(Debug.DEBUG,"Queues = " + propQueues);
+			DBG.trace(Debug.DEBUG,"Debug Level = " + props.getProperty("debug"));
 
-                   trotsServer ts = new trotsServer(Integer.parseInt(propServerPort));
+                   TrotsServer ts = new TrotsServer(Integer.parseInt(propServerPort));
 
 		}
 		catch(FileNotFoundException exFile)

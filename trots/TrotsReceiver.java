@@ -23,7 +23,7 @@ Revision 1.10  99/07/13  12:51:05  12:51:05  dkelly (Dave Kelly)
 Multiple changes
 
 Move host / port information to frame from the title bar
-Changed most concatenated strings to StringBuffer
+Changed most concatenated strings to StringBuilder
 
 Revision 1.9  99/07/05  15:53:19  15:53:19  dkelly (Dave Kelly)
 Forced checkin 
@@ -36,7 +36,7 @@ General code cleanup.
 Removed privates and statics
 
 Revision 1.6  99/04/30  09:50:40  09:50:40  dkelly (Dave Kelly)
-Cleaned up number handling for debug level
+Cleaned up number handling for Debug level
 Set title bar to display the current host
 
 Revision 1.5  99/04/29  13:50:44  13:50:44  dkelly (Dave Kelly)
@@ -64,19 +64,19 @@ import java.util.Observer;
 /*------------------------------------*/
 /* Class to receive the TROTS message */
 /*------------------------------------*/
-public class trotsReceiver implements Observer, WindowListener
+public class TrotsReceiver implements Observer, WindowListener
 {
-	List<trotsMessage> oldMsgs,trotsMessages;
+	List<TrotsMessage> oldMsgs,trotsMessages;
 	int clientID, pServerPort;
-	trotsMessage	 	newMessage;
+	TrotsMessage	 	newMessage;
 	String				pServer, pQueues, pUserName, pUserPhone;
 	Frame 				statusFrame;
-	countdownLabel		lblConnect;
+	CountdownLabel		lblConnect;
 	Label					lblServerInfo;
 	boolean				available;
-	static debug		DBG;
-	dataConnection		client;
-	static iniFileGen	ini;
+	static Debug		DBG;
+	DataConnection		client;
+	static IniFileGen	ini;
 	OKDialog				dlgAbout;
 
         @Override
@@ -84,7 +84,7 @@ public class trotsReceiver implements Observer, WindowListener
         @Override
         public void windowClosing(WindowEvent e)
 	{
-		DBG.trace(debug.MAJOR,"Window Closed");
+		DBG.trace(Debug.MAJOR,"Window Closed");
 		exitProgram();
 	}
         @Override
@@ -101,19 +101,19 @@ public class trotsReceiver implements Observer, WindowListener
 	void exitProgram()
 	{
 		deregisterClient();
-		DBG.trace(debug.ERROR,"Normal Termination");
+		DBG.trace(Debug.ERROR,"Normal Termination");
 		System.exit(0);
 	}
 	public void reloadIniProps()
 	{
 		int pDebug;
-		DBG.trace(debug.ERROR,"Ini File Settings");
-		DBG.trace(debug.ERROR,"-----------------");
-		DBG.trace(debug.ERROR,new StringBuffer("Server Name :").append(ini.getProperty("server")).toString());
-		DBG.trace(debug.ERROR,new StringBuffer("Port        :").append(ini.getProperty("port")).toString());
-		DBG.trace(debug.ERROR, new StringBuffer("User Name   :").append(ini.getProperty("user")).toString());
-		DBG.trace(debug.ERROR, new StringBuffer("Phone No    :").append(ini.getProperty("phone")).toString());
-		DBG.trace(debug.ERROR, new StringBuffer("Debug Level :").append(ini.getProperty("debug")).toString());
+		DBG.trace(Debug.ERROR,"Ini File Settings");
+		DBG.trace(Debug.ERROR,"-----------------");
+		DBG.trace(Debug.ERROR,new StringBuilder("Server Name :").append(ini.getProperty("server")).toString());
+		DBG.trace(Debug.ERROR,new StringBuilder("Port        :").append(ini.getProperty("port")).toString());
+		DBG.trace(Debug.ERROR, new StringBuilder("User Name   :").append(ini.getProperty("user")).toString());
+		DBG.trace(Debug.ERROR, new StringBuilder("Phone No    :").append(ini.getProperty("phone")).toString());
+		DBG.trace(Debug.ERROR, new StringBuilder("Debug Level :").append(ini.getProperty("debug")).toString());
 
 		pServer = ini.getProperty("server");
                 pServerPort = Integer.parseInt(ini.getProperty("port"));
@@ -126,7 +126,7 @@ public class trotsReceiver implements Observer, WindowListener
 		}
 		catch(NumberFormatException exNumFmt)
 		{
-			DBG.trace(debug.ERROR, "Debug Level is not a number, setting to 0");
+			DBG.trace(Debug.ERROR, "Debug Level is not a number, setting to 0");
 			pDebug = 0;
 		}
 		DBG.setLevel(pDebug);
@@ -138,17 +138,17 @@ public class trotsReceiver implements Observer, WindowListener
         @Override
         public void update(Observable o, Object arg)
 	{
-		dataConnection d;
+		DataConnection d;
 		String oldServer = pServer, oldUser = pUserName, oldQueues = pQueues;
 		String oldPhone = pUserPhone;
 		int oldPort = pServerPort;
 
-		DBG.trace(debug.MAJOR, "Ini file has changed");
+		DBG.trace(Debug.MAJOR, "Ini file has changed");
 
 /*---------------------------------*/
 /* Re-read the ini file properties */
 /*---------------------------------*/
-		DBG.trace(debug.MINOR, "Reloading INI properties");
+		DBG.trace(Debug.MINOR, "Reloading INI properties");
 		reloadIniProps();
 
 /*----------------------------------------------------------------------*/
@@ -157,24 +157,24 @@ public class trotsReceiver implements Observer, WindowListener
 /*----------------------------------------------------------------------*/
 		try
 		{
-			DBG.trace(debug.MINOR, new StringBuffer("Creating connection to [").append(oldServer).append(":").append(oldPort).append("]").toString());
-			d = new dataConnection(oldServer, oldPort);
+			DBG.trace(Debug.MINOR, new StringBuilder("Creating connection to [").append(oldServer).append(":").append(oldPort).append("]").toString());
+			d = new DataConnection(oldServer, oldPort);
 			
-			DBG.trace(debug.MINOR, "Sending CLIENT_RESET");
+			DBG.trace(Debug.MINOR, "Sending CLIENT_RESET");
 			d.dataOut.writeInt(Constants.CLIENT_RESET);
-			DBG.trace(debug.MINOR, "Sending client id");
+			DBG.trace(Debug.MINOR, "Sending client id");
 			d.dataOut.writeInt(clientID);
 	
-			DBG.trace(debug.MINOR, "Waiting for ACK response");
-			DBG.trace(debug.DEBUG, new StringBuffer("Server responded with ").append(d.dataIn.readInt()).toString());
+			DBG.trace(Debug.MINOR, "Waiting for ACK response");
+			DBG.trace(Debug.DEBUG, new StringBuilder("Server responded with ").append(d.dataIn.readInt()).toString());
 
 			d.close();
-			lblServerInfo.setText( new StringBuffer(pServer).append(":").append(pServerPort).toString());
+			lblServerInfo.setText( new StringBuilder(pServer).append(":").append(pServerPort).toString());
 			statusFrame.repaint();
 		}
 		catch(IOException exIO)
 		{
-			DBG.trace(debug.ERROR, "Unable to send CLIENT_RESET");
+			DBG.trace(Debug.ERROR, "Unable to send CLIENT_RESET");
 		}
 		
 	}
@@ -184,11 +184,11 @@ public class trotsReceiver implements Observer, WindowListener
 /*--------------------------------------------------*/
         boolean isIDExists(int id)
         {
-                List<trotsMessage> copy = new ArrayList<>(trotsMessages);
+                List<TrotsMessage> copy = new ArrayList<>(trotsMessages);
 
-                DBG.trace(debug.DEBUG, new StringBuffer("--> isIDExists(").append(id).append(")").toString());
+                DBG.trace(Debug.DEBUG, new StringBuilder("--> isIDExists(").append(id).append(")").toString());
                 if(id == 0) return true;
-                for(trotsMessage currentMessage : copy)
+                for(TrotsMessage currentMessage : copy)
                 {
                         if(currentMessage.instanceID == id)
                                 return true;
@@ -201,26 +201,26 @@ public class trotsReceiver implements Observer, WindowListener
 /*--------------------------------------------------*/
 	void deregisterClient()
 	{
-		dataConnection d;
+		DataConnection d;
 
-		DBG.trace(debug.DEBUG, "--> deregisterClient");
-		DBG.trace(debug.MAJOR, "Deregistering client");
+		DBG.trace(Debug.DEBUG, "--> deregisterClient");
+		DBG.trace(Debug.MAJOR, "Deregistering client");
 		try
 		{
-			DBG.trace(debug.MINOR, "Making connection to host");
-			d = new dataConnection(pServer, pServerPort);
+			DBG.trace(Debug.MINOR, "Making connection to host");
+			d = new DataConnection(pServer, pServerPort);
 
-			DBG.trace(debug.MINOR, "Sending CLIENT_DEREGISTER");
+			DBG.trace(Debug.MINOR, "Sending CLIENT_DEREGISTER");
 			d.dataOut.writeInt(Constants.CLIENT_DEREGISTER);
-			DBG.trace(debug.DEBUG, new StringBuffer("Sending User ID [").append(clientID).append("]").toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Sending User ID [").append(clientID).append("]").toString());
 			d.dataOut.writeInt(clientID);
 
-			DBG.trace(debug.MINOR, "Closing down socket connection");
+			DBG.trace(Debug.MINOR, "Closing down socket connection");
 			d.close();
 		}
 		catch(IOException exIO)
 		{
-			DBG.trace(debug.ERROR, "Unable to send CLIENT_DEREGISTER (" + exIO.getMessage() + ")");
+			DBG.trace(Debug.ERROR, "Unable to send CLIENT_DEREGISTER (" + exIO.getMessage() + ")");
 		}
 	}
 
@@ -229,32 +229,32 @@ public class trotsReceiver implements Observer, WindowListener
 /*----------------------------------------------*/
 	void sendStatus(int userID, boolean state)
 	{
-		dataConnection d;
+		DataConnection d;
 
-		DBG.trace(debug.DEBUG, "--> sendStatus");
-		DBG.trace(debug.MAJOR, "Sending client status");
+		DBG.trace(Debug.DEBUG, "--> sendStatus");
+		DBG.trace(Debug.MAJOR, "Sending client status");
 
 		try
 		{
-			DBG.trace(debug.MINOR, "Making connection to host");
-			d = new dataConnection(pServer, pServerPort);
+			DBG.trace(Debug.MINOR, "Making connection to host");
+			d = new DataConnection(pServer, pServerPort);
 
-			DBG.trace(debug.MINOR, "Sending CLIENT_STATUS");
+			DBG.trace(Debug.MINOR, "Sending CLIENT_STATUS");
 			d.dataOut.writeInt(Constants.CLIENT_STATUS);
-			DBG.trace(debug.DEBUG, new StringBuffer("Sending User ID [").append(userID).append("]").toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Sending User ID [").append(userID).append("]").toString());
 			d.dataOut.writeInt(userID);
-			DBG.trace(debug.DEBUG, new StringBuffer("Sending Status [").append(state).append("]").toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Sending Status [").append(state).append("]").toString());
 			d.dataOut.writeInt((state ? 0 : 1));
 
-			DBG.trace(debug.MINOR, "Waiting for server response");
-			DBG.trace(debug.DEBUG, new StringBuffer("Server responded with [").append(d.dataIn.readInt()).append("]").toString());
+			DBG.trace(Debug.MINOR, "Waiting for server response");
+			DBG.trace(Debug.DEBUG, new StringBuilder("Server responded with [").append(d.dataIn.readInt()).append("]").toString());
 
-			DBG.trace(debug.MINOR, "Closing down socket connection");
+			DBG.trace(Debug.MINOR, "Closing down socket connection");
 			d.close();
 		}
 		catch(IOException exIO)
 		{
-			DBG.trace(debug.ERROR, "Unable to send CLIENT_STATUS ("+exIO.getMessage()+")");
+			DBG.trace(Debug.ERROR, "Unable to send CLIENT_STATUS ("+exIO.getMessage()+")");
 		}
 	}
 
@@ -267,31 +267,31 @@ public class trotsReceiver implements Observer, WindowListener
 		DataOutputStream send;
 		DataInputStream recv;
 
-		DBG.trace(debug.DEBUG, "-->sendAssign");
-		DBG.trace(debug.MAJOR, "Assign to Me");
+		DBG.trace(Debug.DEBUG, "-->sendAssign");
+		DBG.trace(Debug.MAJOR, "Assign to Me");
 
 		try
 		{
-			DBG.trace(debug.MINOR, "Making connection to host");
+			DBG.trace(Debug.MINOR, "Making connection to host");
 			s = new Socket(pServer, pServerPort);
 
-			DBG.trace(debug.MINOR, "Creating data input/output streams");
+			DBG.trace(Debug.MINOR, "Creating data input/output streams");
 			send = new DataOutputStream(s.getOutputStream());
 			recv = new DataInputStream(s.getInputStream());
 
-			DBG.trace(debug.MINOR, "Sending TROTS_ASSIGN_RECV");
+			DBG.trace(Debug.MINOR, "Sending TROTS_ASSIGN_RECV");
 			send.writeInt(Constants.TROTS_ASSIGN_RECV);
-			DBG.trace(debug.DEBUG, new StringBuffer("Sending Message ID [").append(msgID).append("]").toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Sending Message ID [").append(msgID).append("]").toString());
 			send.writeInt(msgID);
-			DBG.trace(debug.DEBUG, new StringBuffer("Sending User ID [").append(userID).append("]").toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Sending User ID [").append(userID).append("]").toString());
 			send.writeInt(userID);
 
-			DBG.trace(debug.MINOR, "Waiting for server response");
-			DBG.trace(debug.DEBUG, new StringBuffer("Server responded with [").append(recv.readInt()).append("]").toString());
+			DBG.trace(Debug.MINOR, "Waiting for server response");
+			DBG.trace(Debug.DEBUG, new StringBuilder("Server responded with [").append(recv.readInt()).append("]").toString());
 		}
 		catch(IOException exIO)
 		{
-			DBG.trace(debug.ERROR, "Unable to send TROTS_ASSIGN ("+exIO.getMessage()+")");
+			DBG.trace(Debug.ERROR, "Unable to send TROTS_ASSIGN ("+exIO.getMessage()+")");
 		}
 	}
 
@@ -317,12 +317,12 @@ public class trotsReceiver implements Observer, WindowListener
 /*---------------------------------------------------------------*/
 			if(actionType.equals("D"))
 			{
-				DBG.trace(debug.MAJOR, new StringBuffer("Dismiss button pressed [").append(trotsID).append("]").toString());
+				DBG.trace(Debug.MAJOR, new StringBuilder("Dismiss button pressed [").append(trotsID).append("]").toString());
 				if(isIDExists(trotsID)) killTrots(trotsID);
 			}
 			if(actionType.equals("A"))
 			{
-				DBG.trace(debug.MAJOR, new StringBuffer("Assign button pressed [").append(trotsID).append("]").toString());
+				DBG.trace(Debug.MAJOR, new StringBuilder("Assign button pressed [").append(trotsID).append("]").toString());
 				sendAssign(trotsID, clientID);
 			}
 		}
@@ -338,10 +338,10 @@ public class trotsReceiver implements Observer, WindowListener
 		{
 			String command = e.getActionCommand();
 			
-			DBG.trace(debug.DEBUG, new StringBuffer("Action [").append(command).append("]").toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Action [").append(command).append("]").toString());
 			if(command.equalsIgnoreCase("Exit"))
 			{
-				DBG.trace(debug.DEBUG,"Exit option selected");
+				DBG.trace(Debug.DEBUG,"Exit option selected");
 				exitProgram();
 			}
 
@@ -365,8 +365,8 @@ public class trotsReceiver implements Observer, WindowListener
                 @Override
                 public void itemStateChanged(ItemEvent e)
 		{
-			DBG.trace(debug.MAJOR, "Status change");
-			DBG.trace(debug.DEBUG, new StringBuffer("Change status from ").append(available).append(" to ").append(!available).toString());
+			DBG.trace(Debug.MAJOR, "Status change");
+			DBG.trace(Debug.DEBUG, new StringBuilder("Change status from ").append(available).append(" to ").append(!available).toString());
 			available = !available;
 			sendStatus(clientID, available);
 			lblConnect.setText((available ? Constants.LISTENING : Constants.NOT_LISTENING));
@@ -386,8 +386,8 @@ public class trotsReceiver implements Observer, WindowListener
 
 
 
-		DBG.trace(debug.DEBUG, "--> buildControlBox");
-		DBG.trace(debug.MAJOR, "Creating receiver box");
+		DBG.trace(Debug.DEBUG, "--> buildControlBox");
+		DBG.trace(Debug.MAJOR, "Creating receiver box");
 		statusFrame = new Frame("Trots Receiver");
 		statusFrame.addWindowListener(this);
 
@@ -419,7 +419,7 @@ public class trotsReceiver implements Observer, WindowListener
 		lblServerInfo = new Label(title);
 		lblServerInfo.setAlignment(Label.CENTER);
 
-		lblConnect = new countdownLabel(30);
+		lblConnect = new CountdownLabel(30);
 		lblConnect.setAlignment(Label.CENTER);
 
 		statusFrame.add(lblServerInfo);
@@ -440,13 +440,13 @@ public class trotsReceiver implements Observer, WindowListener
 /*----------------------------*/
 /* Find the specified message */
 /*----------------------------*/
-        trotsMessage findMsg(int id)
+        TrotsMessage findMsg(int id)
         {
-                List<trotsMessage> copy = new ArrayList<>(trotsMessages);
+                List<TrotsMessage> copy = new ArrayList<>(trotsMessages);
 
-                DBG.trace(debug.DEBUG, new StringBuffer("--> findMsg(").append(id).append(")").toString());
+                DBG.trace(Debug.DEBUG, new StringBuilder("--> findMsg(").append(id).append(")").toString());
 
-                for(trotsMessage t : copy)
+                for(TrotsMessage t : copy)
                 {
                         if(t.instanceID == id)
                         {
@@ -461,21 +461,21 @@ public class trotsReceiver implements Observer, WindowListener
 /*------------------------------------------------------------------*/
 	void killTrots(int id)
 	{
-		trotsMessage t;
+		TrotsMessage t;
 
-		DBG.trace(debug.DEBUG, new StringBuffer("--> killTrots(").append(id).append(")").toString());
-		DBG.trace(debug.MAJOR, "Killing trots message");
-		DBG.trace(debug.MINOR, new StringBuffer("Locating Message Id [").append(id).append("]").toString());
+		DBG.trace(Debug.DEBUG, new StringBuilder("--> killTrots(").append(id).append(")").toString());
+		DBG.trace(Debug.MAJOR, "Killing trots message");
+		DBG.trace(Debug.MINOR, new StringBuilder("Locating Message Id [").append(id).append("]").toString());
 		t = findMsg(id);
 
 		if(t == null)
 		{
-			DBG.trace(debug.MAJOR, "Unable to locate message ID");
+			DBG.trace(Debug.MAJOR, "Unable to locate message ID");
 			return;
 		}
 
 		t.kill();
-		DBG.trace(debug.MINOR, "Removing the message from the vector");
+		DBG.trace(Debug.MINOR, "Removing the message from the vector");
                 trotsMessages.remove(t);
                 oldMsgs.add(t);
 	}
@@ -485,34 +485,34 @@ public class trotsReceiver implements Observer, WindowListener
 /*------------------*/
 	void processClientReset()
 	{
-		DBG.trace(debug.DEBUG, "--> processClientReset");
-		DBG.trace(debug.MINOR, "Processing CLIENT_RESET");
+		DBG.trace(Debug.DEBUG, "--> processClientReset");
+		DBG.trace(Debug.MINOR, "Processing CLIENT_RESET");
 
 		try
 		{
-			DBG.trace(debug.MINOR, "Sending ACK");
+			DBG.trace(Debug.MINOR, "Sending ACK");
 			client.dataOut.writeInt(Constants.ACK);
 
-			DBG.trace(debug.MAJOR, "Closing client connection");
+			DBG.trace(Debug.MAJOR, "Closing client connection");
 			client.close();
 
-			DBG.trace(debug.MAJOR, "Making new connection");
-			lblServerInfo.setText(new StringBuffer(pServer).append(":").append(pServerPort).toString());
+			DBG.trace(Debug.MAJOR, "Making new connection");
+			lblServerInfo.setText(new StringBuilder(pServer).append(":").append(pServerPort).toString());
 			statusFrame.repaint();
 			makeServerConnection(pUserName, pUserPhone, pQueues);
 			
 			sendStatus(clientID, available);
 
 
-			DBG.trace(debug.DEBUG, "<-- processClientReset");
+			DBG.trace(Debug.DEBUG, "<-- processClientReset");
 
 		}
 		catch(IOException exIO)
 		{
-			DBG.trace(debug.ERROR, "Unable to process CLIENT_RESET");
+			DBG.trace(Debug.ERROR, "Unable to process CLIENT_RESET");
 		}
 
-		DBG.trace(debug.DEBUG, "<-- processClientReset");
+		DBG.trace(Debug.DEBUG, "<-- processClientReset");
 	}
 
 /*---------------------------------------------------*/
@@ -520,32 +520,32 @@ public class trotsReceiver implements Observer, WindowListener
 /*---------------------------------------------------*/
 	void processTrotsAssign()
 	{
-		trotsMessage tm;
+		TrotsMessage tm;
 		String extraText;
 		int id;
 	
-		DBG.trace(debug.DEBUG, "--> processTrotsAssign");
-		DBG.trace(debug.MAJOR, "Processing trots assign message");
+		DBG.trace(Debug.DEBUG, "--> processTrotsAssign");
+		DBG.trace(Debug.MAJOR, "Processing trots assign message");
 
 		try
 		{
-			DBG.trace(debug.MINOR, "Waiting for message ID");
+			DBG.trace(Debug.MINOR, "Waiting for message ID");
 			id = client.dataIn.readInt();
-			DBG.trace(debug.DEBUG, new StringBuffer("Message ID = ").append(id).toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Message ID = ").append(id).toString());
 
-			DBG.trace(debug.MINOR, "Waiting for extra text");
+			DBG.trace(Debug.MINOR, "Waiting for extra text");
 			extraText = client.textIn.readLine();
-			DBG.trace(debug.DEBUG, new StringBuffer("Extra Text [").append(extraText).append("]").toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Extra Text [").append(extraText).append("]").toString());
 			
 			tm = findMsg(id);
 
 			if(tm == null)
 			{
-				DBG.trace(debug.MAJOR, "Unable to locate message");
+				DBG.trace(Debug.MAJOR, "Unable to locate message");
 				return;
 			}
 
-			DBG.trace(debug.MINOR, "Updating trots message");
+			DBG.trace(Debug.MINOR, "Updating trots message");
 			tm.update(extraText);
 
 			class killThread extends Thread
@@ -558,12 +558,12 @@ public class trotsReceiver implements Observer, WindowListener
 
 				public void run()
 				{
-					DBG.trace(debug.MINOR, new StringBuffer("Will kill message in ").append(Constants.MESSAGE_TIMEOUT).append(" seconds").toString());
+					DBG.trace(Debug.MINOR, new StringBuilder("Will kill message in ").append(Constants.MESSAGE_TIMEOUT).append(" seconds").toString());
 					try
 					{
 						Thread.sleep(Constants.MESSAGE_TIMEOUT * 1000);
 					} catch (InterruptedException exInt) {}
-					DBG.trace(debug.MINOR, "Killing Trots message from thread");
+					DBG.trace(Debug.MINOR, "Killing Trots message from thread");
 					killTrots(msgID);
 				}
 			};
@@ -572,15 +572,15 @@ public class trotsReceiver implements Observer, WindowListener
 		}
 		catch(IOException exIO)
 		{
-			DBG.trace(debug.ERROR, "Unable to process TROTS_ASSIGN ("+exIO.getMessage()+")");
+			DBG.trace(Debug.ERROR, "Unable to process TROTS_ASSIGN ("+exIO.getMessage()+")");
 		}
 	}
 
 	void createTrotsMessage(int ID, String strUser, String strMessage)
 	{
 
-		DBG.trace(debug.DEBUG, "--> createTrotsMessage");
-		DBG.trace(debug.MAJOR, "Creating trots message");
+		DBG.trace(Debug.DEBUG, "--> createTrotsMessage");
+		DBG.trace(Debug.MAJOR, "Creating trots message");
                 newMessage.setDetails(ID, strUser, strMessage);
                 trotsMessages.add(newMessage);
                 newMessage.show();
@@ -593,7 +593,7 @@ public class trotsReceiver implements Observer, WindowListener
                 }
                 else
                 {
-                        newMessage = new trotsMessage(buttonListener);
+                        newMessage = new TrotsMessage(buttonListener);
                 }
 
                 newMessage.hide();
@@ -605,24 +605,24 @@ public class trotsReceiver implements Observer, WindowListener
 		String userName, messageText;
 		int msgID;
 
-		DBG.trace(debug.DEBUG, "--> processTrotsMessage");
-		DBG.trace(debug.MAJOR, "Processing trots message");
+		DBG.trace(Debug.DEBUG, "--> processTrotsMessage");
+		DBG.trace(Debug.MAJOR, "Processing trots message");
 
 		try
 		{
-			DBG.trace(debug.MINOR, "Waiting for message ID");
+			DBG.trace(Debug.MINOR, "Waiting for message ID");
 			msgID = client.dataIn.readInt();
-			DBG.trace(debug.DEBUG, new StringBuffer("MSG ID = ").append(msgID).toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("MSG ID = ").append(msgID).toString());
 
-			DBG.trace(debug.MINOR, "Waiting for user name");
+			DBG.trace(Debug.MINOR, "Waiting for user name");
 			userName = client.textIn.readLine();
-			DBG.trace(debug.DEBUG, new StringBuffer("USER NAME = ").append(userName).toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("USER NAME = ").append(userName).toString());
 
-			DBG.trace(debug.MINOR, "Waiting for message Text");
+			DBG.trace(Debug.MINOR, "Waiting for message Text");
 			messageText = client.textIn.readLine();
-			DBG.trace(debug.DEBUG, new StringBuffer("MESSAGE TEXT = ").append(messageText).toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("MESSAGE TEXT = ").append(messageText).toString());
 
-			DBG.trace(debug.MINOR, "Sending ACK response back to server");
+			DBG.trace(Debug.MINOR, "Sending ACK response back to server");
 			client.dataOut.writeInt(Constants.ACK);
 
 			createTrotsMessage(msgID, userName, messageText);
@@ -630,7 +630,7 @@ public class trotsReceiver implements Observer, WindowListener
 		}
 		catch(IOException exIO)
 		{
-			DBG.trace(debug.ERROR, "Unable to process TROTS_MESSAGE_RECV ("+exIO.getMessage()+")");
+			DBG.trace(Debug.ERROR, "Unable to process TROTS_MESSAGE_RECV ("+exIO.getMessage()+")");
 		}
 	}
 
@@ -638,36 +638,36 @@ public class trotsReceiver implements Observer, WindowListener
 	{
 		int msgID;
 	
-		DBG.trace(debug.DEBUG, "--> processTrotsCancel");
-		DBG.trace(debug.MAJOR, "Processing trots cancel");
+		DBG.trace(Debug.DEBUG, "--> processTrotsCancel");
+		DBG.trace(Debug.MAJOR, "Processing trots cancel");
 
 		try
 		{
-			DBG.trace(debug.MINOR, "Waiting for message ID");
+			DBG.trace(Debug.MINOR, "Waiting for message ID");
 			msgID = client.dataIn.readInt();
-			DBG.trace(debug.DEBUG, new StringBuffer("Message ID = ").append(msgID).toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Message ID = ").append(msgID).toString());
 
 			killTrots(msgID);
 		}
 		catch(IOException exIO)
 		{
-			DBG.trace(debug.ERROR, "Unable to process TROTS_CANCEL ("+ exIO.getMessage() + ")");
+			DBG.trace(Debug.ERROR, "Unable to process TROTS_CANCEL ("+ exIO.getMessage() + ")");
 		}
 	}
 
 	public void processHeartbeat()
 	{
-		DBG.trace(debug.DEBUG, "-->processHeartbeat");
-		DBG.trace(debug.MAJOR, "Responding to server heartbeat");
+		DBG.trace(Debug.DEBUG, "-->processHeartbeat");
+		DBG.trace(Debug.MAJOR, "Responding to server heartbeat");
 
 		try
 		{
-			DBG.trace(debug.DEBUG, "Sending ACK");
+			DBG.trace(Debug.DEBUG, "Sending ACK");
 			client.dataOut.writeInt(Constants.ACK);
 		}
 		catch(IOException exIO)
 		{
-			DBG.trace(debug.ERROR, "Unable to process HEARTBEAT ("+exIO.getMessage()+")");
+			DBG.trace(Debug.ERROR, "Unable to process HEARTBEAT ("+exIO.getMessage()+")");
 		}
 	}
 
@@ -677,37 +677,37 @@ public class trotsReceiver implements Observer, WindowListener
 
 		while(!stopProcessing)
 		{
-			DBG.trace(debug.MAJOR, new StringBuffer("Making server connection to [").append(pServer).append(":").append(pServerPort).append("]").toString());;
-			lblServerInfo.setText(new StringBuffer(pServer).append(":").append(pServerPort).toString());
+			DBG.trace(Debug.MAJOR, new StringBuilder("Making server connection to [").append(pServer).append(":").append(pServerPort).append("]").toString());;
+			lblServerInfo.setText(new StringBuilder(pServer).append(":").append(pServerPort).toString());
 			statusFrame.repaint();
 			try
 			{
 				lblConnect.setText(Constants.CONNECTING);
-				DBG.trace(debug.MINOR, "Making server connection");
-				client = new dataConnection(pServer, pServerPort);
+				DBG.trace(Debug.MINOR, "Making server connection");
+				client = new DataConnection(pServer, pServerPort);
 
-				DBG.trace(debug.MINOR, "Registering client");
+				DBG.trace(Debug.MINOR, "Registering client");
 				client.dataOut.writeInt(Constants.CLIENT_REGISTER);
 				clientID = client.dataIn.readInt();
-				DBG.trace(debug.DEBUG, "Server assigned ID = " + clientID);
-				DBG.trace(debug.MINOR, "Sending User Name");
-				DBG.trace(debug.DEBUG, "User Name = " + u);
+				DBG.trace(Debug.DEBUG, "Server assigned ID = " + clientID);
+				DBG.trace(Debug.MINOR, "Sending User Name");
+				DBG.trace(Debug.DEBUG, "User Name = " + u);
 				client.dataOut.writeBytes(u + "\n");
-				DBG.trace(debug.MINOR, "Sending Phone Number");
-				DBG.trace(debug.DEBUG, "Phone Number = " + p);
+				DBG.trace(Debug.MINOR, "Sending Phone Number");
+				DBG.trace(Debug.DEBUG, "Phone Number = " + p);
 				client.dataOut.writeBytes(p + "\n");
-				DBG.trace(debug.MINOR, "Sending Queue List");
-				DBG.trace(debug.DEBUG, "Queue List = " + q);
+				DBG.trace(Debug.MINOR, "Sending Queue List");
+				DBG.trace(Debug.DEBUG, "Queue List = " + q);
 				client.dataOut.writeBytes(q + "\n");
-				DBG.trace(debug.MINOR, "Sending Client Version");
-				DBG.trace(debug.DEBUG, "Client Version = $Revision: 6 $");
+				DBG.trace(Debug.MINOR, "Sending Client Version");
+				DBG.trace(Debug.DEBUG, "Client Version = $Revision: 6 $");
 				client.dataOut.writeBytes("$Revision: 6 $\n");
 
 				stopProcessing = true;
 			}
 			catch(IOException exIO)
 			{
-				DBG.trace(debug.ERROR, "Unable to make server connection ("+exIO.getMessage()+")");
+				DBG.trace(Debug.ERROR, "Unable to make server connection ("+exIO.getMessage()+")");
 				try
 				{
 					statusFrame.getToolkit().beep();
@@ -720,33 +720,33 @@ public class trotsReceiver implements Observer, WindowListener
 				catch(InterruptedException exInt) {}
 			}
 		}
-		DBG.trace(debug.MAJOR, "Connection made");
+		DBG.trace(Debug.MAJOR, "Connection made");
 	}
 
-	public trotsReceiver()
+	public TrotsReceiver()
 	{
 		int serverCommand;
 
-		DBG.trace(debug.DEBUG, "--> trotsReceiver (Constructor)");
+		DBG.trace(Debug.DEBUG, "--> TrotsReceiver (Constructor)");
 
 		available = true;
 
-                DBG.trace(debug.DEBUG, "Creating new messages vector");
+                DBG.trace(Debug.DEBUG, "Creating new messages vector");
                 trotsMessages = new ArrayList<>();
 
-                DBG.trace(debug.DEBUG, "Creating old messages vector");
+                DBG.trace(Debug.DEBUG, "Creating old messages vector");
                 oldMsgs = new ArrayList<>();
 
-		DBG.trace(debug.DEBUG, "Adding observer to ini file generator");
+		DBG.trace(Debug.DEBUG, "Adding observer to ini file generator");
 		reloadIniProps();
 		ini.addObserver(this);
 
 /*-----------------------*/
 /* Build the control box */
 /*-----------------------*/
-		buildControlBox(new StringBuffer(pServer).append(":").append(pServerPort).toString());
+		buildControlBox(new StringBuilder(pServer).append(":").append(pServerPort).toString());
 
-		newMessage = new trotsMessage(buttonListener);
+		newMessage = new TrotsMessage(buttonListener);
 		newMessage.hide();
 
 /*--------------------------------------------------------------------*/
@@ -761,39 +761,39 @@ public class trotsReceiver implements Observer, WindowListener
 			lblConnect.setText((available ? Constants.LISTENING : Constants.NOT_LISTENING));
 			try
 			{
-				DBG.trace(debug.MAJOR, "Waiting for server command");
+				DBG.trace(Debug.MAJOR, "Waiting for server command");
 				serverCommand = client.dataIn.readInt();
 
 				switch(serverCommand)
 				{
 					case Constants.TROTS_MESSAGE_RECV:
-						DBG.trace(debug.MAJOR, "TROTS_MESSAGE_RECV");
+						DBG.trace(Debug.MAJOR, "TROTS_MESSAGE_RECV");
 						processTrotsMessage();
 						break;
 					case Constants.TROTS_ASSIGN_SEND:
-						DBG.trace(debug.MAJOR, "TROTS_ASSIGN_SEND");
+						DBG.trace(Debug.MAJOR, "TROTS_ASSIGN_SEND");
 						processTrotsAssign();
 						break;
 					case Constants.CLIENT_SHUTDOWN:
-						DBG.trace(debug.MAJOR, "CLIENT_SHUTDOWN");
+						DBG.trace(Debug.MAJOR, "CLIENT_SHUTDOWN");
 						break;
 					case Constants.TROTS_CANCEL:
-						DBG.trace(debug.MAJOR, "TROTS_CANCEL");
+						DBG.trace(Debug.MAJOR, "TROTS_CANCEL");
 						processTrotsCancel();
 						break;
 					case Constants.CLIENT_RESET:
-						DBG.trace(debug.MAJOR, "CLIENT_RESET");
+						DBG.trace(Debug.MAJOR, "CLIENT_RESET");
 						processClientReset();
 						break;
 					case Constants.HEARTBEAT:
-						DBG.trace(debug.MAJOR, "HEARTBEAT");
+						DBG.trace(Debug.MAJOR, "HEARTBEAT");
 						processHeartbeat();
 						break;
 				}
 			}
 			catch(IOException exIO)
 			{
-				lblServerInfo.setText(new StringBuffer(pServer).append(":").append(pServerPort).toString());
+				lblServerInfo.setText(new StringBuilder(pServer).append(":").append(pServerPort).toString());
 				statusFrame.repaint();
 				makeServerConnection(pUserName, pUserPhone, pQueues);
 				sendStatus(clientID, available);
@@ -803,7 +803,7 @@ public class trotsReceiver implements Observer, WindowListener
 		OKDialog okd = new OKDialog(statusFrame, "Shutdown", true, "Trots Receiver has been shutdown from the server");
 		statusFrame.setState(Frame.NORMAL);
 		okd.show();
-		DBG.trace(debug.ERROR,"Normal termination");
+		DBG.trace(Debug.ERROR,"Normal termination");
 		System.exit(0);
 	}
 
@@ -823,9 +823,9 @@ public class trotsReceiver implements Observer, WindowListener
 									};
 		int tempDebug = 0;
 
-		DBG = new debug(0, "recv.dbg", "TROTS RECEIVER ($Revision: 6 $) DEBUG TRACE");
+		DBG = new Debug(0, "recv.dbg", "TROTS RECEIVER ($Revision: 6 $) DEBUG TRACE");
 
-		ini = new iniFileGen("Receiver Information", iniFileName, propArray);
+		ini = new IniFileGen("Receiver Information", iniFileName, propArray);
 
 /*---------------------------------------------------------------*/
 /* If the INI file did not exist in the first place then show it */
@@ -838,10 +838,10 @@ public class trotsReceiver implements Observer, WindowListener
 			{
 				if(ini.getProperty(propArray[i][1]) == null)
 				{
-					DBG.trace(debug.ERROR, "Property ["+propArray[i][1]+"] is not set");	
+					DBG.trace(Debug.ERROR, "Property ["+propArray[i][1]+"] is not set");	
 				}
 			}
-			DBG.trace(debug.ERROR, "Properties were not set. Abnormal termination");
+			DBG.trace(Debug.ERROR, "Properties were not set. Abnormal termination");
 			System.exit(1);
 		}
 
@@ -853,12 +853,12 @@ public class trotsReceiver implements Observer, WindowListener
 			}
 			catch(NumberFormatException exNumFmt)
 			{
-				DBG.trace(debug.ERROR, "Debug Level is not a number, setting to 0");
+				DBG.trace(Debug.ERROR, "Debug Level is not a number, setting to 0");
 				tempDebug = 0;
 			}
 			DBG.setLevel(tempDebug);
 		}
 
-		trotsReceiver tr = new trotsReceiver();
+		TrotsReceiver tr = new TrotsReceiver();
 	}
 }

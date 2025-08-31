@@ -76,23 +76,23 @@ import java.net.*;
 /*---------------------------------*/
 /* Class to send the TROTS message */
 /*---------------------------------*/
-public class trotsSender implements Observer, WindowListener
+public class TrotsSender implements Observer, WindowListener
 { 
 	Socket client;
 	DataOutputStream	clientDataOut;
 	DataInputStream	clientDataIn;
 	BufferedReader		clientTextIn;
-	static iniFileGen ini;
+	static IniFileGen ini;
 	Frame sendFrame;
 	java.awt.List queueList;
-	countdownLabel timer;
+	CountdownLabel timer;
 	Button btnCancel, btnSend, btnReset;
 	Panel	pnlButtons, pnlTextAndList;
 	TextArea messageInput;
 	MenuItem configOption, exitOption;
 	String pServer, pUserName, pUserPhone;
 	int pServerPort, pDebug, pTimeout, messageID = 0;
-	static debug DBG;
+	static Debug DBG;
 	Thread queueThread;
 	int listSelectedItem = -2, clientID = 0;
 	OKDialog dlgAbout;
@@ -103,7 +103,7 @@ public class trotsSender implements Observer, WindowListener
         @Override
         public void windowClosing(WindowEvent e)
         {
-                DBG.trace(debug.MAJOR, "Window closed");
+                DBG.trace(Debug.MAJOR, "Window closed");
                 exitProgram();
         }
         @Override
@@ -123,9 +123,9 @@ public class trotsSender implements Observer, WindowListener
 		sendTrotsCancel(messageID);
 		sendDeregister();
 		sendFrame.dispose();
-		DBG.trace(debug.MAJOR, "Stopping queue name updater thread");
+		DBG.trace(Debug.MAJOR, "Stopping queue name updater thread");
 		if(queueThread != null) queueThread.interrupt();
-		DBG.trace(debug.ERROR, "Normal termination");
+		DBG.trace(Debug.ERROR, "Normal termination");
 		System.exit(0);
 	}
 
@@ -136,24 +136,24 @@ public class trotsSender implements Observer, WindowListener
 		{
 			String actionCommand;
 			actionCommand = e.getActionCommand();
-			DBG.trace(debug.MINOR, new StringBuffer("Event ").append(actionCommand).append(" occurred").toString());
+			DBG.trace(Debug.MINOR, new StringBuilder("Event ").append(actionCommand).append(" occurred").toString());
 			if(actionCommand.equals("Config"))
 			{
-				DBG.trace(debug.MAJOR,"Displaying INI file");
+				DBG.trace(Debug.MAJOR,"Displaying INI file");
 				ini.show();
 			}
 			if(actionCommand.equals("Send"))
 			{
-				DBG.trace(debug.DEBUG, new StringBuffer("Starting timer [").append(pTimeout).append("] seconds").toString());
+				DBG.trace(Debug.DEBUG, new StringBuilder("Starting timer [").append(pTimeout).append("] seconds").toString());
 				timer.reset(pTimeout);
 				timer.go();
-				DBG.trace(debug.MINOR, "Disabling Send/Reset");
+				DBG.trace(Debug.MINOR, "Disabling Send/Reset");
 				btnSend.setEnabled(false);
 				btnReset.setEnabled(false);
-				DBG.trace(debug.MINOR, "Enabling Cancel");
+				DBG.trace(Debug.MINOR, "Enabling Cancel");
 				btnCancel.setEnabled(true);
 
-				DBG.trace(debug.MINOR, "Disabling CONFIG option on menu");
+				DBG.trace(Debug.MINOR, "Disabling CONFIG option on menu");
 				configOption.setEnabled(false);
 				Thread thread = new Thread()
 				{
@@ -162,39 +162,39 @@ public class trotsSender implements Observer, WindowListener
 						sendTrotsMessage();
 					}
 				};
-				DBG.trace(debug.MINOR, "Starting send thread");
+				DBG.trace(Debug.MINOR, "Starting send thread");
 				thread.start();
 				return;
 			}
 			if(actionCommand.equals("Cancel"))
 			{
-				DBG.trace(debug.DEBUG, "Stopping timer");
+				DBG.trace(Debug.DEBUG, "Stopping timer");
 				timer.stop();
 				if(messageID != 0)
 				{
 					sendTrotsCancel(messageID);
 				}
-				DBG.trace(debug.MINOR, "Enabling Send/Reset");
+				DBG.trace(Debug.MINOR, "Enabling Send/Reset");
 				btnSend.setEnabled(true);
 				btnReset.setEnabled(true);
 
-				DBG.trace(debug.MINOR, "Disabling Cancel");
+				DBG.trace(Debug.MINOR, "Disabling Cancel");
 				btnCancel.setEnabled(false);
 
-				DBG.trace(debug.MINOR, "Enabling CONFIG option on menu");
+				DBG.trace(Debug.MINOR, "Enabling CONFIG option on menu");
 				configOption.setEnabled(true);
 				timer.setText("");
 				return;
 			}
 			if(actionCommand.equals("Exit"))
 			{
-				DBG.trace(debug.MAJOR, "Exit selected");
+				DBG.trace(Debug.MAJOR, "Exit selected");
 				exitProgram();
 			}
 
 			if(actionCommand.equals("Reset"))
 			{
-				DBG.trace(debug.MINOR, "Resetting controls");
+				DBG.trace(Debug.MINOR, "Resetting controls");
 				timer.setText("");
 				queueList.deselect(queueList.getSelectedIndex());
 				listSelectedItem = -2;
@@ -231,7 +231,7 @@ public class trotsSender implements Observer, WindowListener
 			{
 				colonPos = text.indexOf(":");
 				text = text.substring(colonPos + 1);
-				messageInput.setText(new StringBuffer(queueList.getSelectedItem()).append(":").append(text).toString());
+				messageInput.setText(new StringBuilder(queueList.getSelectedItem()).append(":").append(text).toString());
 			}
 			listSelectedItem = queueList.getSelectedIndex();
 		}
@@ -241,13 +241,13 @@ public class trotsSender implements Observer, WindowListener
 	{
 		int tempDebug = 0, tempTimeout = 0;
 
-		DBG.trace(debug.ERROR,"Ini File Settings");
-		DBG.trace(debug.ERROR,"-----------------");
-		DBG.trace(debug.ERROR,new StringBuffer("Server Name :").append(ini.getProperty("server")).toString());
-		DBG.trace(debug.ERROR,new StringBuffer("Port        :").append(ini.getProperty("port")).toString());
-		DBG.trace(debug.ERROR,new StringBuffer("User Name   :").append(ini.getProperty("user")).toString());
-		DBG.trace(debug.ERROR,new StringBuffer("Timeout     :").append(ini.getProperty("msgtimeout")).toString());
-		DBG.trace(debug.ERROR,new StringBuffer("Debug Level :").append(ini.getProperty("debug")).toString());
+		DBG.trace(Debug.ERROR,"Ini File Settings");
+		DBG.trace(Debug.ERROR,"-----------------");
+		DBG.trace(Debug.ERROR,new StringBuilder("Server Name :").append(ini.getProperty("server")).toString());
+		DBG.trace(Debug.ERROR,new StringBuilder("Port        :").append(ini.getProperty("port")).toString());
+		DBG.trace(Debug.ERROR,new StringBuilder("User Name   :").append(ini.getProperty("user")).toString());
+		DBG.trace(Debug.ERROR,new StringBuilder("Timeout     :").append(ini.getProperty("msgtimeout")).toString());
+		DBG.trace(Debug.ERROR,new StringBuilder("Debug Level :").append(ini.getProperty("debug")).toString());
 
                 pServer = ini.getProperty("server");
                 pServerPort = Integer.parseInt(ini.getProperty("port"));
@@ -262,7 +262,7 @@ public class trotsSender implements Observer, WindowListener
 			}
 			catch(NumberFormatException exNumFmt)
 			{
-				DBG.trace(debug.ERROR, "Debug Level is not a number, setting to 0");
+				DBG.trace(Debug.ERROR, "Debug Level is not a number, setting to 0");
 				tempDebug = 0;
 			}
 		}
@@ -275,7 +275,7 @@ public class trotsSender implements Observer, WindowListener
 			}
 			catch(NumberFormatException exNumFmt)
 			{
-				DBG.trace(debug.ERROR, new StringBuffer("Message Timeout is not a number, setting to ").append(Constants.SENDER_TIMEOUT).toString());
+				DBG.trace(Debug.ERROR, new StringBuilder("Message Timeout is not a number, setting to ").append(Constants.SENDER_TIMEOUT).toString());
 				tempTimeout = Constants.SENDER_TIMEOUT;
 			}
 		}
@@ -293,12 +293,12 @@ public class trotsSender implements Observer, WindowListener
     @Override
     public void update(Observable o, Object arg)
 	{
-		DBG.trace(debug.MAJOR, "Ini file has changed");
+		DBG.trace(Debug.MAJOR, "Ini file has changed");
 
 /*---------------------------------*/
 /* Re-read the ini file properties */
 /*---------------------------------*/
-		DBG.trace(debug.MINOR, "Reloading INI properties");
+		DBG.trace(Debug.MINOR, "Reloading INI properties");
 		reloadIniProps();
 	}
 
@@ -309,8 +309,8 @@ public class trotsSender implements Observer, WindowListener
 		Menu fileMenu;
 		MenuItem aboutOption;
 
-		DBG.trace(debug.DEBUG, "--> buildWindow");
-		DBG.trace(debug.MAJOR, "Creating send window");
+		DBG.trace(Debug.DEBUG, "--> buildWindow");
+		DBG.trace(Debug.MAJOR, "Creating send window");
 		sendFrame = new Frame("Trots Sender");
 		
 		sendFrame.addWindowListener(this);
@@ -353,7 +353,7 @@ public class trotsSender implements Observer, WindowListener
 		btnReset.addActionListener(buttonListener);
 		btnSend.addActionListener(buttonListener);
 
-		timer = new countdownLabel(20);
+		timer = new CountdownLabel(20);
 		timer.setPrefix("Time remaining: ");
 
 		pnlButtons.add(btnSend);
@@ -393,22 +393,22 @@ public class trotsSender implements Observer, WindowListener
 	{
 		String queues;
 
-		DBG.trace(debug.DEBUG, "--> getQueueNames");
-		DBG.trace(debug.MAJOR, "Getting queue names from server");
+		DBG.trace(Debug.DEBUG, "--> getQueueNames");
+		DBG.trace(Debug.MAJOR, "Getting queue names from server");
 
 		try
 		{
-			DBG.trace(debug.MINOR, "Creating socket connection");
+			DBG.trace(Debug.MINOR, "Creating socket connection");
 			client = new Socket(pServer, pServerPort);
 
-			DBG.trace(debug.MINOR, "Creating data streams");
+			DBG.trace(Debug.MINOR, "Creating data streams");
 			clientDataOut = new DataOutputStream(client.getOutputStream());
 			clientTextIn = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
-			DBG.trace(debug.MINOR, "Sending QUEUE_NAMES");
+			DBG.trace(Debug.MINOR, "Sending QUEUE_NAMES");
 			clientDataOut.writeInt(Constants.QUEUE_NAMES);
 			queues = clientTextIn.readLine();
-			DBG.trace(debug.DEBUG, new StringBuffer("Queue Names = ").append(queues).toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Queue Names = ").append(queues).toString());
 
 			if(queues != null)
 			{
@@ -418,13 +418,13 @@ public class trotsSender implements Observer, WindowListener
 			else
 			{
 				timer.setText("No queues were supplied from the server");
-				DBG.trace(debug.ERROR, "No queues were supplied from the server");
+				DBG.trace(Debug.ERROR, "No queues were supplied from the server");
 			}
 		}
 		catch(IOException exIO)
 		{
 			timer.setText("Unable to obtain queue names from server");
-			DBG.trace(debug.ERROR, "Cannot send QUEUE_NAMES ("+exIO.getMessage()+")");
+			DBG.trace(Debug.ERROR, "Cannot send QUEUE_NAMES ("+exIO.getMessage()+")");
 		}
 	}
 
@@ -437,12 +437,12 @@ public class trotsSender implements Observer, WindowListener
 		String temp = qlist;
 		String queueName;
 
-		DBG.trace(debug.DEBUG, new StringBuffer("--> updateQueueList(").append(qlist).append(")").toString());
-		DBG.trace(debug.MAJOR, "Parsing queue list");
+		DBG.trace(Debug.DEBUG, new StringBuilder("--> updateQueueList(").append(qlist).append(")").toString());
+		DBG.trace(Debug.MAJOR, "Parsing queue list");
 
 		if(queueList.getItemCount() > 0)
 		{
-			DBG.trace(debug.MINOR, "Clearing existing items");
+			DBG.trace(Debug.MINOR, "Clearing existing items");
 			queueList.removeAll();
 		}
 
@@ -460,7 +460,7 @@ public class trotsSender implements Observer, WindowListener
 				queueName = temp.substring(0,commaPos);
 				temp = temp.substring(commaPos + 1);
 			}
-			DBG.trace(debug.DEBUG, new StringBuffer("Adding queue (").append(queueName).append(")").toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Adding queue (").append(queueName).append(")").toString());
 			queueList.add(queueName);
 		}
 
@@ -472,29 +472,29 @@ public class trotsSender implements Observer, WindowListener
 /*-------------------------------------------------------*/
 	public void sendTrotsCancel(int msgID)
 	{
-		dataConnection d;
+		DataConnection d;
 
-		DBG.trace(debug.DEBUG, "--> sendTrotsCancel");
-		DBG.trace(debug.MAJOR, "Sending trots cancel");
+		DBG.trace(Debug.DEBUG, "--> sendTrotsCancel");
+		DBG.trace(Debug.MAJOR, "Sending trots cancel");
 
 		try
 		{
-			DBG.trace(debug.MINOR, "Creating socket connection");
-			d = new dataConnection(pServer, pServerPort);
+			DBG.trace(Debug.MINOR, "Creating socket connection");
+			d = new DataConnection(pServer, pServerPort);
 
-			DBG.trace(debug.MINOR, "Sending TROTS_CANCEL");
+			DBG.trace(Debug.MINOR, "Sending TROTS_CANCEL");
 			d.dataOut.writeInt(Constants.TROTS_CANCEL);
-			DBG.trace(debug.DEBUG, new StringBuffer("Sending Message ID [").append(msgID).append("]").toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Sending Message ID [").append(msgID).append("]").toString());
 			d.dataOut.writeInt(msgID);
-			DBG.trace(debug.MINOR, "Waiting for server response");
-			DBG.trace(debug.DEBUG, new StringBuffer("Server responded with ").append(d.dataIn.readInt()).toString());
+			DBG.trace(Debug.MINOR, "Waiting for server response");
+			DBG.trace(Debug.DEBUG, new StringBuilder("Server responded with ").append(d.dataIn.readInt()).toString());
 		
-			DBG.trace(debug.MINOR, "Closing connection");
+			DBG.trace(Debug.MINOR, "Closing connection");
 			d.close();
 		}
 		catch(IOException exIO)
 		{
-			DBG.trace(debug.ERROR, "Unable to send TROTS_CANCEL ("+exIO.getMessage()+")");
+			DBG.trace(Debug.ERROR, "Unable to send TROTS_CANCEL ("+exIO.getMessage()+")");
 		}
 	}
 
@@ -503,23 +503,23 @@ public class trotsSender implements Observer, WindowListener
 /*---------------------------------------*/
 	void sendDeregister()
 	{
-		dataConnection d;
+		DataConnection d;
 
 		try
 		{
-			DBG.trace(debug.MINOR,"Creating secondary socket");
-			d = new dataConnection(pServer, pServerPort);
+			DBG.trace(Debug.MINOR,"Creating secondary socket");
+			d = new DataConnection(pServer, pServerPort);
 
-			DBG.trace(debug.MAJOR, "Sending CLIENT_DEREGISTER");
+			DBG.trace(Debug.MAJOR, "Sending CLIENT_DEREGISTER");
 			d.dataOut.writeInt(Constants.CLIENT_DEREGISTER);
-			DBG.trace(debug.DEBUG, new StringBuffer("Sending Client ID [").append(clientID).append("]").toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Sending Client ID [").append(clientID).append("]").toString());
 			d.dataOut.writeInt(clientID);
-			DBG.trace(debug.MINOR, "Closing connection");
+			DBG.trace(Debug.MINOR, "Closing connection");
 			d.close();
 		}
 		catch(IOException exIO)
 		{
-			DBG.trace(debug.ERROR, "Unable to send CLIENT_DEREGISTER ("+exIO.getMessage()+")");
+			DBG.trace(Debug.ERROR, "Unable to send CLIENT_DEREGISTER ("+exIO.getMessage()+")");
 		}
 	}
 /*------------------------------------*/
@@ -538,8 +538,8 @@ public class trotsSender implements Observer, WindowListener
 		String serverText;
 		int serverData;
 
-		DBG.trace(debug.DEBUG, "--> sendTrotsMessage");
-		DBG.trace(debug.MAJOR, "Sending trots message");
+		DBG.trace(Debug.DEBUG, "--> sendTrotsMessage");
+		DBG.trace(Debug.MAJOR, "Sending trots message");
 
 /*----------------------*/
 /* Get the message text */
@@ -553,7 +553,7 @@ public class trotsSender implements Observer, WindowListener
 
 		if(queue == null)
 		{
-			DBG.trace(debug.MINOR, "A queue name must be selected");
+			DBG.trace(Debug.MINOR, "A queue name must be selected");
 			timer.stop();
 			timer.setText("A queue name must be selected");
 			btnCancel.setEnabled(false);
@@ -565,72 +565,72 @@ public class trotsSender implements Observer, WindowListener
 
 		try
 		{
-			DBG.trace(debug.MINOR, "Creating socket connection");
+			DBG.trace(Debug.MINOR, "Creating socket connection");
 			primaryConnection = new Socket(pServer, pServerPort);
 
-			DBG.trace(debug.MINOR, new StringBuffer("Setting timeout to ").append(pTimeout).append(" seconds").toString());
+			DBG.trace(Debug.MINOR, new StringBuilder("Setting timeout to ").append(pTimeout).append(" seconds").toString());
 			primaryConnection.setSoTimeout(pTimeout * 1000);
 
-			DBG.trace(debug.MINOR, "Creating data input/output stream");
+			DBG.trace(Debug.MINOR, "Creating data input/output stream");
 			clientDataOut = new DataOutputStream(primaryConnection.getOutputStream());
 			clientDataIn = new DataInputStream(primaryConnection.getInputStream());
 			clientTextIn = new BufferedReader(new InputStreamReader(primaryConnection.getInputStream()));
 
-			DBG.trace(debug.MINOR, "CLIENT_REGISTER");
+			DBG.trace(Debug.MINOR, "CLIENT_REGISTER");
 			clientDataOut.writeInt(Constants.CLIENT_REGISTER);
 
-			DBG.trace(debug.MINOR, "Waiting for client ID");
+			DBG.trace(Debug.MINOR, "Waiting for client ID");
 			clientID = clientDataIn.readInt();
-			DBG.trace(debug.DEBUG, new StringBuffer("Client ID = ").append(clientID).toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Client ID = ").append(clientID).toString());
 
-			DBG.trace(debug.DEBUG, new StringBuffer("Sending User Name [").append(pUserName).append("]").toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Sending User Name [").append(pUserName).append("]").toString());
 			clientDataOut.writeBytes(pUserName + "\n");
 
-			DBG.trace(debug.DEBUG, new StringBuffer("Sending Phone Number [").append(pUserPhone).append("]").toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Sending Phone Number [").append(pUserPhone).append("]").toString());
 			clientDataOut.writeBytes(pUserPhone + "\n");
 
-			DBG.trace(debug.DEBUG, new StringBuffer("Sending Queue List as '").append(Constants.CALL_RECEIPT_QUEUE).append("'").toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Sending Queue List as '").append(Constants.CALL_RECEIPT_QUEUE).append("'").toString());
 			clientDataOut.writeBytes(Constants.CALL_RECEIPT_QUEUE+"\n");
 
-			DBG.trace(debug.DEBUG, new StringBuffer("Sending Client Revision: $Revision: 6 $").toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Sending Client Revision: $Revision: 6 $").toString());
 			clientDataOut.writeBytes("$Revision: 6 $\n");
 
-			DBG.trace(debug.MINOR, "Creating secondary socket");
+			DBG.trace(Debug.MINOR, "Creating secondary socket");
 			client = new Socket(pServer, pServerPort);
 
-			DBG.trace(debug.MINOR, "Creating secondary input/output streams");
+			DBG.trace(Debug.MINOR, "Creating secondary input/output streams");
 			tempOut = new DataOutputStream(client.getOutputStream());
 			tempIn = new DataInputStream(client.getInputStream());
 
-			DBG.trace(debug.MINOR, "Sending TROTS_MESSAGE_SEND");
+			DBG.trace(Debug.MINOR, "Sending TROTS_MESSAGE_SEND");
 			tempOut.writeInt(Constants.TROTS_MESSAGE_SEND);
-			DBG.trace(debug.DEBUG, new StringBuffer("Sending user ID [").append(clientID).append("]").toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Sending user ID [").append(clientID).append("]").toString());
 			tempOut.writeInt(clientID);
-			DBG.trace(debug.DEBUG, new StringBuffer("Sending queue name [").append(queue).append("]").toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Sending queue name [").append(queue).append("]").toString());
 			tempOut.writeBytes(queue + "\n");
-			DBG.trace(debug.DEBUG, new StringBuffer("Sending Message text [").append(message).append("]").toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Sending Message text [").append(message).append("]").toString());
 			tempOut.writeBytes(message + "\n");
-			DBG.trace(debug.MINOR, "Waiting for message iD");
+			DBG.trace(Debug.MINOR, "Waiting for message iD");
 			messageID = tempIn.readInt();
-			DBG.trace(debug.DEBUG, new StringBuffer("Message ID = ").append(messageID).toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Message ID = ").append(messageID).toString());
 
-			DBG.trace(debug.MINOR, "Closing secondary input/output");
+			DBG.trace(Debug.MINOR, "Closing secondary input/output");
 			tempOut.close();
 			tempIn.close();
 			client.close();
 
-			DBG.trace(debug.MINOR, "Waiting for server response");
+			DBG.trace(Debug.MINOR, "Waiting for server response");
 			serverCommand = clientDataIn.readInt();
-			DBG.trace(debug.DEBUG, new StringBuffer("Server command = ").append(serverCommand).toString());
+			DBG.trace(Debug.DEBUG, new StringBuilder("Server command = ").append(serverCommand).toString());
 
 			timer.stop();
 			switch(serverCommand)
 			{
 				case Constants.TROTS_ASSIGN_SEND:
-					DBG.trace(debug.MAJOR, "TROTS_ASSIGN_SEND");
-					DBG.trace(debug.DEBUG, new StringBuffer("Ignoring message id [").append(clientDataIn.readInt()).append("]").toString());
+					DBG.trace(Debug.MAJOR, "TROTS_ASSIGN_SEND");
+					DBG.trace(Debug.DEBUG, new StringBuilder("Ignoring message id [").append(clientDataIn.readInt()).append("]").toString());
 					serverText = clientTextIn.readLine();
-					DBG.trace(debug.DEBUG, new StringBuffer("Server Message = ").append(serverText).toString());
+					DBG.trace(Debug.DEBUG, new StringBuilder("Server Message = ").append(serverText).toString());
 					timer.setText(serverText);
 					queueList.deselect(queueList.getSelectedIndex());
 					listSelectedItem = -2;
@@ -639,17 +639,17 @@ public class trotsSender implements Observer, WindowListener
 					noQueueUpdate = true;
 					break;
 				case Constants.TROTS_CANCEL:
-					DBG.trace(debug.MAJOR, "TROTS_CANCEL");
+					DBG.trace(Debug.MAJOR, "TROTS_CANCEL");
 /*-----------------------*/
 /* Ignore the message ID */
 /*-----------------------*/
 					messageID = clientDataIn.readInt();
-					DBG.trace(debug.DEBUG, new StringBuffer("Message number [").append(messageID).append("]").toString());
+					DBG.trace(Debug.DEBUG, new StringBuilder("Message number [").append(messageID).append("]").toString());
 					messageID = 0;
 					break;
 			}
 
-			DBG.trace(debug.MINOR, "Sending ACK response");
+			DBG.trace(Debug.MINOR, "Sending ACK response");
 			clientDataOut.writeInt(Constants.ACK);
 
 			sendDeregister();
@@ -657,7 +657,7 @@ public class trotsSender implements Observer, WindowListener
 		}
 		catch(InterruptedIOException exInt)
 		{
-			DBG.trace(debug.MAJOR, "No response from recipients");
+			DBG.trace(Debug.MAJOR, "No response from recipients");
 			timer.stop();
 			timer.setText("No response from anyone");
 			sendTrotsCancel(messageID);
@@ -668,7 +668,7 @@ public class trotsSender implements Observer, WindowListener
 		{
 			timer.stop();
 			timer.setText("Unable to communicate with server");
-			DBG.trace(debug.ERROR, "Unable to send trots message ("+exIO.getMessage()+")");
+			DBG.trace(Debug.ERROR, "Unable to send trots message ("+exIO.getMessage()+")");
 		}
 		btnCancel.setEnabled(false);
 		btnSend.setEnabled(true);
@@ -676,18 +676,18 @@ public class trotsSender implements Observer, WindowListener
 		configOption.setEnabled(true);
 	}
 
-	public trotsSender()
+	public TrotsSender()
 	{
-		DBG.trace(debug.DEBUG, "--> trotsSender (Constructor)");
-		DBG.trace(debug.MAJOR, "Creating new trotsSender");
+		DBG.trace(Debug.DEBUG, "--> TrotsSender (Constructor)");
+		DBG.trace(Debug.MAJOR, "Creating new TrotsSender");
 		reloadIniProps();
-		DBG.trace(debug.MINOR, "Adding observer to ini file");
+		DBG.trace(Debug.MINOR, "Adding observer to ini file");
 		ini.addObserver(this);
 		buildWindow();
 
 		noQueueUpdate = false;
 
-		DBG.trace(debug.MAJOR, "Starting queue name updater thread");
+		DBG.trace(Debug.MAJOR, "Starting queue name updater thread");
 		queueThread = new Thread()
 		{
 			public void run()
@@ -703,7 +703,7 @@ public class trotsSender implements Observer, WindowListener
 						}
 						else
 						{
-							DBG.trace(debug.MINOR, "The list is being used at the moment. Will update later");
+							DBG.trace(Debug.MINOR, "The list is being used at the moment. Will update later");
 						}
 						noQueueUpdate=false;
 					}
@@ -733,10 +733,10 @@ public class trotsSender implements Observer, WindowListener
 										{"Debug Level", "debug"}
 									};
 
-		DBG = new debug(0, "sender.dbg", "TROTS SENDER ($Revision: 6 $) DEBUG TRACE");
+		DBG = new Debug(0, "sender.dbg", "TROTS SENDER ($Revision: 6 $) DEBUG TRACE");
 
 		iniFileOK = new File(iniFileName).exists();
-		ini = new iniFileGen("Sender Information", iniFileName, propArray);
+		ini = new IniFileGen("Sender Information", iniFileName, propArray);
 
 /*---------------------------------------------------------------*/
 /* If the INI file did not exist in the first place then show it */
@@ -749,11 +749,11 @@ public class trotsSender implements Observer, WindowListener
 			{
 				if(ini.getProperty(propArray[i][1]) == null)
 				{
-					DBG.trace(debug.ERROR, "Property ["+propArray[i][1]+"] is not set");	
+					DBG.trace(Debug.ERROR, "Property ["+propArray[i][1]+"] is not set");	
 					iniFileOK = false;
 				}
 			}
-			DBG.trace(debug.ERROR, "Properties were not set. Abnormal termination");
+			DBG.trace(Debug.ERROR, "Properties were not set. Abnormal termination");
 			System.exit(1);
 		}
 
@@ -766,7 +766,7 @@ public class trotsSender implements Observer, WindowListener
 			}
 			catch(NumberFormatException exNumFmt)
 			{
-				DBG.trace(debug.ERROR, "Debug Level is not a number, setting to 0");
+				DBG.trace(Debug.ERROR, "Debug Level is not a number, setting to 0");
 				tempDebug = 0;
 			}
 			DBG.setLevel(tempDebug);
@@ -780,11 +780,11 @@ public class trotsSender implements Observer, WindowListener
 			}
 			catch(NumberFormatException exNumFmt)
 			{
-				DBG.trace(debug.ERROR, "msgtimeout is not a number, setting to " + Constants.SENDER_TIMEOUT);
+				DBG.trace(Debug.ERROR, "msgtimeout is not a number, setting to " + Constants.SENDER_TIMEOUT);
 				tempTimeout = Constants.SENDER_TIMEOUT;
 			}
 		}
 
-		trotsSender ts = new trotsSender();
+		TrotsSender ts = new TrotsSender();
 	}
 }

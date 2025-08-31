@@ -21,7 +21,7 @@ Added RCS statements
 import java.awt.Label;
 import java.lang.Thread;
 
-public class countdownLabel extends Label implements Runnable
+public class CountdownLabel extends Label implements Runnable
 {
 	private boolean working;
 	private int timeLeft;
@@ -34,7 +34,7 @@ public class countdownLabel extends Label implements Runnable
 		timeLeft = newTime;
 	}
 
-	public countdownLabel(int seconds)
+        public CountdownLabel(int seconds)
 	{
 		working = false;
 		timeLeft = seconds;
@@ -49,7 +49,7 @@ public class countdownLabel extends Label implements Runnable
 	{
 		while(working && timeLeft > 0)
 		{
-			this.setText(new String(prefix + timeLeft));
+                        this.setText(prefix + timeLeft);
 			try
 			{
 				Thread.sleep(1000);
@@ -79,8 +79,9 @@ public class countdownLabel extends Label implements Runnable
 		}
 	}
 
-	public void run()
-	{
-		countdown();
-	}
+        @Override
+        public void run()
+        {
+                countdown();
+        }
 }

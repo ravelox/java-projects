@@ -54,16 +54,16 @@ import java.util.*;
 import java.net.*;
 import java.io.*;
 
-public class trotsControl
+public class TrotsControl
 {
 	static Properties props = new Properties();
 
-	String availableCommands[] = {
-		"server_shutdown", "debug_major", "debug_minor", "debug_debug",
-		"debug_error", "status_html", "add_queue", "del_queue", "clean_users",
-		"list_queues", "heartbeat","list_users",
-		"debug_details", "all_shutdown", "user_details", "client_shutdown",
-		"queue_details", "version", "server_version"};
+        String availableCommands[] = {
+                "server_shutdown", "debug_major", "debug_minor", "debug_debug",
+                "debug_error", "status_html", "add_queue", "del_queue", "clean_users",
+                "list_queues", "heartbeat","list_users",
+                "debug_details", "all_shutdown", "user_details", "client_shutdown",
+                "queue_details", "version", "server_version"};
 
 	public boolean commandAllowed(String c)
 	{
@@ -93,7 +93,7 @@ public class trotsControl
 		return returnValue;
 	}
 		
-	public trotsControl(String host, int port, String command, String parm)
+        public TrotsControl(String host, int port, String command, String parm)
 	{
 
 		Socket s;
@@ -129,22 +129,22 @@ public class trotsControl
 			{
 				dataOut.writeInt(Constants.ALL_SHUTDOWN);
 			}
-			if(command.equalsIgnoreCase("debug_major"))
-			{
-				dataOut.writeInt(Constants.DEBUG_MAJOR);
-			}
-			if(command.equalsIgnoreCase("debug_minor"))
-			{
-				dataOut.writeInt(Constants.DEBUG_MINOR);
-			}
-			if(command.equalsIgnoreCase("debug_debug"))
-			{
-				dataOut.writeInt(Constants.DEBUG_DEBUG);
-			}
-			if(command.equalsIgnoreCase("debug_error"))
-			{
-				dataOut.writeInt(Constants.DEBUG_ERROR);
-			}
+                        if(command.equalsIgnoreCase("debug_major"))
+                        {
+                                dataOut.writeInt(Constants.DEBUG_MAJOR);
+                        }
+                        if(command.equalsIgnoreCase("debug_minor"))
+                        {
+                                dataOut.writeInt(Constants.DEBUG_MINOR);
+                        }
+                        if(command.equalsIgnoreCase("debug_debug"))
+                        {
+                                dataOut.writeInt(Constants.DEBUG_DEBUG);
+                        }
+                        if(command.equalsIgnoreCase("debug_error"))
+                        {
+                                dataOut.writeInt(Constants.DEBUG_ERROR);
+                        }
 			if(command.equalsIgnoreCase("status_html"))
 			{
 				dataOut.writeInt(Constants.STATUS_HTML);
@@ -214,16 +214,16 @@ public class trotsControl
 				dataOut.writeInt(Constants.DEBUG_DETAILS);
 				switch(dataIn.readInt())
 				{
-					case debug.ERROR:
+					case Debug.ERROR:
 						System.out.println("Errors only");
 						break;
-					case debug.MAJOR:
+					case Debug.MAJOR:
 						System.out.println("Major events");
 						break;
-					case debug.MINOR:
+					case Debug.MINOR:
 						System.out.println("Minor events");
 						break;
-					case debug.DEBUG:
+					case Debug.DEBUG:
 						System.out.println("Debugging events");
 						break;
 					default:
@@ -270,7 +270,7 @@ public class trotsControl
 
 		if(argv.length != 1 && argv.length != 2)
 		{
-			System.out.println("Usage: trotsControl <command> [<parm>]");
+                    System.out.println("Usage: TrotsControl <command> [<parm>]");
 			System.exit(1);
 		}
 
@@ -302,7 +302,7 @@ public class trotsControl
 				parameter = argv[1];
 			}
 			
-			new trotsControl(propServerHost, Integer.parseInt(propServerPort), argv[0], parameter);
+                    new TrotsControl(propServerHost, Integer.parseInt(propServerPort), argv[0], parameter);
 
 		}
 		catch(FileNotFoundException exFile)
