@@ -1,10 +1,14 @@
 .SUFFIXES:
 .SUFFIXES: .class .java
 
-JAVAC           =       javac -O -classpath .:/web/docs/score_client.jar
+JAVAC           =       javac -O -classpath .:..
 JAVA            =       java
 
-CLASSES         =       Maki
+# All game and score server classes
+CLASSES         =       Maki \
+                        ScoreServer \
+                        ScoreClient \
+                        DataConnection
 
 SRC=$(CLASSES:=.java)
 OBJ=$(SRC:.java=.class)
@@ -13,9 +17,9 @@ JAR=maki.jar
 
 all: $(OBJ) $(JAR)
 
-$(JAR)::
-	@echo Building ${JAR} file
-	@jar -0cvf ${JAR} *.class
+$(JAR):: $(OBJ)
+        @echo Building ${JAR} file
+        @jar -0cvf ${JAR} $(OBJ)
 
 .java.class:
 	@echo Compiling $<
