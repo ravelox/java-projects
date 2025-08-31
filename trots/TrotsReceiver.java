@@ -137,8 +137,7 @@ public class TrotsReceiver implements IniFileListener, WindowListener
         public void iniFileUpdated()
         {
 		DataConnection d;
-		String oldServer = pServer, oldUser = pUserName, oldQueues = pQueues;
-		String oldPhone = pUserPhone;
+		String oldServer = pServer;
 		int oldPort = pServerPort;
 
 		DBG.trace(Debug.MAJOR, "Ini file has changed");
@@ -303,7 +302,7 @@ public class TrotsReceiver implements IniFileListener, WindowListener
 		{
 			String actionCommand = e.getActionCommand();
 			String actionType, IDString;
-			int commandLen = actionCommand.length();
+//			int commandLen = actionCommand.length();
 			int trotsID;
 
 			actionType = actionCommand.substring(0,1);
@@ -810,7 +809,7 @@ public class TrotsReceiver implements IniFileListener, WindowListener
 		String iniFileName =	System.getProperty("user.home") +
 									System.getProperty("file.separator") +
 									Constants.TROTS_INI_FILE;
-		String propServerName, propServerPort, propUserName, propQueues;
+		//String propServerName, propServerPort, propUserName, propQueues;
 		String propArray[][]={
                      		   {"Server Name", "server"},
                		         {"Port Number", "port"},
@@ -857,6 +856,6 @@ public class TrotsReceiver implements IniFileListener, WindowListener
 			DBG.setLevel(tempDebug);
 		}
 
-		TrotsReceiver tr = new TrotsReceiver();
+		new TrotsReceiver();
 	}
 }

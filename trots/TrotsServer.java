@@ -106,7 +106,6 @@ Added RCS statements
 import java.util.*;
 import java.net.*;
 import java.io.*;
-import java.awt.event.*;
 import java.text.*;
 
 /*---------------------------*/
@@ -962,14 +961,12 @@ public class TrotsServer
 	{
 		List<TrotsUser> userCopy;
 		TrotsUser tu;
-		int userCount;
 
 		DBG.trace(Debug.DEBUG, "--> processListUsers");
 		DBG.trace(Debug.MAJOR, "Sending list of user names");
 		userCopy = new ArrayList<>(users);
 		try
 		{
-			userCount = 0;
 			for(int i=0; i< userCopy.size(); i++)
 			{
 				tu = userCopy.get(i);
@@ -1232,7 +1229,6 @@ public class TrotsServer
 	public void processQueueDetails()
 	{
 		String queueName;
-		int queuePos;
 
 		DBG.trace(Debug.DEBUG, "-->processQueueDetails");
 		try
@@ -1613,7 +1609,7 @@ public class TrotsServer
 				}
 			}
 
-			DBG.trace(DBG.ERROR, "Normal Completion");
+			DBG.trace(Debug.ERROR, "Normal Completion");
 		}
 		catch(IOException exIO)
 		{
@@ -1656,7 +1652,7 @@ public class TrotsServer
 			DBG.trace(Debug.DEBUG,"Queues = " + propQueues);
 			DBG.trace(Debug.DEBUG,"Debug Level = " + props.getProperty("debug"));
 
-                   TrotsServer ts = new TrotsServer(Integer.parseInt(propServerPort));
+            new TrotsServer(Integer.parseInt(propServerPort));
 
 		}
 		catch(FileNotFoundException exFile)

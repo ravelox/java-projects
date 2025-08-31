@@ -69,7 +69,6 @@ Added RCS statements
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
 import java.io.*;
 import java.net.*;
 
@@ -249,8 +248,8 @@ public class TrotsSender implements IniFileListener, WindowListener
 		DBG.trace(Debug.ERROR,new StringBuilder("Timeout     :").append(ini.getProperty("msgtimeout")).toString());
 		DBG.trace(Debug.ERROR,new StringBuilder("Debug Level :").append(ini.getProperty("debug")).toString());
 
-                pServer = ini.getProperty("server");
-                pServerPort = Integer.parseInt(ini.getProperty("port"));
+        pServer = ini.getProperty("server");
+        pServerPort = Integer.parseInt(ini.getProperty("port"));
 		pUserName = ini.getProperty("user");
 		pUserPhone = ini.getProperty("phone");
 
@@ -271,7 +270,7 @@ public class TrotsSender implements IniFileListener, WindowListener
 		{
 			try
 			{
-                                tempTimeout = Integer.parseInt(ini.getProperty("msgtimeout"));
+            	tempTimeout = Integer.parseInt(ini.getProperty("msgtimeout"));
 			}
 			catch(NumberFormatException exNumFmt)
 			{
@@ -287,6 +286,10 @@ public class TrotsSender implements IniFileListener, WindowListener
 	}
 
 
+	public void setTimeout(int timeOutValue)
+	{
+		pTimeout = timeOutValue;
+	}
 /*-------------------------------------------------------------------*/
 /* The ini file has been changed so we need to re-set the connection */
 /*-------------------------------------------------------------------*/
@@ -532,11 +535,11 @@ public class TrotsSender implements IniFileListener, WindowListener
 
 		DataOutputStream tempOut;
 		DataInputStream tempIn;
-		BufferedReader textIn;
+//		BufferedReader textIn;
 		
 		int serverCommand;
 		String serverText;
-		int serverData;
+//		int serverData;
 
 		DBG.trace(Debug.DEBUG, "--> sendTrotsMessage");
 		DBG.trace(Debug.MAJOR, "Sending trots message");
@@ -696,7 +699,7 @@ public class TrotsSender implements IniFileListener, WindowListener
 				{
 					try
 					{
-						this.sleep(30 * 1000);
+						Thread.sleep(30 * 1000);
 						if(queueList.getSelectedIndex() == -1 && !noQueueUpdate)
 						{
 							getQueueNames();
@@ -721,7 +724,8 @@ public class TrotsSender implements IniFileListener, WindowListener
 							System.getProperty("file.separator") +
 							Constants.SENDER_INI_FILE;
 	
-		int tempDebug, tempTimeout;
+		int tempDebug;
+		int tempTimeout;
 		boolean iniFileOK = false;
 
 		String propArray[][]={
@@ -762,7 +766,7 @@ public class TrotsSender implements IniFileListener, WindowListener
 		{
 			try
 			{
-                                tempDebug = Integer.parseInt(ini.getProperty("debug"));
+                tempDebug = Integer.parseInt(ini.getProperty("debug"));
 			}
 			catch(NumberFormatException exNumFmt)
 			{
@@ -772,11 +776,12 @@ public class TrotsSender implements IniFileListener, WindowListener
 			DBG.setLevel(tempDebug);
 		}
 
+		tempTimeout = Constants.SENDER_TIMEOUT;
 		if(ini.getProperty("msgtimeout") != null)
 		{
 			try
 			{
-                                tempTimeout = Integer.parseInt(ini.getProperty("msgtimeout"));
+                tempTimeout = Integer.parseInt(ini.getProperty("msgtimeout"));
 			}
 			catch(NumberFormatException exNumFmt)
 			{
@@ -786,5 +791,6 @@ public class TrotsSender implements IniFileListener, WindowListener
 		}
 
 		TrotsSender ts = new TrotsSender();
+		ts.setTimeout(tempTimeout);
 	}
 }
