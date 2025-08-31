@@ -1,15 +1,20 @@
-import netscape.security.PrivilegeManager;
-import java.net.*;
-import java.io.*;
-import java.util.Vector;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public class ScoreServer
 {
-	ServerSocket serverSocket;
-	Vector Games;
+        ServerSocket serverSocket;
+        List<GameTable> games;
 
-	class Player
+        static class Player
 	{
 		String playerName;
 		int playerScore;
@@ -21,84 +26,84 @@ public class ScoreServer
 		}
 	}
 
-	class GameTable
+        static class GameTable
 	{
 		String name;
-		Vector playerScores;
+                List<Player> playerScores;
 
-		public GameTable(String pName)
-		{
-			playerScores = new Vector();
-			for(int i=0;i<10;i++)
-			{
-				Player p = new Player(pName + " " + (i+1), 0);
-				playerScores.insertElementAt(p, i);
-			}
+                public GameTable(String pName)
+                {
+                        playerScores = new ArrayList<>();
+                        for(int i=0;i<10;i++)
+                        {
+                                Player p = new Player(pName + " " + (i+1), 0);
+                                playerScores.add(p);
+                        }
 
-			name = pName;
-		}
+                        name = pName;
+                }
 
-		public boolean isHiScore(int score)
-		{
-			Player p;
-			
-			p = (Player)playerScores.elementAt(9);
+                public boolean isHiScore(int score)
+                {
+                        Player p;
 
-			return(score > p.playerScore);
-		}
+                        p = playerScores.get(9);
 
-		public void addScore(String name, int score)
-		{
-			Player p = new Player(name, score);
-			Player hiPlayer;
-			int i;
+                        return(score > p.playerScore);
+                }
 
-			i = 0;
-			while(i < 10)
-			{
-				hiPlayer = (Player)playerScores.elementAt(i);
-				if(p.playerScore > hiPlayer.playerScore)
-				{
-					playerScores.insertElementAt(p, i);
-					break;
-				}
-				i++;
-			}
-		}
+                public void addScore(String name, int score)
+                {
+                        Player p = new Player(name, score);
+                        Player hiPlayer;
+                        int i;
 
-		public String getScores()
-		{
-			StringBuffer sb = new StringBuffer("");
-			int i;
-			Player p;
+                        i = 0;
+                        while(i < 10)
+                        {
+                                hiPlayer = playerScores.get(i);
+                                if(p.playerScore > hiPlayer.playerScore)
+                                {
+                                        playerScores.add(i, p);
+                                        break;
+                                }
+                                i++;
+                        }
+                }
 
-			for(i=0;i<10;i++)
-			{
-				p = (Player)playerScores.elementAt(i);
-				if(i > 0)
-				{
-					sb.append(";");
-				}
-				sb.append(p.playerName);
-				sb.append("#");
-				sb.append(p.playerScore);
-			}
-			return sb.toString();
-		}
-	}
+                public String getScores()
+                {
+                        StringBuilder sb = new StringBuilder();
+                        int i;
+                        Player p;
 
-	private GameTable findGame(String game)
-	{
-		if(Games.size() == 0) return null;
+                        for(i=0;i<10;i++)
+                        {
+                                p = playerScores.get(i);
+                                if(i > 0)
+                                {
+                                        sb.append(";");
+                                }
+                                sb.append(p.playerName);
+                                sb.append("#");
+                                sb.append(p.playerScore);
+                        }
+                        return sb.toString();
+                }
+        }
 
-		for(int i = 0; i < Games.size(); i++)
-		{
-			GameTable g = (GameTable)Games.elementAt(i);
-			if(g.name.equalsIgnoreCase(game)) return g;
-		}
+        private GameTable findGame(String game)
+        {
+                if(games.isEmpty()) return null;
 
-		return null;
-	}
+                for(int i = 0; i < games.size(); i++)
+                {
+                        GameTable g = games.get(i);
+                        if(g.name.equalsIgnoreCase(game)) return g;
+                }
+
+                return null;
+        }
 
 	private int isHi(String game, int score)
 	{
@@ -113,8 +118,8 @@ public class ScoreServer
 
 		if(g == null)
 		{
-			g = new GameTable(game);
-			Games.addElement(g);
+                        g = new GameTable(game);
+                        games.add(g);
 		}
 
 		return g.getScores()+"\n";
@@ -128,8 +133,8 @@ public class ScoreServer
 
 		if(g == null)
 		{
-			g = new GameTable(game);
-			Games.addElement(g);
+                        g = new GameTable(game);
+                        games.add(g);
 		}
 
 		g.addScore(pName, pScore);
@@ -137,88 +142,84 @@ public class ScoreServer
 
 	public ScoreServer()
 	{
-		Games = new Vector();
-		Socket client;
-		DataInputStream dataIn;
-		DataOutputStream dataOut;
-		BufferedReader textIn;
-		String commandString = "";
-		String command = "";
-		String game = "";
-		String pName = "";
-		String score = "";
-		int pScore = 0;
-		String scoreList;
-		GameTable gt;
+                games = new ArrayList<>();
+                String commandString = "";
+                String command = "";
+                String game = "";
+                String pName = "";
+                String score = "";
+                int pScore = 0;
+                String scoreList;
+                GameTable gt;
 
-		try
-		{
-			serverSocket = new ServerSocket(9800);
+                try
+                {
+                        serverSocket = new ServerSocket(9800);
 
+                        while(true)
+                        {
+                                try (Socket client = serverSocket.accept();
+                                     DataInputStream dataIn = new DataInputStream(client.getInputStream());
+                                     DataOutputStream dataOut = new DataOutputStream(client.getOutputStream());
+                                     BufferedReader textIn = new BufferedReader(new InputStreamReader(client.getInputStream())))
+                                {
+                                        System.out.println("Client connection made");
 
-			while(true)
-			{
-				client = serverSocket.accept();
-				System.out.println("Client connection made");
+                                        commandString = textIn.readLine();
 
-				dataIn = new DataInputStream(client.getInputStream());
-				dataOut = new DataOutputStream(client.getOutputStream());
-				textIn = new BufferedReader(new InputStreamReader(client.getInputStream()));
+                                        StringTokenizer st = new StringTokenizer(commandString, "#");
 
-				commandString = textIn.readLine();
+                                        int numTokens = st.countTokens();
 
-				StringTokenizer st = new StringTokenizer(commandString, "#");
-				
-				int numTokens = st.countTokens();
-				
-				command = st.nextToken();
-				game = st.nextToken();
+                                        command = st.nextToken();
+                                        game = st.nextToken();
 
-				if(numTokens >= 3)
-				{
-					score = st.nextToken();
-					pScore = Integer.parseInt(score);
-				}
+                                        if(numTokens >= 3)
+                                        {
+                                                score = st.nextToken();
+                                                pScore = Integer.parseInt(score);
+                                        }
 
-				if(numTokens >= 4)
-				{
-					pName = st.nextToken();
-				}
-					
-				System.out.println("Command = " + command);
-				if(command.equalsIgnoreCase("get"))
-				{
-					scoreList = getTable(game);
-					dataOut.writeBytes(scoreList);
-				}
+                                        if(numTokens >= 4)
+                                        {
+                                                pName = st.nextToken();
+                                        }
 
-				if(command.equalsIgnoreCase("clr"))
-				{
-					gt = findGame(game);
-					if(gt != null)
-					{
-						Games.removeElement(gt);
-						gt = new GameTable(game);
-						Games.addElement(gt);
-					}
-				}
+                                        System.out.println("Command = " + command);
+                                        if(command.equalsIgnoreCase("get"))
+                                        {
+                                                scoreList = getTable(game);
+                                                dataOut.writeBytes(scoreList);
+                                        }
 
-				if(command.equalsIgnoreCase("chk"))
-				{
-					dataOut.writeInt(isHi(game, pScore));
-				}
+                                        if(command.equalsIgnoreCase("clr"))
+                                        {
+                                                gt = findGame(game);
+                                                if(gt != null)
+                                                {
+                                                games.remove(gt);
+                                                gt = new GameTable(game);
+                                                games.add(gt);
+                                                }
+                                        }
 
-				if(command.equalsIgnoreCase("add"))
-				{
-					addScore(game, pName, pScore);
-				}
-			}
-		}
-		catch(IOException exIO)
-		{
-			System.out.println("Unable to create server socket");
-			System.out.println(exIO.getMessage());
-		}
+                                        if(command.equalsIgnoreCase("chk"))
+                                        {
+                                                dataOut.writeInt(isHi(game, pScore));
+                                        }
+
+                                        if(command.equalsIgnoreCase("add"))
+                                        {
+                                                addScore(game, pName, pScore);
+                                        }
+                                }
+                        }
+                }
+                catch(IOException exIO)
+                {
+                        System.out.println("Unable to create server socket");
+                        System.out.println(exIO.getMessage());
+                }
 		
 	}
 	public static void main(String argv[])

@@ -1,134 +1,116 @@
 import java.applet.*;
 import java.awt.*;
-import java.io.*;
+import java.io.IOException;
 import java.util.StringTokenizer;
 
 public class ScoreClient extends Applet
 {
-	Label lblMessage;
-	TextField txtPlayerName;
-	Label lblPlayerName[];
-	Label lblPlayerScore[];
+        Label lblMessage;
+        TextField txtPlayerName;
+        Label[] lblPlayerName;
+        Label[] lblPlayerScore;
 
-	public void init()
-	{
-		Panel pnlScores,pnlText;
-		lblPlayerName = new Label[10];
-		lblPlayerScore = new Label[10];
+        @Override
+        public void init()
+        {
+                Panel pnlScores,pnlText;
+                lblPlayerName = new Label[10];
+                lblPlayerScore = new Label[10];
 
-		//netscape.security.PrivilegeManager.enablePrivilege("UniversalConnect");
+                pnlText = new Panel(new BorderLayout());
+                txtPlayerName = new TextField(getParameter("game"));
+                pnlText.add("North", txtPlayerName);
+                lblMessage = new Label(getParameter("game"));
+                lblMessage.setForeground(Color.white);
+                lblMessage.setBackground(Color.black);
+                lblMessage.setAlignment(Label.CENTER);
+                pnlText.add("South",lblMessage);
 
-		pnlText = new Panel(new BorderLayout());
-		txtPlayerName = new TextField(getParameter("game"));
-		pnlText.add("North", txtPlayerName);
-		lblMessage = new Label(getParameter("game"));
-		lblMessage.setForeground(Color.white);
-		lblMessage.setBackground(Color.black);
-		lblMessage.setAlignment(Label.CENTER);
-		pnlText.add("South",lblMessage);
-		
-		pnlScores = new Panel(new GridLayout(10, 2));
-		for(int i = 0; i < 10 ; i++)
-		{
-			lblPlayerName[i] = new Label("Player " + i);
-			pnlScores.add(lblPlayerName[i]);
-			lblPlayerScore[i] = new Label("" + i);
-			lblPlayerScore[i].setAlignment(Label.RIGHT);
-			pnlScores.add(lblPlayerScore[i]);
-		}
-		setLayout(new BorderLayout());
-		add("North",pnlText);
-		add("Center",pnlScores);
-		
-		updateScores();
-	}
+                pnlScores = new Panel(new GridLayout(10, 2));
+                for(int i = 0; i < 10 ; i++)
+                {
+                        lblPlayerName[i] = new Label("Player " + i);
+                        pnlScores.add(lblPlayerName[i]);
+                        lblPlayerScore[i] = new Label("" + i);
+                        lblPlayerScore[i].setAlignment(Label.RIGHT);
+                        pnlScores.add(lblPlayerScore[i]);
+                }
+                setLayout(new BorderLayout());
+                add("North",pnlText);
+                add("Center",pnlScores);
 
-	public void addScore(String name, int score)
-	{
-		dataConnection d;
+                updateScores();
+        }
 
-		try
-		{
-			//netscape.security.PrivilegeManager.enablePrivilege("UniversalConnect");
+        public void addScore(String name, int score)
+        {
+                try (DataConnection d = new DataConnection(getParameter("server"), 9800))
+                {
+                        d.dataOut.writeBytes("add#" + getParameter("game") + "#");
+                        d.dataOut.writeBytes(score + "#");
+                        d.dataOut.writeBytes(name + "\n");
+                }
+                catch(IOException exIO) {}
 
-			d = new dataConnection(getParameter("server"), 9800);
+                updateScores();
+        }
 
-			d.dataOut.writeBytes("add#" + getParameter("game") + "#");
-			d.dataOut.writeBytes(score + "#");
-			d.dataOut.writeBytes(name + "\n");
-			
-			updateScores();
-		}
-		catch(IOException exIO) {}
-	}
+        public void updateScores()
+        {
+                StringTokenizer st1, st2;
+                String scoreString;
 
-	public void updateScores()
-	{
-		dataConnection d;
-		StringTokenizer st1, st2;
-		String scoreString;
+                try (DataConnection d = new DataConnection(getParameter("server"), 9800))
+                {
+                        d.dataOut.writeBytes("get#"+getParameter("game")+"\n");
 
-		try
-		{
-			//netscape.security.PrivilegeManager.enablePrivilege("UniversalConnect");
-			d = new dataConnection(getParameter("server"), 9800);
+                        scoreString = d.textIn.readLine();
 
-			d.dataOut.writeBytes("get#"+getParameter("game")+"\n");
+                        st1 = new StringTokenizer(scoreString, ";");
 
-			scoreString = d.textIn.readLine();
+                        for(int i=0; i < 10; i++)
+                        {
+                                String player = st1.nextToken();
+                                st2 = new StringTokenizer(player, "#");
 
-			d.close();
+                                String pname = st2.nextToken();
+                                String pscore = st2.nextToken();
 
-			st1 = new StringTokenizer(scoreString, ";");
+                                lblPlayerName[i].setText(pname);
+                                lblPlayerScore[i].setText(pscore);
+                        }
+                }
+                catch(IOException exIO) {}
+        }
 
-			for(int i=0; i < 10; i++)
-			{
+        public void newScore(int score)
+        {
+                try (DataConnection d = new DataConnection(getParameter("server"), 9800))
+                {
+                        d.dataOut.writeBytes("chk#"+getParameter("game")+"#"+score+"\n");
 
-				String player = st1.nextToken();
-				st2 = new StringTokenizer(player, "#");
+                        if(d.dataIn.readInt() > 0)
+                        {
+                                addScore(txtPlayerName.getText(), score);
+                                lblMessage.setBackground(Color.red);
+                                lblMessage.setForeground(Color.white);
+                                lblMessage.setText("High Score");
+                        }
+                        else
+                        {
+                                lblMessage.setBackground(Color.black);
+                                lblMessage.setForeground(Color.white);
+                                lblMessage.setText(getParameter("game"));
+                        }
+                }
+                catch(IOException exIO) { lblMessage.setText("Uh Oh!"); }
+        }
 
-				String pname = st2.nextToken();
-				String pscore = st2.nextToken();
+        @Override
+        public void paint(Graphics g)
+        {
+                Dimension d = this.getSize();
 
-				lblPlayerName[i].setText(pname);
-				lblPlayerScore[i].setText(pscore);
-			}
-		}
-		catch(IOException exIO) {}
-	}
-
-	public void newScore(int score)
-	{
-		dataConnection d;
-
-		try
-		{
-			//netscape.security.PrivilegeManager.enablePrivilege("UniversalConnect");
-			d = new dataConnection(getParameter("server"), 9800);
-
-			d.dataOut.writeBytes("chk#"+getParameter("game")+"#"+score+"\n");
-			
-			if(d.dataIn.readInt() > 0)
-			{
-				addScore(txtPlayerName.getText(), score);
-				lblMessage.setBackground(Color.red);
-				lblMessage.setForeground(Color.white);
-				lblMessage.setText("High Score");
-			}
-			else
-			{
-				lblMessage.setBackground(Color.black);
-				lblMessage.setForeground(Color.white);
-				lblMessage.setText(getParameter("game"));
-			}
-		}
-		catch(IOException exIO) { lblMessage.setText("Uh Oh!"); }
-	}
-
-	public void paint(Graphics g)
-	{
-		Dimension d = this.getSize();
-
-		g.drawRect(2, 2, d.width - 2, d.height - 2);
-	}
+                g.drawRect(2, 2, d.width - 2, d.height - 2);
+        }
 }
