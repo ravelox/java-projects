@@ -18,8 +18,8 @@ JAR=maki.jar
 all: $(OBJ) $(JAR)
 
 $(JAR):: $(OBJ)
-        @echo Building ${JAR} file
-        @jar -0cvf ${JAR} $(OBJ)
+	@echo Building ${JAR} file
+	@jar -0cvf ${JAR} $(OBJ)
 
 .java.class:
 	@echo Compiling $<
