@@ -1,0 +1,592 @@
++00000000 TROTS SERVER ($Revision: 693 $) DEBUG TRACE (Tue Jul 22 16:35:56 PDT 2008)
+
++00000000 Properties loaded
++00000000 Port = 9876
++00000000 Queues = OAQ,DKQ,NEWQ
++00000000 Debug Level = 4
++00000000 --> trotsServer (Constructor)
++00000000 Initialising counters
++00000000 -->queue_list_to_vector
++00000000 <--queue_list_to_vector
++00000000 Creating socket on port 9876
++00000000 Waiting for client connection
++00000035 Creating input/output streams
++00000035 Waiting for client command
++00000035 Received command [10]
++00000035 QUEUE_NAMES
++00000035 --> processQueueNames
++00000035 Sending queue names
++00000035 -->queue_vector_to_list
++00000035 <--queue_vector_to_list
++00000035 <--processQueueNames
++00000035 Waiting for client connection
++00000065 Creating input/output streams
++00000065 Waiting for client command
++00000065 Received command [10]
++00000065 QUEUE_NAMES
++00000065 --> processQueueNames
++00000065 Sending queue names
++00000065 -->queue_vector_to_list
++00000065 <--queue_vector_to_list
++00000065 <--processQueueNames
++00000065 Waiting for client connection
++00000074 Creating input/output streams
++00000074 Waiting for client command
++00000074 Received command [1]
++00000074 CLIENT_REGISTER
++00000074 --> registerClient
++00000074 Creating new trots user
++00000074 Generating client ID
++00000074 -->isDuplicateUser (0)
++00000074 -->isDuplicateUser (1)
++00000074 <--isDuplicateUser (false)
++00000074 Client ID = 1
++00000074 Sending ID to client
++00000074 Waiting for user name
++00000074 User Name = Mr Receiver
++00000074 Waiting for phone number
++00000074 Phone No = 2
++00000074 Waiting for queue list
++00000074 Queue List = OAQ
++00000074 Waiting for Client version
++00000074 Client Version = $Revision: 693 $
++00000074 Assigning input/output streams
++00000074 Obtaining client host name
++00000074 Client Host Name = localhost.localdomain
++00000074 Adding user to list of clients
++00000074 Client registered
++00000074 <--registerClient
++00000074 Waiting for client connection
++00000074 Creating input/output streams
++00000074 Waiting for client command
++00000074 Received command [9]
++00000074 CLIENT_STATUS
++00000074 --> processClientStatus
++00000074 Waiting for client ID
++00000074 Client ID = 1
++00000074 Waiting for client status
++00000074 Client Status = 0
++00000074 Sending ACK response
++00000074 Locating client
++00000074 -->findUser (1)
++00000074 <--findUser(true)
++00000074 User Name = Mr Receiver
++00000074 Setting user availability
++00000074 <--processClientStatus
++00000074 Waiting for client connection
++00000095 Creating input/output streams
++00000095 Waiting for client command
++00000095 Received command [10]
++00000095 QUEUE_NAMES
++00000095 --> processQueueNames
++00000095 Sending queue names
++00000095 -->queue_vector_to_list
++00000095 <--queue_vector_to_list
++00000095 <--processQueueNames
++00000096 Waiting for client connection
++00000100 Creating input/output streams
++00000100 Waiting for client command
++00000100 Received command [1]
++00000100 CLIENT_REGISTER
++00000100 --> registerClient
++00000100 Creating new trots user
++00000100 Generating client ID
++00000100 -->isDuplicateUser (0)
++00000100 -->isDuplicateUser (1)
++00000100 <--isDuplicateUser (true)
++00000100 -->isDuplicateUser (2)
++00000100 <--isDuplicateUser (false)
++00000100 Client ID = 2
++00000100 Sending ID to client
++00000100 Waiting for user name
++00000100 User Name = Dave Kelly
++00000100 Waiting for phone number
++00000100 Phone No = 1
++00000100 Waiting for queue list
++00000100 Queue List = *Sender*
++00000100 Waiting for Client version
++00000100 Client Version = $Revision: 693 $
++00000100 Assigning input/output streams
++00000100 Obtaining client host name
++00000100 Client Host Name = localhost.localdomain
++00000100 Adding user to list of clients
++00000100 Client registered
++00000100 <--registerClient
++00000100 Waiting for client connection
++00000100 Creating input/output streams
++00000100 Waiting for client command
++00000100 Received command [12]
++00000100 TROTS_MESSAGE_SEND
++00000100 --> processTrotsMessage
++00000100 Creating new trots message
++00000100 Generating message ID
++00000100 -->isDuplicateMsg (0)
++00000100 -->isDuplicateMsg (1)
++00000100 <--isDuplicateMsg(false)
++00000100 Message ID = 1
++00000100 Waiting for user ID
++00000100 User ID = 2
++00000100 Waiting for queue name
++00000100 Queue Name = OAQ
++00000100 Updating statistics
++00000100 Waiting for message text
++00000100 Message Text = OAQ:This is a test 
++00000100 Sending message ID
++00000100 Finding recipients
++00000100 Checking [Mr Receiver] Queues [OAQ]
++00000100 Adding [Mr Receiver]
++00000100 --> sendMessage
++00000100 -->findUser (2)
++00000100 <--findUser(true)
++00000100 Sending TROTS_MESSAGE_RECV
++00000100 Sending Message ID [1]
++00000100 Sending From [Dave Kelly - 1]
++00000100 Sending Message Text [OAQ:This is a test ]
++00000100 Waiting for client response
++00000100 Response [54321]
++00000100 TROTS_MESSAGE_RECV sent
++00000100 <-- sendMessage
++00000100 Checking [Dave Kelly] Queues [*Sender*]
++00000100 Adding message to list of messages
++00000100 <-- processTrotsMessage
++00000100 Waiting for client connection
++00000106 Creating input/output streams
++00000106 Waiting for client command
++00000106 Received command [15]
++00000106 TROTS_ASSIGN_RECV
++00000106 --> processTrotsAssign
++00000106 Processing TROTS_ASSIGN_RECV
++00000106 Waiting for Message ID
++00000106 Message ID = 1
++00000106 Waiting for User ID
++00000106 User ID = 1
++00000106 Sending ACK response
++00000106 Locating Message ID [1]
++00000106 -->findMsg (1)
++00000106 <--findMsg (true)
++00000106 Setting message to processed
++00000106 Locating User ID [1]
++00000106 -->findUser (1)
++00000106 <--findUser(true)
++00000106 User ID [1] is [Mr Receiver]
++00000106 Telling sender who picked this up
++00000106 --> tellSender
++00000106 Locating sender details
++00000106 -->findUser (2)
++00000106 <--findUser(true)
++00000106 Sender is [Dave Kelly]
++00000106 Sending TROTS_ASSIGN_SEND to sender
++00000106 Sending message id [1]
++00000106 Sending [Mr Receiver] to sender
++00000106 Waiting for server response
++00000106 Server response [54321]
++00000106 <--tellSender
++00000106 Telling other recipients who picked this up
++00000106 --> tellRecipients
++00000106 [1] recipients to update
++00000106 Sending TROTS_ASSIGN_SEND
++00000106 To Mr Receiver
++00000106 <--tellRecipients
++00000106 Removing message from list of messages
++00000106 <-- processTrotsAssign
++00000106 Waiting for client connection
++00000106 Creating input/output streams
++00000106 Waiting for client command
++00000106 Received command [2]
++00000106 CLIENT_DEREGISTER
++00000106 --> deregisterClient
++00000106 Waiting for User ID
++00000106 User ID [2]
++00000106 Locating user ID
++00000106 -->findUser (2)
++00000106 <--findUser(true)
++00000106 Closing down data streams
++00000106 Client deregistered
++00000106 <-- deregisterClient
++00000106 Waiting for client connection
++00000119 Creating input/output streams
++00000119 Waiting for client command
++00000119 Received command [1]
++00000119 CLIENT_REGISTER
++00000119 --> registerClient
++00000119 Creating new trots user
++00000119 Generating client ID
++00000119 -->isDuplicateUser (0)
++00000119 -->isDuplicateUser (1)
++00000119 <--isDuplicateUser (true)
++00000119 -->isDuplicateUser (2)
++00000119 <--isDuplicateUser (false)
++00000119 Client ID = 2
++00000119 Sending ID to client
++00000119 Waiting for user name
++00000119 User Name = Dave Kelly
++00000119 Waiting for phone number
++00000119 Phone No = 1
++00000119 Waiting for queue list
++00000119 Queue List = *Sender*
++00000119 Waiting for Client version
++00000119 Client Version = $Revision: 693 $
++00000119 Assigning input/output streams
++00000119 Obtaining client host name
++00000119 Client Host Name = localhost.localdomain
++00000119 Adding user to list of clients
++00000119 Client registered
++00000119 <--registerClient
++00000119 Waiting for client connection
++00000119 Creating input/output streams
++00000119 Waiting for client command
++00000119 Received command [12]
++00000119 TROTS_MESSAGE_SEND
++00000119 --> processTrotsMessage
++00000119 Creating new trots message
++00000119 Generating message ID
++00000119 -->isDuplicateMsg (0)
++00000119 -->isDuplicateMsg (1)
++00000119 <--isDuplicateMsg(false)
++00000119 Message ID = 1
++00000119 Waiting for user ID
++00000119 User ID = 2
++00000119 Waiting for queue name
++00000119 Queue Name = OAQ
++00000119 Updating statistics
++00000119 Waiting for message text
++00000119 Message Text = OAQ:Another message
++00000119 Sending message ID
++00000119 Finding recipients
++00000119 Checking [Mr Receiver] Queues [OAQ]
++00000119 Adding [Mr Receiver]
++00000119 --> sendMessage
++00000119 -->findUser (2)
++00000119 <--findUser(true)
++00000119 Sending TROTS_MESSAGE_RECV
++00000119 Sending Message ID [1]
++00000119 Sending From [Dave Kelly - 1]
++00000119 Sending Message Text [OAQ:Another message]
++00000119 Waiting for client response
++00000119 Response [54321]
++00000119 TROTS_MESSAGE_RECV sent
++00000119 <-- sendMessage
++00000119 Checking [Dave Kelly] Queues [*Sender*]
++00000119 Adding message to list of messages
++00000119 <-- processTrotsMessage
++00000119 Waiting for client connection
++00000129 Creating input/output streams
++00000129 Waiting for client command
++00000129 Received command [8]
++00000129 TROTS_CANCEL
++00000129 --> processTrotsCancel
++00000129 Cancelling trots message
++00000129 Waiting for message ID
++00000129 Message ID = 1
++00000129 Sending ACK
++00000129 Locating message
++00000129 -->findMsg (1)
++00000129 <--findMsg (true)
++00000129 Locating sender
++00000129 -->findUser (2)
++00000129 <--findUser(true)
++00000129 Sending TROTS_CANCEL to sender
++00000129 Sending message ID [1] to sender
++00000129 Processing recipients
++00000129 Processing [Mr Receiver]
++00000129 Sending TROTS_CANCEL
++00000129 Sending message id
++00000129 Removing message from list of messages
++00000129 <-- processTrotsCancel
++00000129 Waiting for client connection
++00000129 Creating input/output streams
++00000129 Waiting for client command
++00000129 Received command [2]
++00000129 CLIENT_DEREGISTER
++00000129 --> deregisterClient
++00000129 Waiting for User ID
++00000129 User ID [2]
++00000129 Locating user ID
++00000129 -->findUser (2)
++00000129 <--findUser(true)
++00000129 Closing down data streams
++00000129 Client deregistered
++00000129 <-- deregisterClient
++00000129 Waiting for client connection
++00000167 Creating input/output streams
++00000167 Waiting for client command
++00000167 Received command [1012]
++00000167 DEBUG_DETAILS
++00000167 Waiting for client connection
++00000175 Creating input/output streams
++00000175 Waiting for client command
++00000175 Received command [1000]
++00000175 HEARTBEAT
++00000175 Waiting for client connection
++00000181 Creating input/output streams
++00000181 Waiting for client command
++00000181 Received command [10]
++00000181 QUEUE_NAMES
++00000181 --> processQueueNames
++00000181 Sending queue names
++00000181 -->queue_vector_to_list
++00000181 <--queue_vector_to_list
++00000181 <--processQueueNames
++00000181 Waiting for client connection
++00000188 Creating input/output streams
++00000188 Waiting for client command
++00000188 Received command [1005]
++00000188 STATUS_HTML
++00000188 --> processServerStatusHTML
++00000188 Dumping server status as HTML
++00000188 Setting GMT0BST time zone
++00000188 <-- processServerStatusHTML
++00000188 Waiting for client connection
++00000238 Creating input/output streams
++00000238 Waiting for client command
++00000238 Received command [17]
++00000238 SERVER_VERSION
++00000238 --> processServerVersion
++00000238 Sending server version
++00000238 Sending revision
++00000238 $Revision: 693 $
++00000238 <-- processServerVersion
++00000238 Waiting for client connection
++00000238 Creating input/output streams
++00000238 Waiting for client command
++00000238 Received command [10]
++00000238 QUEUE_NAMES
++00000238 --> processQueueNames
++00000238 Sending queue names
++00000238 -->queue_vector_to_list
++00000238 <--queue_vector_to_list
++00000238 <--processQueueNames
++00000238 Waiting for client connection
++00000238 Creating input/output streams
++00000238 Waiting for client command
++00000238 Received command [1009]
++00000238 LIST_USERS
++00000238 --> processListUsers
++00000238 Sending list of user names
++00000238 <-- processListUsers
++00000238 Waiting for client connection
++00000238 Creating input/output streams
++00000238 Waiting for client command
++00000238 Received command [1012]
++00000238 DEBUG_DETAILS
++00000238 Waiting for client connection
++00000246 Creating input/output streams
++00000246 Waiting for client command
++00000246 Received command [1011]
++00000246 QUEUE_DETAILS
++00000246 -->processQueueDetails
++00000246 Waiting for queue name
++00000246 Queue Name = OAQ
++00000246 <--processQueueDetails
++00000246 Waiting for client connection
++00000268 Creating input/output streams
++00000268 Waiting for client command
++00000268 Received command [17]
++00000268 SERVER_VERSION
++00000268 --> processServerVersion
++00000268 Sending server version
++00000268 Sending revision
++00000268 $Revision: 693 $
++00000268 <-- processServerVersion
++00000268 Waiting for client connection
++00000268 Creating input/output streams
++00000268 Waiting for client command
++00000268 Received command [10]
++00000268 QUEUE_NAMES
++00000268 --> processQueueNames
++00000268 Sending queue names
++00000268 -->queue_vector_to_list
++00000268 <--queue_vector_to_list
++00000268 <--processQueueNames
++00000268 Waiting for client connection
++00000268 Creating input/output streams
++00000268 Waiting for client command
++00000268 Received command [1009]
++00000268 LIST_USERS
++00000268 --> processListUsers
++00000268 Sending list of user names
++00000268 <-- processListUsers
++00000268 Waiting for client connection
++00000268 Creating input/output streams
++00000268 Waiting for client command
++00000268 Received command [1012]
++00000268 DEBUG_DETAILS
++00000268 Waiting for client connection
++00000271 Creating input/output streams
++00000271 Waiting for client command
++00000271 Received command [1006]
++00000271 ADD_QUEUE
++00000271 --> processAddQueue
++00000271 Adding queue [ANOTHERQ]
++00000271 -->queue_vector_to_list
++00000271 <--queue_vector_to_list
++00000271 <-- processAddQueue
++00000271 Waiting for client connection
++00000271 Creating input/output streams
++00000271 Waiting for client command
++00000271 Received command [17]
++00000271 SERVER_VERSION
++00000271 --> processServerVersion
++00000271 Sending server version
++00000271 Sending revision
++00000271 $Revision: 693 $
++00000271 <-- processServerVersion
++00000271 Waiting for client connection
++00000271 Creating input/output streams
++00000271 Waiting for client command
++00000271 Received command [10]
++00000271 QUEUE_NAMES
++00000271 --> processQueueNames
++00000271 Sending queue names
++00000271 -->queue_vector_to_list
++00000271 <--queue_vector_to_list
++00000271 <--processQueueNames
++00000271 Waiting for client connection
++00000271 Creating input/output streams
++00000271 Waiting for client command
++00000271 Received command [1009]
++00000271 LIST_USERS
++00000271 --> processListUsers
++00000271 Sending list of user names
++00000271 <-- processListUsers
++00000271 Waiting for client connection
++00000271 Creating input/output streams
++00000271 Waiting for client command
++00000271 Received command [1012]
++00000271 DEBUG_DETAILS
++00000271 Waiting for client connection
++00000284 Creating input/output streams
++00000284 Waiting for client command
++00000284 Received command [11]
++00000284 CLIENT_RESET
++00000284 --> processClientReset
++00000284 Waiting for client ID
++00000284 Client ID = 1
++00000284 Sending ACK response
++00000284 Locating client
++00000284 -->findUser (1)
++00000284 <--findUser(true)
++00000284 User Name = Mr Receiver
++00000284 Sending CLIENT_RESET to client
++00000284 Waiting for ACK
++00000284 Client responded with 54321
++00000284 De-registering client
++00000284 <-- processClientReset
++00000284 Waiting for client connection
++00000284 Creating input/output streams
++00000284 Waiting for client command
++00000284 Received command [1]
++00000284 CLIENT_REGISTER
++00000284 --> registerClient
++00000284 Creating new trots user
++00000284 Generating client ID
++00000284 -->isDuplicateUser (0)
++00000284 -->isDuplicateUser (1)
++00000284 <--isDuplicateUser (false)
++00000284 Client ID = 1
++00000284 Sending ID to client
++00000284 Waiting for user name
++00000284 User Name = Mr Receiver
++00000284 Waiting for phone number
++00000284 Phone No = 2
++00000284 Waiting for queue list
++00000284 Queue List = OAQ,ANOTHERQ
++00000284 Waiting for Client version
++00000284 Client Version = $Revision: 693 $
++00000284 Assigning input/output streams
++00000284 Obtaining client host name
++00000284 Client Host Name = localhost.localdomain
++00000284 Adding user to list of clients
++00000284 Client registered
++00000284 <--registerClient
++00000284 Waiting for client connection
++00000284 Creating input/output streams
++00000284 Waiting for client command
++00000284 Received command [9]
++00000284 CLIENT_STATUS
++00000284 --> processClientStatus
++00000284 Waiting for client ID
++00000284 Client ID = 1
++00000284 Waiting for client status
++00000284 Client Status = 0
++00000284 Sending ACK response
++00000284 Locating client
++00000284 -->findUser (1)
++00000284 <--findUser(true)
++00000284 User Name = Mr Receiver
++00000284 Setting user availability
++00000284 <--processClientStatus
++00000284 Waiting for client connection
++00000298 Creating input/output streams
++00000298 Waiting for client command
++00000298 Received command [17]
++00000298 SERVER_VERSION
++00000298 --> processServerVersion
++00000298 Sending server version
++00000298 Sending revision
++00000298 $Revision: 693 $
++00000298 <-- processServerVersion
++00000298 Waiting for client connection
++00000298 Creating input/output streams
++00000298 Waiting for client command
++00000298 Received command [10]
++00000298 QUEUE_NAMES
++00000298 --> processQueueNames
++00000298 Sending queue names
++00000298 -->queue_vector_to_list
++00000298 <--queue_vector_to_list
++00000298 <--processQueueNames
++00000298 Waiting for client connection
++00000298 Creating input/output streams
++00000298 Waiting for client command
++00000298 Received command [1009]
++00000298 LIST_USERS
++00000298 --> processListUsers
++00000298 Sending list of user names
++00000298 <-- processListUsers
++00000298 Waiting for client connection
++00000298 Creating input/output streams
++00000298 Waiting for client command
++00000298 Received command [1012]
++00000298 DEBUG_DETAILS
++00000298 Waiting for client connection
++00000299 Creating input/output streams
++00000299 Waiting for client command
++00000299 Received command [8]
++00000299 TROTS_CANCEL
++00000299 --> processTrotsCancel
++00000299 Cancelling trots message
++00000299 Waiting for message ID
++00000299 Message ID = 0
++00000299 Sending ACK
++00000299 Locating message
++00000299 -->findMsg (0)
++00000299 <--findMsg (null)
++00000299 Unable to find message (Non-fatal)
++00000299 <--processTrotsCancel
++00000299 Waiting for client connection
++00000299 Creating input/output streams
++00000299 Waiting for client command
++00000299 Received command [2]
++00000299 CLIENT_DEREGISTER
++00000299 --> deregisterClient
++00000299 Waiting for User ID
++00000299 User ID [2]
++00000299 Locating user ID
++00000299 -->findUser (2)
++00000299 <--findUser(null)
++00000299 Unable to locate user ID
++00000299 <-- deregisterClient
++00000299 Waiting for client connection
++00000321 Creating input/output streams
++00000321 Waiting for client command
++00000321 Received command [16]
++00000321 ALL_SHUTDOWN
++00000321 Closing down [1] users
++00000321 Closing down [ Mr Receiver]
++00000321 -->shutdownClient
++00000321 Sending CLIENT_SHUTDOWN
++00000321 Closing input/output streams
++00000321 Removing client entry
++00000321 <--shutdownClient
++00000321 Normal Completion

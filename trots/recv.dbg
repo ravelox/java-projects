@@ -1,0 +1,158 @@
++00000000 TROTS RECEIVER ($Revision: 693 $) DEBUG TRACE (Tue Jul 22 16:36:43 PDT 2008)
+
++00000026 --> trotsReceiver (Constructor)
++00000026 Creating new messages vector
++00000026 Creating old messages vector
++00000026 Adding observer to ini file generator
++00000026 Ini File Settings
++00000026 -----------------
++00000026 Server Name :localhost
++00000026 Port        :9876
++00000026 User Name   :Mr Receiver
++00000026 Phone No    :2
++00000026 Debug Level :8
++00000026 --> buildControlBox
++00000026 Creating receiver box
++00000027 Making server connection to [localhost:9876]
++00000027 Making server connection
++00000027 Registering client
++00000027 Server assigned ID = 1
++00000027 Sending User Name
++00000027 User Name = Mr Receiver
++00000027 Sending Phone Number
++00000027 Phone Number = 2
++00000027 Sending Queue List
++00000027 Queue List = OAQ
++00000027 Sending Client Version
++00000027 Client Version = $Revision: 693 $
++00000027 Connection made
++00000027 --> sendStatus
++00000027 Sending client status
++00000027 Making connection to host
++00000027 Sending CLIENT_STATUS
++00000027 Sending User ID [1]
++00000027 Sending Status [true]
++00000027 Waiting for server response
++00000027 Server responded with [54321]
++00000027 Closing down socket connection
++00000029 Waiting for server command
++00000040 Action [About]
++00000053 TROTS_MESSAGE_RECV
++00000053 --> processTrotsMessage
++00000053 Processing trots message
++00000053 Waiting for message ID
++00000053 MSG ID = 1
++00000053 Waiting for user name
++00000053 USER NAME = Dave Kelly - 1
++00000053 Waiting for message Text
++00000053 MESSAGE TEXT = OAQ:This is a test 
++00000053 Sending ACK response back to server
++00000053 --> createTrotsMessage
++00000053 Creating trots message
++00000053 Waiting for server command
++00000059 Assign button pressed [1]
++00000059 -->sendAssign
++00000059 Assign to Me
++00000059 Making connection to host
++00000059 Creating data input/output streams
++00000059 Sending TROTS_ASSIGN_RECV
++00000059 Sending Message ID [1]
++00000059 Sending User ID [1]
++00000059 Waiting for server response
++00000059 Server responded with [54321]
++00000059 TROTS_ASSIGN_SEND
++00000059 --> processTrotsAssign
++00000059 Processing trots assign message
++00000059 Waiting for message ID
++00000059 Message ID = 1
++00000059 Waiting for extra text
++00000059 Extra Text [Call is assigned to you]
++00000059 --> findMsg(1)
++00000059 Updating trots message
++00000059 Waiting for server command
++00000059 Will kill message in 10 seconds
++00000065 Dismiss button pressed [1]
++00000065 --> isIDExists(1)
++00000065 --> killTrots(1)
++00000065 Killing trots message
++00000065 Locating Message Id [1]
++00000065 --> findMsg(1)
++00000065 Removing the message from the vector
++00000069 Killing Trots message from thread
++00000069 --> killTrots(1)
++00000069 Killing trots message
++00000069 Locating Message Id [1]
++00000069 --> findMsg(1)
++00000069 Unable to locate message ID
++00000072 TROTS_MESSAGE_RECV
++00000072 --> processTrotsMessage
++00000072 Processing trots message
++00000072 Waiting for message ID
++00000072 MSG ID = 1
++00000072 Waiting for user name
++00000072 USER NAME = Dave Kelly - 1
++00000072 Waiting for message Text
++00000072 MESSAGE TEXT = OAQ:Another message
++00000072 Sending ACK response back to server
++00000072 --> createTrotsMessage
++00000072 Creating trots message
++00000072 Waiting for server command
++00000082 TROTS_CANCEL
++00000082 --> processTrotsCancel
++00000082 Processing trots cancel
++00000082 Waiting for message ID
++00000082 Message ID = 1
++00000082 --> killTrots(1)
++00000082 Killing trots message
++00000082 Locating Message Id [1]
++00000082 --> findMsg(1)
++00000082 Removing the message from the vector
++00000082 Waiting for server command
++00000230 Action [Config]
++00000237 Ini file has changed
++00000237 Reloading INI properties
++00000237 Ini File Settings
++00000237 -----------------
++00000237 Server Name :localhost
++00000237 Port        :9876
++00000237 User Name   :Mr Receiver
++00000237 Phone No    :2
++00000237 Debug Level :8
++00000237 Creating connection to [localhost:9876]
++00000237 Sending CLIENT_RESET
++00000237 Sending client id
++00000237 Waiting for ACK response
++00000237 Server responded with 54321
++00000237 CLIENT_RESET
++00000237 --> processClientReset
++00000237 Processing CLIENT_RESET
++00000237 Sending ACK
++00000237 Closing client connection
++00000237 Making new connection
++00000237 Making server connection to [localhost:9876]
++00000237 Making server connection
++00000237 Registering client
++00000237 Server assigned ID = 1
++00000237 Sending User Name
++00000237 User Name = Mr Receiver
++00000237 Sending Phone Number
++00000237 Phone Number = 2
++00000237 Sending Queue List
++00000237 Queue List = OAQ,ANOTHERQ
++00000237 Sending Client Version
++00000237 Client Version = $Revision: 693 $
++00000237 Connection made
++00000237 --> sendStatus
++00000237 Sending client status
++00000237 Making connection to host
++00000237 Sending CLIENT_STATUS
++00000237 Sending User ID [1]
++00000237 Sending Status [true]
++00000237 Waiting for server response
++00000237 Server responded with [54321]
++00000237 Closing down socket connection
++00000237 <-- processClientReset
++00000237 <-- processClientReset
++00000237 Waiting for server command
++00000274 CLIENT_SHUTDOWN
++00000277 Normal termination

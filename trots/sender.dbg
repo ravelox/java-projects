@@ -1,0 +1,165 @@
++00000000 TROTS SENDER ($Revision: 693 $) DEBUG TRACE (Tue Jul 22 16:36:03 PDT 2008)
+
++00000027 --> trotsSender (Constructor)
++00000027 Creating new trotsSender
++00000027 Ini File Settings
++00000027 -----------------
++00000027 Server Name :localhost
++00000027 Port        :9876
++00000027 User Name   :Dave Kelly
++00000027 Timeout     :10
++00000027 Debug Level :8
++00000027 Adding observer to ini file
++00000027 --> buildWindow
++00000027 Creating send window
++00000028 --> getQueueNames
++00000028 Getting queue names from server
++00000028 Creating socket connection
++00000028 Creating data streams
++00000028 Sending QUEUE_NAMES
++00000028 Queue Names = OAQ,DKQ,NEWQ
++00000028 --> updateQueueList(OAQ,DKQ,NEWQ)
++00000028 Parsing queue list
++00000028 Adding queue (OAQ)
++00000028 Adding queue (DKQ)
++00000028 Adding queue (NEWQ)
++00000028 Starting queue name updater thread
++00000058 --> getQueueNames
++00000058 Getting queue names from server
++00000058 Creating socket connection
++00000058 Creating data streams
++00000058 Sending QUEUE_NAMES
++00000058 Queue Names = OAQ,DKQ,NEWQ
++00000058 --> updateQueueList(OAQ,DKQ,NEWQ)
++00000058 Parsing queue list
++00000058 Clearing existing items
++00000058 Adding queue (OAQ)
++00000058 Adding queue (DKQ)
++00000058 Adding queue (NEWQ)
++00000088 --> getQueueNames
++00000088 Getting queue names from server
++00000088 Creating socket connection
++00000088 Creating data streams
++00000088 Sending QUEUE_NAMES
++00000088 Queue Names = OAQ,DKQ,NEWQ
++00000088 --> updateQueueList(OAQ,DKQ,NEWQ)
++00000088 Parsing queue list
++00000088 Clearing existing items
++00000088 Adding queue (OAQ)
++00000088 Adding queue (DKQ)
++00000088 Adding queue (NEWQ)
++00000089 Event Send occurred
++00000089 Starting timer [10] seconds
++00000089 Disabling Send/Reset
++00000089 Enabling Cancel
++00000089 Disabling CONFIG option on menu
++00000089 Starting send thread
++00000089 --> sendTrotsMessage
++00000089 Sending trots message
++00000089 A queue name must be selected
++00000093 Event Send occurred
++00000093 Starting timer [10] seconds
++00000093 Disabling Send/Reset
++00000093 Enabling Cancel
++00000093 Disabling CONFIG option on menu
++00000093 Starting send thread
++00000093 --> sendTrotsMessage
++00000093 Sending trots message
++00000093 Creating socket connection
++00000093 Setting timeout to 10 seconds
++00000093 Creating data input/output stream
++00000093 CLIENT_REGISTER
++00000093 Waiting for client ID
++00000093 Client ID = 2
++00000093 Sending User Name [Dave Kelly]
++00000093 Sending Phone Number [1]
++00000093 Sending Queue List as '*Sender*'
++00000093 Sending Client Revision: $Revision: 693 $
++00000093 Creating secondary socket
++00000093 Creating secondary input/output streams
++00000093 Sending TROTS_MESSAGE_SEND
++00000093 Sending user ID [2]
++00000093 Sending queue name [OAQ]
++00000093 Sending Message text [OAQ:This is a test ]
++00000093 Waiting for message iD
++00000093 Message ID = 1
++00000093 Closing secondary input/output
++00000093 Waiting for server response
++00000099 Server command = 14
++00000099 TROTS_ASSIGN_SEND
++00000099 Ignoring message id [1]
++00000099 Server Message = Call accepted by Mr Receiver - 2
++00000099 Sending ACK response
++00000099 Creating secondary socket
++00000099 Sending CLIENT_DEREGISTER
++00000099 Sending Client ID [2]
++00000099 Closing connection
++00000112 Event Send occurred
++00000112 Starting timer [10] seconds
++00000112 Disabling Send/Reset
++00000112 Enabling Cancel
++00000112 Disabling CONFIG option on menu
++00000112 Starting send thread
++00000112 --> sendTrotsMessage
++00000112 Sending trots message
++00000112 Creating socket connection
++00000112 Setting timeout to 10 seconds
++00000112 Creating data input/output stream
++00000112 CLIENT_REGISTER
++00000112 Waiting for client ID
++00000112 Client ID = 2
++00000112 Sending User Name [Dave Kelly]
++00000112 Sending Phone Number [1]
++00000112 Sending Queue List as '*Sender*'
++00000112 Sending Client Revision: $Revision: 693 $
++00000112 Creating secondary socket
++00000112 Creating secondary input/output streams
++00000112 Sending TROTS_MESSAGE_SEND
++00000112 Sending user ID [2]
++00000112 Sending queue name [OAQ]
++00000112 Sending Message text [OAQ:Another message]
++00000112 Waiting for message iD
++00000112 Message ID = 1
++00000112 Closing secondary input/output
++00000112 Waiting for server response
++00000119 The list is being used at the moment. Will update later
++00000122 No response from recipients
++00000122 --> sendTrotsCancel
++00000122 Sending trots cancel
++00000122 Creating socket connection
++00000122 Sending TROTS_CANCEL
++00000122 Sending Message ID [1]
++00000122 Waiting for server response
++00000122 Server responded with 54321
++00000122 Closing connection
++00000122 Creating secondary socket
++00000122 Sending CLIENT_DEREGISTER
++00000122 Sending Client ID [2]
++00000122 Closing connection
++00000149 The list is being used at the moment. Will update later
++00000179 The list is being used at the moment. Will update later
++00000209 The list is being used at the moment. Will update later
++00000239 The list is being used at the moment. Will update later
++00000269 The list is being used at the moment. Will update later
++00000281 Event Reset occurred
++00000281 Resetting controls
++00000282 Event Reset occurred
++00000282 Resetting controls
++00000285 Event Config occurred
++00000285 Displaying INI file
++00000292 Event Exit occurred
++00000292 Exit selected
++00000292 --> sendTrotsCancel
++00000292 Sending trots cancel
++00000292 Creating socket connection
++00000292 Sending TROTS_CANCEL
++00000292 Sending Message ID [0]
++00000292 Waiting for server response
++00000292 Server responded with 54321
++00000292 Closing connection
++00000292 Creating secondary socket
++00000292 Sending CLIENT_DEREGISTER
++00000292 Sending Client ID [2]
++00000292 Closing connection
++00000292 Stopping queue name updater thread
++00000292 Normal termination
