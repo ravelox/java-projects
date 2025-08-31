@@ -1,17 +1,19 @@
-import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Maki extends Applet implements MouseListener
-{
+/**
+ * Standalone version of the original applet based game.  The class now extends
+ * {@link Panel} instead of the deprecated {@code Applet}.  All applet specific
+ * functionality has been removed so the game can run as a normal desktop
+ * application without deprecation warnings.
+ */
+public class Maki extends Panel implements MouseListener {
         private static final int MAX_X=14, MAX_Y=14;
         private int[][] board, marker, undoBoard;
-	public boolean gameOver;
-	public int score, undoScore;
+        public boolean gameOver;
+        public int score, undoScore;
         Font displayFont;
-        Object sc;
-        boolean scoreClientPresent;
 
 /*------------------------*/
 /* Re-randomize the board */
@@ -35,42 +37,25 @@ public class Maki extends Applet implements MouseListener
 /*-------------*/
 /* Constructor */
 /*-------------*/
-        @Override
-        public void init()
-	{
-		board = new int[MAX_X][MAX_Y];
-		marker = new int[MAX_X][MAX_Y];
-		undoBoard = new int[MAX_X][MAX_Y];
+        public Maki() {
+                board = new int[MAX_X][MAX_Y];
+                marker = new int[MAX_X][MAX_Y];
+                undoBoard = new int[MAX_X][MAX_Y];
 
-		displayFont = new Font("Helvetica", Font.BOLD, 21);
+                displayFont = new Font("Helvetica", Font.BOLD, 21);
 
                 initialiseBoard();
-		
-		addMouseListener(this);
 
-/*-------------------------------------------*/
-/* Check to see if a score client is present */
-/*-------------------------------------------*/
-                scoreClientPresent = false;
-                System.out.println("Checking for presence of ScoreClient");
-                Applet app = getAppletContext().getApplet("SCORES");
-                if(app != null)
-                {
-                        try
-                        {
-                                app.getClass().getMethod("newScore", int.class);
-                                sc = app;
-                                scoreClientPresent = true;
-                        }
-                        catch (NoSuchMethodException ex)
-                        {
-                                // ScoreClient not present or does not support newScore
-                        }
-                }
+                addMouseListener(this);
 
-                System.out.println("Score Client present ? " + (scoreClientPresent ? "Yes" : "No"));
-		
-	};
+                // in the original applet a remote score client could be used
+                // via the applet context.  That functionality is not supported
+                // in the standalone version.
+
+                // provide a preferred size so the panel can be packed into a
+                // window when run as a standalone application
+                setPreferredSize(new Dimension((MAX_X + 4) * 25, (MAX_Y + 4) * 25));
+        }
 
 /*----------------*/
 /* Draw the board */
@@ -221,22 +206,10 @@ public class Maki extends Applet implements MouseListener
 			pack_columns();
 			shift_columns();
 
-			gameOver = check_win();
-
-                        if(gameOver && scoreClientPresent)
-                        {
-                                try
-                                {
-                                        sc.getClass().getMethod("newScore", int.class).invoke(sc, score);
-                                }
-                                catch (Exception ex)
-                                {
-                                        // ignore any errors from score client
-                                }
-                        }
-		}
-		else
-		{
+                        gameOver = check_win();
+               }
+               else
+               {
 /*--------------------------------------------------------------*/
 /* If the box is not marked then clear out any existing markers */
 /* and mark from the new position                               */
@@ -438,9 +411,9 @@ public class Maki extends Applet implements MouseListener
 		undoScore = score;
 	}
 
-	public void undo()
-	{
-		int x,y;
+        public void undo()
+        {
+                int x,y;
 
 		for(x = 0 ; x < MAX_X ; x++)
 		{
@@ -451,7 +424,25 @@ public class Maki extends Applet implements MouseListener
 		}
 		score = undoScore;
 
-		paint(this.getGraphics());
-		drawScore(this.getGraphics());
-	}
+                paint(this.getGraphics());
+                drawScore(this.getGraphics());
+        }
+
+        /**
+         * Entry point for running the game as a standalone desktop
+         * application.
+         */
+        public static void main(String[] args) {
+                Frame frame = new Frame("Maki");
+                Maki maki = new Maki();
+                frame.add(maki);
+                frame.pack();
+                frame.addWindowListener(new WindowAdapter() {
+                        @Override
+                        public void windowClosing(WindowEvent e) {
+                                System.exit(0);
+                        }
+                });
+                frame.setVisible(true);
+        }
 }
