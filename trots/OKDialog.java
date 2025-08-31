@@ -20,6 +20,7 @@ import java.awt.event.*;
 public class OKDialog extends Dialog
 {
         ActionListener OKButtonListener = e -> setVisible(false);
+        
 
         @Override
         public void setVisible(boolean visible)

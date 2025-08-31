@@ -1108,7 +1108,7 @@ public class TrotsServer
 
 			dataOut.writeBytes("<H2>Call Statistics</H2>\n");
 
-			dataOut.writeBytes("<H3>Total messages: " + serverStats.msgTotal +"</H3><BR>\n");
+			dataOut.writeBytes("<H3>Total messages: " + serverStats.getMsgTotal() +"</H3><BR>\n");
 			if(serverStats.size() != 0)
 			{
 				dataOut.writeBytes("<CENTER>\n");

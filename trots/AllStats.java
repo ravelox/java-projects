@@ -23,7 +23,7 @@ import java.util.List;
 class AllStats
 {
         private static List<QueueStats> stats;
-        public static int msgTotal;
+        private static int msgTotal;
 
         private static class QueueStats
         {
@@ -130,5 +130,10 @@ class AllStats
                 if(s == null) return "";
 
                 return String.format("%s#%d#%d#%d", s.queue, s.sentCount, s.acceptedCount, s.cancelledCount);
+        }
+
+        public int getMsgTotal()
+        {
+                return msgTotal;
         }
 }
