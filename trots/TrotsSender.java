@@ -76,7 +76,7 @@ import java.net.*;
 /*---------------------------------*/
 /* Class to send the TROTS message */
 /*---------------------------------*/
-public class TrotsSender implements Observer, WindowListener
+public class TrotsSender implements IniFileListener, WindowListener
 { 
 	Socket client;
 	DataOutputStream	clientDataOut;
@@ -291,9 +291,9 @@ public class TrotsSender implements Observer, WindowListener
 /* The ini file has been changed so we need to re-set the connection */
 /*-------------------------------------------------------------------*/
     @Override
-    public void update(Observable o, Object arg)
-	{
-		DBG.trace(Debug.MAJOR, "Ini file has changed");
+    public void iniFileUpdated()
+        {
+                DBG.trace(Debug.MAJOR, "Ini file has changed");
 
 /*---------------------------------*/
 /* Re-read the ini file properties */
@@ -386,7 +386,7 @@ public class TrotsSender implements Observer, WindowListener
 		getQueueNames();
 
 		sendFrame.pack();
-		sendFrame.show();
+            sendFrame.setVisible(true);
 	}
 
 	void getQueueNames()
@@ -682,7 +682,7 @@ public class TrotsSender implements Observer, WindowListener
 		DBG.trace(Debug.MAJOR, "Creating new TrotsSender");
 		reloadIniProps();
 		DBG.trace(Debug.MINOR, "Adding observer to ini file");
-		ini.addObserver(this);
+            ini.addListener(this);
 		buildWindow();
 
 		noQueueUpdate = false;

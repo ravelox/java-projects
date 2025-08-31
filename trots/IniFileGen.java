@@ -27,16 +27,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
 import java.util.Properties;
 
-public class IniFileGen extends Observable
+public class IniFileGen
 {
-	Properties props;
-	String iniFileName;
-	Dialog iniDialog;
+        Properties props;
+        String iniFileName;
+        Dialog iniDialog;
         List<TextField> inputValues;
         boolean OK = true;
+        private final List<IniFileListener> listeners = new ArrayList<>();
 
         private ActionListener buttonListener = new ActionListener()
         {
@@ -69,11 +69,18 @@ public class IniFileGen extends Observable
 		}
 	};
 
-	public void tellObservers()
-	{
-		setChanged();
-		notifyObservers();
-	}
+        public void addListener(IniFileListener l)
+        {
+                listeners.add(l);
+        }
+
+        public void tellObservers()
+        {
+                for(IniFileListener l : listeners)
+                {
+                        l.iniFileUpdated();
+                }
+        }
 
 /*-------------*/
 /* Constructor */
