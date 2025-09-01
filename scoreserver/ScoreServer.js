@@ -110,3 +110,6 @@ class GameTable {
 if (typeof window !== 'undefined') {
     window.ScoreServer = ScoreServer;
 }
+
+export { ScoreServer };
+
