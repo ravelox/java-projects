@@ -35,12 +35,12 @@
 		</javac>
 	</target>
 
-	<target name="buildjar">
-		<jar
-			jarfile="${dist.dir}/${jar.file}"
-			basedir="${build.dir}"
-			includes="*class"
-		/>
-	</target>
+        <target name="buildjar">
+                <jar jarfile="${dist.dir}/${jar.file}" basedir="${build.dir}">
+                        <manifest>
+                                <attribute name="Main-Class" value="battleship.BattleShip"/>
+                        </manifest>
+                </jar>
+        </target>
 
 </project>

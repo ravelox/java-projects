@@ -1,8 +1,24 @@
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.net.*;
-import java.util.*;
+package battleship;
+
+import java.awt.BorderLayout;
+import java.awt.Frame;
+import java.awt.Label;
+import java.awt.Menu;
+import java.awt.MenuBar;
+import java.awt.MenuItem;
+import java.awt.EventQueue;
+import java.awt.Panel;
+import java.awt.GridLayout;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Observer;
+import java.util.Observable;
 
 public class BattleShip implements Observer,WindowListener,ActionListener
 {
@@ -18,7 +34,7 @@ public class BattleShip implements Observer,WindowListener,ActionListener
 	private PlayerBoard winLocal,winRemote;	
 	private Label localStatus, remoteStatus;
 	private boolean runningAsServer,connectedToServer,changingConfig,startPlaced;
-	static iniFileGen	ini;
+	static IniFileGen ini;
 	private int clientID, gameState;
 	private String shipName[]={
 					"Destroyer",
@@ -119,7 +135,7 @@ public class BattleShip implements Observer,WindowListener,ActionListener
 
 		try
 		{
-			returnValue = new Integer(value).intValue();
+                        returnValue = Integer.parseInt(value);
 		}
 		catch(NumberFormatException exNumFmt) {}
 
@@ -443,7 +459,7 @@ public class BattleShip implements Observer,WindowListener,ActionListener
                		         {"Server", "server"},
 										{"Port", "port"},
 									};
-		ini = new iniFileGen("Game Information", "battleship.ini", propArray);
+		ini = new IniFileGen("Game Information", "battleship.ini", propArray);
 
 /*---------------------------------------------------------------*/
 /* If the INI file did not exist in the first place then show it */
@@ -462,6 +478,6 @@ public class BattleShip implements Observer,WindowListener,ActionListener
 			System.out.println("Properties were not set. Abnormal termination");
 			System.exit(1);
 		}
-		BattleShip b = new BattleShip();
-	}
+                EventQueue.invokeLater(BattleShip::new);
+        }
 }
