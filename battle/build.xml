@@ -1,0 +1,46 @@
+<?xml version="1.0" ?>
+<project default="dist">
+	<property name="version" value="0.0.1" />
+	<property name="jar.file" value="battle.jar" />
+	<property name="src.dir" value="src" />
+	<property name="build.dir" value="build" />
+	<property name="dist.dir" value="battle-${version}" />
+	<property name="zip.file" value="battle-${version}.zip" />
+
+	<target name="init">
+		<tstamp/>
+		<mkdir dir="${build.dir}"/>
+		<mkdir dir="${dist.dir}"/>
+	</target>
+
+	<target name="clean">
+		<delete dir="${build.dir}"/>
+		<delete dir="${dist.dir}"/>
+		<delete file="${zip.file}" />
+	</target>
+
+	<target name="dist" depends="compile,buildjar">
+		<zip destfile="${zip.file}" >
+			<zipfileset dir="${dist.dir}" prefix="${dist.dir}/" />
+		</zip>
+	</target>
+
+	<target name="compile" depends="init">
+		<javac
+			srcdir="${src.dir}"
+			destdir="${build.dir}"
+			classpath=""
+		>
+			<compilerarg value="-Xlint"/>
+		</javac>
+	</target>
+
+	<target name="buildjar">
+		<jar
+			jarfile="${dist.dir}/${jar.file}"
+			basedir="${build.dir}"
+			includes="*class"
+		/>
+	</target>
+
+</project>
