@@ -37,13 +37,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
 import java.util.Properties;
 import java.io.FileOutputStream;
 import java.io.FileInputStream;
 import java.io.File;
 
-public class IniFileGen extends Observable {
+public class IniFileGen {
         Properties props;
         String iniFileName;
         Dialog iniDialog;
@@ -76,17 +75,11 @@ public class IniFileGen extends Observable {
 /*-----------------------------------------------------*/
 /* Tell anyone who's listening that we've been updated */
 /*-----------------------------------------------------*/
-                                tellObservers();
+                                // configuration updated, no observers to notify
                         }
                         iniDialog.setVisible(false);
                 }
         };
-
-	public void tellObservers()
-	{
-		setChanged();
-		notifyObservers();
-	}
 
 /*-------------*/
 /* Constructor */
@@ -112,7 +105,7 @@ public class IniFileGen extends Observable {
 		
 		iniFileName = fileName;
 	
-		load(propDetails);
+                load(propDetails);
 
 		for(i=0;i<propDetails.length;i++)
 		{
@@ -137,8 +130,7 @@ public class IniFileGen extends Observable {
 		OK = checkAllInput();
 	}
 
-	public void load(String propDetails[][])
-	{
+        private void load(String propDetails[][]) {
 		int i;
 
 		props = new Properties();

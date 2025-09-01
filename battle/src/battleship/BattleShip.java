@@ -17,10 +17,7 @@ import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Observer;
-import java.util.Observable;
-
-public class BattleShip implements Observer,WindowListener,ActionListener
+public class BattleShip implements WindowListener,ActionListener
 {
 	MenuItem miNew;
 	MenuItem miStartServer;
@@ -102,13 +99,6 @@ public class BattleShip implements Observer,WindowListener,ActionListener
 			whoseTurn = (action.equals("Local") ? Constants.LOCAL_TURN : Constants.REMOTE_TURN);
 		}
 	};
-
-/*----------------*/
-/* Observer event */
-/*----------------*/
-	public void update(Observable o, Object arg)
-	{
-	}
 
 /*-----------------*/
 /* Pseudo notifier */
@@ -432,12 +422,12 @@ public class BattleShip implements Observer,WindowListener,ActionListener
 /*-------------*/
 /* Constructor */
 /*-------------*/
-	public BattleShip()
-	{
+        @SuppressWarnings("this-escape")
+        public BattleShip()
+        {
 		runningAsServer=false;
 		connectedToServer=false;
 		changingConfig=false;
-		ini.addObserver(this);
 		build_windows();
 		whoPlays = new YesNoDialog(win, "New Game", true, "Who starts?", "Local", "Remote");
 		whoPlays.addListener(startListener);

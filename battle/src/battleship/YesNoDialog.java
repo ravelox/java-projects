@@ -11,8 +11,9 @@ import java.awt.Panel;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 
-public class YesNoDialog extends Dialog
-{
+public class YesNoDialog extends Dialog {
+        private static final long serialVersionUID = 1L;
+
         Button btnYes,btnNo;
 	
 	public void setVisible(boolean visible)
@@ -20,20 +21,19 @@ public class YesNoDialog extends Dialog
 		super.setVisible(visible);
 	}
 
-	public YesNoDialog(Frame f, String title, boolean modal, String message)
-	{
-		super(f, title, modal);
-		buildDialog(f, title, modal, message, "Yes", "No");
-	}
+        @SuppressWarnings("this-escape")
+        public YesNoDialog(Frame f, String title, boolean modal, String message) {
+                super(f, title, modal);
+                buildDialog(f, title, modal, message, "Yes", "No");
+        }
 
-	public YesNoDialog(Frame f, String title, boolean modal, String message, String yes, String no)
-	{
-		super(f, title, modal);
-		buildDialog(f, title, modal, message, yes, no);
-	}
+        @SuppressWarnings("this-escape")
+        public YesNoDialog(Frame f, String title, boolean modal, String message, String yes, String no) {
+                super(f, title, modal);
+                buildDialog(f, title, modal, message, yes, no);
+        }
 
-        public void buildDialog(Frame f, String title, boolean modal, String message, String yes, String no)
-        {
+        private void buildDialog(Frame f, String title, boolean modal, String message, String yes, String no) {
                 String[] lines = message.split("\n");
                 int j = lines.length;
 
@@ -59,9 +59,8 @@ public class YesNoDialog extends Dialog
                 this.setLocation((s.width - d.width) / 2, (s.height - d.height) / 2);
         }
 
-	public void addListener(ActionListener a)
-	{
-		btnYes.addActionListener(a);
-		btnNo.addActionListener(a);
-	}
+        public void addListener(ActionListener a) {
+                btnYes.addActionListener(a);
+                btnNo.addActionListener(a);
+        }
 }
