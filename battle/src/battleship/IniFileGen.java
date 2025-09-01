@@ -1,3 +1,5 @@
+package battleship;
+
 /*
 $Log$
 Revision 1.1  2003/10/10 10:10:28  dkelly
@@ -19,54 +21,66 @@ Added RCS
 
 */
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.BorderLayout;
+import java.awt.Button;
+import java.awt.Color;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.awt.Label;
+import java.awt.Panel;
+import java.awt.TextField;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Observable;
+import java.util.Properties;
 import java.io.FileOutputStream;
 import java.io.FileInputStream;
 import java.io.File;
 
-public class iniFileGen extends Observable
-{
-	Properties props;
-	String iniFileName;
-	Dialog iniDialog;
-	Vector inputValues;
-	boolean OK = true;
+public class IniFileGen extends Observable {
+        Properties props;
+        String iniFileName;
+        Dialog iniDialog;
+        List<TextField> inputValues;
+        boolean OK = true;
 
-	private ActionListener buttonListener = new ActionListener()
-	{
-		public void actionPerformed(ActionEvent e)
-		{
-			String command = e.getActionCommand();
-			TextField t;
-			int numValues;
+        private ActionListener buttonListener = new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                        String command = e.getActionCommand();
+                        TextField t;
+                        int numValues;
 
-			if(command.equalsIgnoreCase("OK"))
-			{
-				OK = checkAllInput();
-				if(!OK) return;
+                        if(command.equalsIgnoreCase("OK"))
+                        {
+                                OK = checkAllInput();
+                                if(!OK) return;
 
-				numValues = inputValues.size();
-				for(int i = 0; i < numValues ; i++)
-				{
-					t = (TextField)inputValues.elementAt(i);
-					props.put(t.getName(),t.getText());
-				}
-				try
-				{
-					props.store(new FileOutputStream(iniFileName), "Updated by iniFileGen");
-				}
-				catch(Exception ex) {}
+                                numValues = inputValues.size();
+                                for(int i = 0; i < numValues ; i++)
+                                {
+                                        t = inputValues.get(i);
+                                        props.setProperty(t.getName(), t.getText());
+                                }
+                                try
+                                {
+                                        props.store(new FileOutputStream(iniFileName), "Updated by iniFileGen");
+                                }
+                                catch(Exception ex) {}
 
 /*-----------------------------------------------------*/
 /* Tell anyone who's listening that we've been updated */
 /*-----------------------------------------------------*/
-				tellObservers();
-			}
-			iniDialog.setVisible(false);
-		}
-	};
+                                tellObservers();
+                        }
+                        iniDialog.setVisible(false);
+                }
+        };
 
 	public void tellObservers()
 	{
@@ -77,7 +91,7 @@ public class iniFileGen extends Observable
 /*-------------*/
 /* Constructor */
 /*-------------*/
-	public iniFileGen(String title, String fileName, String propDetails[][])
+        public IniFileGen(String title, String fileName, String propDetails[][])
 	{
 		int i;
 		TextField t;
@@ -91,7 +105,7 @@ public class iniFileGen extends Observable
 		pnlButtons = new Panel();
 		pnlButtons.setLayout(new FlowLayout());
 
-		inputValues = new Vector();
+                inputValues = new ArrayList<>();
 		frame = new Frame(title);
 		iniDialog = new Dialog(frame,title, true);
 		iniDialog.setLayout(new BorderLayout());
@@ -105,8 +119,8 @@ public class iniFileGen extends Observable
 			pnlValues.add(new Label(propDetails[i][0]));
 			t = new TextField(props.getProperty(propDetails[i][1]));
 			t.setName(propDetails[i][1]);
-			pnlValues.add(t);
-			inputValues.addElement(t);
+                        pnlValues.add(t);
+                        inputValues.add(t);
 		}
 
 		btnCancel = new Button("Cancel");
@@ -141,7 +155,7 @@ public class iniFileGen extends Observable
 		{
 			if(props.getProperty(propDetails[i][1]) == null)
 			{
-				props.put(propDetails[i][1],"");
+                                props.setProperty(propDetails[i][1],"");
 			}
 		}
 	}
@@ -175,7 +189,7 @@ public class iniFileGen extends Observable
 		numValues = inputValues.size();
 		for(i=0; i < numValues; i++)
 		{
-			t = (TextField)inputValues.elementAt(i);	
+                        t = inputValues.get(i);
 			if(t.getText() == null || t.getText().length() == 0)
 			{
 				t.setBackground(Color.red);

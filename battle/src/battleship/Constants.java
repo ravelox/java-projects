@@ -1,3 +1,5 @@
+package battleship;
+
 public class Constants
 {
 	public static final int COMMAND_NULL = 0;
