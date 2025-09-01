@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: maki
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: maki
+  template:
+    metadata:
+      labels:
+        app: maki
+    spec:
+      containers:
+        - name: maki
+          image: maki:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
