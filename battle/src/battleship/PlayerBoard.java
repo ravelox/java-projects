@@ -6,15 +6,16 @@ import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class PlayerBoard extends Canvas implements MouseListener
-{
-	private int board[][];
-	private int state;
-	private int turn;
-	private int currentShip;
-	private boolean startPlaced;
-	private int startX, startY;
-	private BattleShip parent;
+public class PlayerBoard extends Canvas implements MouseListener {
+        private static final long serialVersionUID = 1L;
+
+        private int board[][];
+        private int state;
+        private int turn;
+        private int currentShip;
+        private boolean startPlaced;
+        private int startX, startY;
+        private transient BattleShip parent;
 
 	public int getCurrentShip()
 	{
@@ -235,12 +236,14 @@ public class PlayerBoard extends Canvas implements MouseListener
 /*-------------*/
 /* Constructor */
 /*-------------*/
-	public PlayerBoard(BattleShip p)
-	{
+        @SuppressWarnings("this-escape")
+        public PlayerBoard(BattleShip p)
+        {
 		super();
 		parent = p;
 		board = new int[Constants.MAX_X][Constants.MAX_Y];
-		this.setSize(3 + (Constants.MAX_X * Constants.SQUARE_SIZE) + 3, 3 + (Constants.MAX_X * Constants.SQUARE_SIZE) + 3);
+                super.setSize(3 + (Constants.MAX_X * Constants.SQUARE_SIZE) + 3,
+                                3 + (Constants.MAX_X * Constants.SQUARE_SIZE) + 3);
 		state = 0;
 		turn = 0;
 		currentShip = 1;

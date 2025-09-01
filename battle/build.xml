@@ -26,14 +26,15 @@
 	</target>
 
 	<target name="compile" depends="init">
-		<javac
-			srcdir="${src.dir}"
-			destdir="${build.dir}"
-			classpath=""
-		>
-			<compilerarg value="-Xlint"/>
-		</javac>
-	</target>
+               <javac
+                       srcdir="${src.dir}"
+                       destdir="${build.dir}"
+                       classpath=""
+                       includeantruntime="false"
+               >
+                       <compilerarg value="-Xlint"/>
+               </javac>
+       </target>
 
         <target name="buildjar">
                 <jar jarfile="${dist.dir}/${jar.file}" basedir="${build.dir}">
