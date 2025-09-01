@@ -196,4 +196,7 @@ class Maki {
     }
 }
 
-export { Maki };
+// Expose the class when running in a browser without modules
+if (typeof window !== 'undefined') {
+    window.Maki = Maki;
+}

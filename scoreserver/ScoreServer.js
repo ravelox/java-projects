@@ -106,4 +106,7 @@ class GameTable {
     }
 }
 
-export { ScoreServer };
+// Expose the class when loaded in a browser without modules
+if (typeof window !== 'undefined') {
+    window.ScoreServer = ScoreServer;
+}
